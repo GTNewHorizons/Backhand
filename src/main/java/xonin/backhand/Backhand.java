@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import mods.battlegear2.BattlemodeHookContainerClass;
-import mods.battlegear2.packet.BattlegearPacketHandler;
+import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -25,7 +25,7 @@ public class Backhand {
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy",
                 serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
-    public static BattlegearPacketHandler packetHandler;
+    public static BackhandPacketHandler packetHandler;
 
     public static boolean OffhandAttack = false;
     public static boolean EmptyOffhand = false;
@@ -62,7 +62,7 @@ public class Backhand {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        packetHandler = new BattlegearPacketHandler();
+        packetHandler = new BackhandPacketHandler();
         packetHandler.register();
     }
 

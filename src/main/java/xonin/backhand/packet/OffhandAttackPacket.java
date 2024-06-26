@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import xonin.backhand.Backhand;
 
-public class OffhandAttackPacket extends AbstractMBPacket {
+public class OffhandAttackPacket extends AbstractPacket {
     public static final String packetName = "MB2|Attack";
     private String user;
     private int targetId;
@@ -51,7 +51,7 @@ public class OffhandAttackPacket extends AbstractMBPacket {
                 return;
             }
             ((IBattlePlayer) player).attackTargetEntityWithCurrentOffItem(target);
-            Backhand.packetHandler.sendPacketAround(player, 120, new BattlegearAnimationPacket(EnumAnimations.OffHandSwing, player).generatePacket());
+            Backhand.packetHandler.sendPacketAround(player, 120, new OffhandAnimationPacket(EnumAnimations.OffHandSwing, player).generatePacket());
         }
     }
 }

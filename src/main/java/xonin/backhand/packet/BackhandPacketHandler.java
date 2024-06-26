@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -15,14 +15,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import xonin.backhand.Backhand;
 
-public final class BattlegearPacketHandler {
+public final class BackhandPacketHandler {
 
-    public Map<String, AbstractMBPacket> map = new Hashtable<>();
+    public Map<String, AbstractPacket> map = new Hashtable<>();
     public Map<String, FMLEventChannel> channels = new Hashtable<>();
 
-    public BattlegearPacketHandler() {
-        map.put(BattlegearSyncItemPacket.packetName, new BattlegearSyncItemPacket());
-        map.put(BattlegearAnimationPacket.packetName, new BattlegearAnimationPacket());
+    public BackhandPacketHandler() {
+        map.put(OffhandSyncItemPacket.packetName, new OffhandSyncItemPacket());
+        map.put(OffhandAnimationPacket.packetName, new OffhandAnimationPacket());
         map.put(OffhandPlaceBlockPacket.packetName, new OffhandPlaceBlockPacket());
         map.put(OffhandToServerPacket.packetName, new OffhandToServerPacket());
         map.put(OffhandSwapPacket.packetName, new OffhandSwapPacket());

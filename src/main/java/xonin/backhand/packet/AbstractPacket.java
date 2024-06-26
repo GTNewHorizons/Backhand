@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import io.netty.buffer.ByteBuf;
@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * Date: 26/06/13
  * Time: 1:35 PM
  */
-public abstract class AbstractMBPacket {
+public abstract class AbstractPacket {
 
 	public final FMLProxyPacket generatePacket() {
         ByteBuf buf = Unpooled.buffer();

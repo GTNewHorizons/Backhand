@@ -1,5 +1,5 @@
 
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +13,7 @@ import xonin.backhand.client.ClientTickHandler;
  * Date: 26/06/13
  * Time: 1:40 PM
  */
-public final class OffhandSwapClientPacket extends AbstractMBPacket {
+public final class OffhandSwapClientPacket extends AbstractPacket {
 
     public static final String packetName = "MB2|SwapClient";
     private String user;

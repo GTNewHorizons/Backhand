@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event;
@@ -21,7 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-public final class OffhandPlaceBlockPacket extends AbstractMBPacket{
+public final class OffhandPlaceBlockPacket extends AbstractPacket {
     public static final String packetName = "MB2|Place";
     private int xPosition;
     private int yPosition;

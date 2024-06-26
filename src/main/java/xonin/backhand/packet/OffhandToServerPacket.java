@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -6,7 +6,7 @@ import xonin.backhand.api.core.BattlegearUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public class OffhandToServerPacket extends AbstractMBPacket {
+public class OffhandToServerPacket extends AbstractPacket {
     public static final String packetName = "MB2|OffhandToServer";
 
     private ItemStack offhandItem;

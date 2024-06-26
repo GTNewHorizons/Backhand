@@ -1,13 +1,12 @@
 
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ContainerPlayer;
 import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 import xonin.backhand.Backhand;
 
-public final class OffhandConfigSyncPacket extends AbstractMBPacket {
+public final class OffhandConfigSyncPacket extends AbstractPacket {
 
     public static final String packetName = "MB2|ConfigSync";
     private EntityPlayer player;

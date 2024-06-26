@@ -2,7 +2,7 @@ package xonin.backhand.client;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import mods.battlegear2.packet.BattlegearAnimationPacket;
+import xonin.backhand.packet.OffhandAnimationPacket;
 import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -39,7 +39,7 @@ public class ClientProxy extends CommonProxy {
     public void sendAnimationPacket(EnumAnimations animation, EntityPlayer entityPlayer) {
         if (entityPlayer instanceof EntityClientPlayerMP) {
             ((EntityClientPlayerMP) entityPlayer).sendQueue.addToSendQueue(
-                    new BattlegearAnimationPacket(animation, entityPlayer).generatePacket());
+                    new OffhandAnimationPacket(animation, entityPlayer).generatePacket());
         }
     }
 

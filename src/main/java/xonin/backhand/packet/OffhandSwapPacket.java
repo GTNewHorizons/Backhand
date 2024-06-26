@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import xonin.backhand.Backhand;
 
-public class OffhandSwapPacket extends AbstractMBPacket {
+public class OffhandSwapPacket extends AbstractPacket {
     public static final String packetName = "MB2|Swap";
 
     private String user;

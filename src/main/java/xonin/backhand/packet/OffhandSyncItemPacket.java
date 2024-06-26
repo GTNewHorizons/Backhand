@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -12,24 +12,24 @@ import net.minecraft.item.ItemStack;
  * Date: 26/06/13
  * Time: 1:40 PM
  */
-public final class BattlegearSyncItemPacket extends AbstractMBPacket {
+public final class OffhandSyncItemPacket extends AbstractPacket {
 
     public static final String packetName = "MB2|SyncItem";
 	private String user;
 	private InventoryPlayer inventory;
 	private EntityPlayer player;
 
-    public BattlegearSyncItemPacket(EntityPlayer player){
+    public OffhandSyncItemPacket(EntityPlayer player){
         this(player.getCommandSenderName(), player.inventory, player);
     }
 
-    public BattlegearSyncItemPacket(String user, InventoryPlayer inventory, EntityPlayer player) {
+    public OffhandSyncItemPacket(String user, InventoryPlayer inventory, EntityPlayer player) {
         this.user = user;
         this.inventory = inventory;
         this.player = player;
     }
 
-    public BattlegearSyncItemPacket() {
+    public OffhandSyncItemPacket() {
 	}
 
 	@Override

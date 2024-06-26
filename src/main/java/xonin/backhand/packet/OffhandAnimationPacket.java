@@ -1,4 +1,4 @@
-package mods.battlegear2.packet;
+package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -12,18 +12,18 @@ import net.minecraft.world.WorldServer;
  * Date: 26/06/13
  * Time: 1:47 PM
  */
-public final class BattlegearAnimationPacket extends AbstractMBPacket {
+public final class OffhandAnimationPacket extends AbstractPacket {
 
     public static final String packetName = "MB2|Animation";
 	private EnumAnimations animation;
 	private String username;
 
-    public BattlegearAnimationPacket(EnumAnimations animation, EntityPlayer user) {
+    public OffhandAnimationPacket(EnumAnimations animation, EntityPlayer user) {
     	this.animation = animation;
     	this.username = user.getCommandSenderName();
     }
 
-    public BattlegearAnimationPacket() {
+    public OffhandAnimationPacket() {
 	}
 
 	@Override

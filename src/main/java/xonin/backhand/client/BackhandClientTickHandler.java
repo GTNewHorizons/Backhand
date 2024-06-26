@@ -1,7 +1,7 @@
 package xonin.backhand.client;
 
-import mods.battlegear2.packet.OffhandAttackPacket;
-import mods.battlegear2.packet.OffhandToServerPacket;
+import xonin.backhand.packet.OffhandAttackPacket;
+import xonin.backhand.packet.OffhandToServerPacket;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
@@ -21,7 +21,7 @@ import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BattlegearUtils;
 import xonin.backhand.api.core.IBattlePlayer;
 import xonin.backhand.api.core.InventoryPlayerBattle;
-import mods.battlegear2.packet.OffhandPlaceBlockPacket;
+import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -34,7 +34,6 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 import xonin.backhand.CommonProxy;
-import xonin.backhand.client.ClientTickHandler;
 
 public final class BackhandClientTickHandler {
     public final Minecraft mc = Minecraft.getMinecraft();

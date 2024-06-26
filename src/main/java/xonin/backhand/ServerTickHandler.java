@@ -6,8 +6,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import xonin.backhand.api.core.BattlegearUtils;
-import mods.battlegear2.packet.BattlegearSyncItemPacket;
-import mods.battlegear2.packet.OffhandWorldHotswapPacket;
+import xonin.backhand.packet.OffhandSyncItemPacket;
+import xonin.backhand.packet.OffhandWorldHotswapPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -115,7 +115,7 @@ public class ServerTickHandler {
 
         if (BattlegearUtils.getOffhandEP(player).syncOffhand) {
             if (!tickStartItems.containsKey(player.getUniqueID())) {
-                Backhand.packetHandler.sendPacketToAll(new BattlegearSyncItemPacket(player).generatePacket());
+                Backhand.packetHandler.sendPacketToAll(new OffhandSyncItemPacket(player).generatePacket());
             }
             BattlegearUtils.getOffhandEP(player).syncOffhand = false;
         }

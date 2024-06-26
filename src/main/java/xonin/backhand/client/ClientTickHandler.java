@@ -9,7 +9,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaks;
 import mods.battlegear2.BattlemodeHookContainerClass;
 import xonin.backhand.api.core.BattlegearUtils;
-import mods.battlegear2.packet.OffhandSwapPacket;
+import xonin.backhand.packet.OffhandSwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.item.ItemStack;

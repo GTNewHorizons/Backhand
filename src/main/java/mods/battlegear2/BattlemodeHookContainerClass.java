@@ -10,9 +10,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import xonin.backhand.api.PlayerEventChild;
-import mods.battlegear2.packet.BattlegearSyncItemPacket;
-import mods.battlegear2.packet.OffhandConfigSyncPacket;
-import mods.battlegear2.packet.OffhandPlaceBlockPacket;
+import xonin.backhand.packet.OffhandSyncItemPacket;
+import xonin.backhand.packet.OffhandConfigSyncPacket;
+import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -352,7 +352,7 @@ public final class BattlemodeHookContainerClass {
     @SubscribeEvent
     public void addTracking(PlayerEvent.StartTracking event){
         if(event.target instanceof EntityPlayer && !isFake(event.target)){
-            ((EntityPlayerMP)event.entityPlayer).playerNetServerHandler.sendPacket(new BattlegearSyncItemPacket((EntityPlayer) event.target).generatePacket());
+            ((EntityPlayerMP)event.entityPlayer).playerNetServerHandler.sendPacket(new OffhandSyncItemPacket((EntityPlayer) event.target).generatePacket());
         }
     }
 }
