@@ -9,7 +9,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaks;
 import mods.battlegear2.BattlemodeHookContainerClass;
 import xonin.backhand.api.core.BattlegearUtils;
-import mods.battlegear2.client.BattlegearClientTickHandler;
 import mods.battlegear2.packet.OffhandSwapPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -107,14 +106,14 @@ public class ClientTickHandler {
                     MovingObjectPosition mop = BattlemodeHookContainerClass.getRaytraceBlock(event.player);
                     if (offhandItem != null && BattlemodeHookContainerClass.isItemBlock(offhandItem.getItem())) {
                         if (!BattlegearUtils.usagePriorAttack(offhandItem) && mop != null) {
-                            BattlegearClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
+                            BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
                         } else {
                             mc.playerController.resetBlockRemoving();
                         }
                     } else {
                         if (mop != null && !BattlegearUtils.usagePriorAttack(offhandItem) && !BattlemodeHookContainerClass.canBlockBeInteractedWith(mc.theWorld, mop.blockX, mop.blockY, mop.blockZ)) {
-                            BattlegearClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
+                            BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
                         } else {
                             mc.playerController.resetBlockRemoving();

@@ -11,7 +11,7 @@ import mods.battlegear2.BattlemodeHookContainerClass;
 import xonin.backhand.api.core.BattlegearUtils;
 import xonin.backhand.api.core.IBattlePlayer;
 import xonin.backhand.api.core.InventoryPlayerBattle;
-import mods.battlegear2.client.BattlegearClientTickHandler;
+import xonin.backhand.client.BackhandClientTickHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -594,7 +594,7 @@ public class MysteriumPatchesFixesO {
     public static boolean interactWithEntitySendPacket(PlayerControllerMP controllerMP, EntityPlayer p_78768_1_, Entity p_78768_2_, @ReturnedValue boolean interacted)
     {
         if (interacted) {
-            BattlegearClientTickHandler.attackDelay = 5;
+            BackhandClientTickHandler.attackDelay = 5;
         }
         return interacted;
     }

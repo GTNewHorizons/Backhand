@@ -1,4 +1,4 @@
-package mods.battlegear2.client;
+package xonin.backhand.client;
 
 import mods.battlegear2.packet.OffhandAttackPacket;
 import mods.battlegear2.packet.OffhandToServerPacket;
@@ -36,13 +36,13 @@ import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.client.ClientTickHandler;
 
-public final class BattlegearClientTickHandler {
+public final class BackhandClientTickHandler {
     public final Minecraft mc = Minecraft.getMinecraft();
     public static float ticksBeforeUse = 0;
     public static boolean prevRightClickHeld = false;
     public static int attackDelay = 0;
 
-    public BattlegearClientTickHandler() {
+    public BackhandClientTickHandler() {
     }
 
     @SubscribeEvent
