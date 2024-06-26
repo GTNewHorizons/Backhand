@@ -7,7 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -82,8 +82,8 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
         }
         if(!(player instanceof EntityPlayerMP))
             return;
-        ItemStack offhandWeapon = BattlegearUtils.getOffhandItem(player);
-        if(offhandWeapon!=null && !BattlegearUtils.usagePriorAttack(offhandWeapon))
+        ItemStack offhandWeapon = BackhandUtils.getOffhandItem(player);
+        if(offhandWeapon!=null && !BackhandUtils.usagePriorAttack(offhandWeapon))
             return;
         boolean flag = true;
         int i = xPosition;
@@ -137,15 +137,15 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             }
             ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S23PacketBlockChange(i, j, k, player.getEntityWorld()));
         }
-        offhandWeapon = BattlegearUtils.getOffhandItem(player);
+        offhandWeapon = BackhandUtils.getOffhandItem(player);
         if (offhandWeapon != null && HookContainerClass.isItemBlock(offhandWeapon.getItem())) {
             if (offhandWeapon.stackSize <= 0) {
-                BattlegearUtils.setPlayerOffhandItem(player, null);
+                BackhandUtils.setPlayerOffhandItem(player, null);
                 offhandWeapon = null;
             }
             if (offhandWeapon == null || offhandWeapon.getMaxItemUseDuration() == 0) {
                 ((EntityPlayerMP) player).isChangingQuantityOnly = true;
-                BattlegearUtils.setPlayerOffhandItem(player, ItemStack.copyItemStack(BattlegearUtils.getOffhandItem(player)));
+                BackhandUtils.setPlayerOffhandItem(player, ItemStack.copyItemStack(BackhandUtils.getOffhandItem(player)));
                 player.openContainer.detectAndSendChanges();
                 ((EntityPlayerMP) player).isChangingQuantityOnly = false;
             }
@@ -161,9 +161,9 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             if (itemStack.getItem().onItemUseFirst(itemStack, playerMP, theWorld, x, y, z, side, xOffset, yOffset, zOffset)) {
                 if (itemStack.stackSize <= 0) {
                     ForgeEventFactory.onPlayerDestroyItem(playerMP, itemStack);
-                    BattlegearUtils.setPlayerOffhandItem(playerMP, null);
+                    BackhandUtils.setPlayerOffhandItem(playerMP, null);
                 } else if (itemStack.getItemDamage() != meta) {
-                    BattlegearUtils.setPlayerOffhandItem(playerMP, BattlegearUtils.getOffhandItem(playerMP));
+                    BackhandUtils.setPlayerOffhandItem(playerMP, BackhandUtils.getOffhandItem(playerMP));
                 }
                 return true;
             }
@@ -182,9 +182,9 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             }
             if (itemStack.stackSize <= 0) {
                 ForgeEventFactory.onPlayerDestroyItem(playerMP, itemStack);
-                BattlegearUtils.setPlayerOffhandItem(playerMP, null);
+                BackhandUtils.setPlayerOffhandItem(playerMP, null);
             } else if (itemStack.getItemDamage() != meta) {
-                BattlegearUtils.setPlayerOffhandItem(playerMP, itemStack);
+                BackhandUtils.setPlayerOffhandItem(playerMP, itemStack);
             }
         }
         return result;

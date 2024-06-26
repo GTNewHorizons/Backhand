@@ -55,9 +55,9 @@ public final class HookContainerClass {
                 }
                 Backhand.packetHandler.sendPacketToPlayer(new OffhandConfigSyncPacket((EntityPlayer) event.entity).generatePacket(), (EntityPlayerMP) event.entity);
             }
-            ItemStack offhandItem = BattlegearUtils.getOffhandItem((EntityPlayer) event.entity);
+            ItemStack offhandItem = BackhandUtils.getOffhandItem((EntityPlayer) event.entity);
             if (Backhand.isOffhandBlacklisted(offhandItem)) {
-                BattlegearUtils.setPlayerOffhandItem((EntityPlayer) event.entity,null);
+                BackhandUtils.setPlayerOffhandItem((EntityPlayer) event.entity,null);
                 if (!((EntityPlayer) event.entity).inventory.addItemStackToInventory(offhandItem)) {
                     event.entity.entityDropItem(offhandItem,0);
                 }
@@ -98,15 +98,15 @@ public final class HookContainerClass {
         if(isFake(event.entityPlayer))
             return;
 
-        if (!Backhand.EmptyOffhand && BattlegearUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!Backhand.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 
         if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {//Right click
             ItemStack mainHandItem = event.entityPlayer.getCurrentEquippedItem();
-            ItemStack offhandItem = BattlegearUtils.getOffhandItem(event.entityPlayer);
+            ItemStack offhandItem = BackhandUtils.getOffhandItem(event.entityPlayer);
 
-            if (mainHandItem != null && (BattlegearUtils.checkForRightClickFunction(mainHandItem) || offhandItem == null)) {
+            if (mainHandItem != null && (BackhandUtils.checkForRightClickFunction(mainHandItem) || offhandItem == null)) {
                 return;
             }
 
@@ -139,7 +139,7 @@ public final class HookContainerClass {
                     swingHand = false;
                 }
             }
-            if (event.entityPlayer.worldObj.isRemote && !BattlegearUtils.usagePriorAttack(offhandItem) && Backhand.OffhandAttack && swingHand) {
+            if (event.entityPlayer.worldObj.isRemote && !BackhandUtils.usagePriorAttack(offhandItem) && Backhand.OffhandAttack && swingHand) {
                 HookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
             }
         }
@@ -209,8 +209,8 @@ public final class HookContainerClass {
         ItemStack itemUsed = player.getCurrentEquippedItem().copy();
         ItemStack itemStackResult = itemStack.useItemRightClick(player.getEntityWorld(), player);
         if (!ItemStack.areItemStacksEqual(itemUsed,itemStackResult)) {
-            BattlegearUtils.setPlayerOffhandItem(player,itemStackResult);
-            BattlegearUtils.getOffhandEP(player).syncOffhand = true;
+            BackhandUtils.setPlayerOffhandItem(player,itemStackResult);
+            BackhandUtils.getOffhandEP(player).syncOffhand = true;
             if (player.getCurrentEquippedItem() == null || player.getCurrentEquippedItem().stackSize == 0) {
                 ForgeEventFactory.onPlayerDestroyItem(player, player.getCurrentEquippedItem());
             }
@@ -225,7 +225,7 @@ public final class HookContainerClass {
         }
         else
         {
-            BattlegearUtils.setPlayerOffhandItem(player, itemStackResult);
+            BackhandUtils.setPlayerOffhandItem(player, itemStackResult);
             if (side.isServer() && (player).capabilities.isCreativeMode)
             {
                 itemStackResult.stackSize = i;
@@ -235,7 +235,7 @@ public final class HookContainerClass {
                 }
             }
             if (itemStackResult.stackSize <= 0) {
-                BattlegearUtils.setPlayerOffhandItem(player,null);
+                BackhandUtils.setPlayerOffhandItem(player,null);
                 ForgeEventFactory.onPlayerDestroyItem(player,itemStackResult);
             }
             if (side.isServer() && !player.isUsingItem())
@@ -317,7 +317,7 @@ public final class HookContainerClass {
                 event.setCanceled(true);
                 if(event.offHand.stackSize<=0 && !event.getPlayer().capabilities.isCreativeMode){
                     ItemStack orig = event.offHand;
-                    BattlegearUtils.setPlayerOffhandItem(event.getPlayer(), null);
+                    BackhandUtils.setPlayerOffhandItem(event.getPlayer(), null);
                     MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(event.getPlayer(), orig));
                 }
             }

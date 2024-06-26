@@ -25,7 +25,7 @@ import xonin.backhand.Backhand;
 /**
  * Store commonly used method, mostly for the {@link EntityPlayer} {@link ItemStack}s management
  */
-public class BattlegearUtils {
+public class BackhandUtils {
 
     private static String[] itemBlackListMethodNames = {
             BattlegearTranslator.getMapedMethodName("Item", "func_77648_a", "onItemUse"),
@@ -53,9 +53,9 @@ public class BattlegearUtils {
 
     public static void swapOffhandItem(EntityPlayer player) {
         final ItemStack mainhandItem = player.getCurrentEquippedItem();
-        final ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
-        BattlegearUtils.setPlayerCurrentItem(player, offhandItem);
-        BattlegearUtils.setPlayerOffhandItem(player, mainhandItem);
+        final ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
+        BackhandUtils.setPlayerCurrentItem(player, offhandItem);
+        BackhandUtils.setPlayerOffhandItem(player, mainhandItem);
     }
 
     public static void setPlayerCurrentItem(EntityPlayer player, ItemStack stack) {
@@ -368,11 +368,11 @@ public class BattlegearUtils {
      */
     public static void attackTargetEntityWithCurrentOffItem(EntityPlayer player, Entity par1Entity){
         final ItemStack oldItem = player.getCurrentEquippedItem();
-        final ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
+        final ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (!Backhand.OffhandAttack || (offhandItem == null && !Backhand.EmptyOffhand))
             return;
 
-        BattlegearUtils.setPlayerCurrentItem(player,offhandItem);
+        BackhandUtils.setPlayerCurrentItem(player,offhandItem);
         refreshAttributes(player.getAttributeMap(), oldItem, player.getCurrentEquippedItem());
 
         int prevDamage = offhandItem != null ? offhandItem.getItemDamage() : 0;
@@ -380,10 +380,10 @@ public class BattlegearUtils {
         player.attackTargetEntityWithCurrentItem(par1Entity);
 
         refreshAttributes(player.getAttributeMap(), player.getCurrentEquippedItem(), oldItem);
-        BattlegearUtils.setPlayerCurrentItem(player,oldItem);
+        BackhandUtils.setPlayerCurrentItem(player,oldItem);
 
         if (offhandItem != null && damage <= 0 && offhandItem.getItemDamage() < prevDamage) {
-            BattlegearUtils.setPlayerOffhandItem(player, null);
+            BackhandUtils.setPlayerOffhandItem(player, null);
             ForgeEventFactory.onPlayerDestroyItem(player, offhandItem);
         }
     }

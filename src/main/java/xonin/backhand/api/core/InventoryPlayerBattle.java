@@ -29,11 +29,11 @@ public class InventoryPlayerBattle extends InventoryPlayer {
     }
 
     public ItemStack getOffhandItem(){
-        return BattlegearUtils.getOffhandEP(player).getOffhandItem();
+        return BackhandUtils.getOffhandEP(player).getOffhandItem();
     }
 
     public void setOffhandItem(ItemStack stack) {
-        BattlegearUtils.getOffhandEP(player).setOffhandItem(stack);
+        BackhandUtils.getOffhandEP(player).setOffhandItem(stack);
     }
 
     public int clearInventory(Item item, int metadata) {
@@ -57,7 +57,7 @@ public class InventoryPlayerBattle extends InventoryPlayer {
             if (this.getOffhandItem() == null && getFirstEmptyStack() == -1) {
                 this.setOffhandItem(ItemStack.copyItemStack(itemStack));
                 itemStack.stackSize = 0;
-                BattlegearUtils.getOffhandEP(player).syncOffhand = true;
+                BackhandUtils.getOffhandEP(player).syncOffhand = true;
                 return true;
             }
 
@@ -70,12 +70,12 @@ public class InventoryPlayerBattle extends InventoryPlayer {
                 if (this.getOffhandItem().stackSize + itemStack.stackSize > this.getOffhandItem().getMaxStackSize()) {
                     itemStack.stackSize -= this.getOffhandItem().stackSize;
                     this.getOffhandItem().stackSize = this.getOffhandItem().getMaxStackSize();
-                    BattlegearUtils.getOffhandEP(player).syncOffhand = true;
+                    BackhandUtils.getOffhandEP(player).syncOffhand = true;
                     return super.addItemStackToInventory(itemStack);
                 } else {
                     this.getOffhandItem().stackSize += itemStack.stackSize;
                     itemStack.stackSize = 0;
-                    BattlegearUtils.getOffhandEP(player).syncOffhand = true;
+                    BackhandUtils.getOffhandEP(player).syncOffhand = true;
                     return true;
                 }
             }

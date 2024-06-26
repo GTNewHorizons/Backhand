@@ -2,7 +2,7 @@ package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -38,7 +38,7 @@ public class OffhandToServerPacket extends AbstractPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
             ItemStack offhandItem = ByteBufUtils.readItemStack(inputStream);
-            BattlegearUtils.setPlayerOffhandItem(this.player,offhandItem);
+            BackhandUtils.setPlayerOffhandItem(this.player,offhandItem);
         }
     }
 }

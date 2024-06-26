@@ -8,7 +8,7 @@ import invtweaks.InvTweaksContainerManager;
 import invtweaks.InvTweaksContainerSectionManager;
 import invtweaks.api.container.ContainerSection;
 import xonin.backhand.HookContainerClass;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBattlePlayer;
 import xonin.backhand.api.core.InventoryPlayerBattle;
 import xonin.backhand.client.BackhandClientTickHandler;
@@ -78,9 +78,9 @@ public class MysteriumPatchesFixesO {
             return;
 
         EntityPlayer player = (EntityPlayer) p_77972_2_;
-        ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
+        ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (offhandItem != null && itemStack == offhandItem && itemStack.stackSize == 0) {
-            BattlegearUtils.setPlayerOffhandItem(player,null);
+            BackhandUtils.setPlayerOffhandItem(player,null);
             ForgeEventFactory.onPlayerDestroyItem(player,offhandItem);
         }
     }
@@ -91,17 +91,17 @@ public class MysteriumPatchesFixesO {
         if (returnedAction != EnumAction.none) {
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && ClientEventHandler.renderingPlayer != null) {
                 EntityPlayer player = ClientEventHandler.renderingPlayer;
-                ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
+                ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
 
                 if (offhandItem != null) {
                     ItemStack mainHandItem = player.getCurrentEquippedItem();
                     if (mainHandItem != null
-                            && (BattlegearUtils.checkForRightClickFunctionNoAction(mainHandItem)
+                            && (BackhandUtils.checkForRightClickFunctionNoAction(mainHandItem)
                             || HookContainerClass.isItemBlock(mainHandItem.getItem()))) {
                         if (itemStack == offhandItem) {
                             return EnumAction.none;
                         }
-                    } else if (itemStack == mainHandItem && (!(BattlegearUtils.checkForRightClickFunctionNoAction(offhandItem)
+                    } else if (itemStack == mainHandItem && (!(BackhandUtils.checkForRightClickFunctionNoAction(offhandItem)
                             || HookContainerClass.isItemBlock(offhandItem.getItem())) || player.getItemInUse() != mainHandItem)) {
                         return EnumAction.none;
                     }
@@ -203,7 +203,7 @@ public class MysteriumPatchesFixesO {
         ClientEventHandler.renderingPlayer = player;
 
         ItemStack mainhandItem = player.getCurrentEquippedItem();
-        ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
+        ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (!Backhand.EmptyOffhand && !Backhand.RenderEmptyOffhandAtRest && offhandItem == null) {
             return;
         }
@@ -361,8 +361,8 @@ public class MysteriumPatchesFixesO {
         b.bipedLeftArm.rotateAngleX -= MathHelper.sin(p_78087_3_ * 0.067F) * 0.05F;
 
         if (b.aimedBow) {
-            if (p_78087_7_ instanceof EntityPlayer && p_78087_7_ == Minecraft.getMinecraft().thePlayer && BattlegearUtils.getOffhandItem((EntityPlayer) p_78087_7_) != null
-                && ((EntityClientPlayerMP) p_78087_7_).getItemInUse() == BattlegearUtils.getOffhandItem((EntityPlayer) p_78087_7_)) {
+            if (p_78087_7_ instanceof EntityPlayer && p_78087_7_ == Minecraft.getMinecraft().thePlayer && BackhandUtils.getOffhandItem((EntityPlayer) p_78087_7_) != null
+                && ((EntityClientPlayerMP) p_78087_7_).getItemInUse() == BackhandUtils.getOffhandItem((EntityPlayer) p_78087_7_)) {
                 f6 = 0.0F;
                 f7 = 0.0F;
                 b.bipedLeftArm.rotateAngleZ = 0.0F;
@@ -497,7 +497,7 @@ public class MysteriumPatchesFixesO {
     @Fix(returnSetting=EnumReturnSetting.ALWAYS, insertOnExit = true)
     public static void sendContainerAndContentsToPlayer(EntityPlayerMP player, Container p_71110_1_, List p_71110_2_)
     {
-        BattlegearUtils.getOffhandEP(player).syncOffhand = true;
+        BackhandUtils.getOffhandEP(player).syncOffhand = true;
     }
 
     public static boolean ignoreSetSlot = false;
@@ -545,11 +545,11 @@ public class MysteriumPatchesFixesO {
         Entity entity = p_147340_1_.func_149564_a(worldserver);
         netServer.playerEntity.func_143004_u();
 
-        boolean swappedOffhand = BattlegearUtils.checkForRightClickFunction(BattlegearUtils.getOffhandItem(netServer.playerEntity))
-                && !BattlegearUtils.checkForRightClickFunction(netServer.playerEntity.getCurrentEquippedItem())
+        boolean swappedOffhand = BackhandUtils.checkForRightClickFunction(BackhandUtils.getOffhandItem(netServer.playerEntity))
+                && !BackhandUtils.checkForRightClickFunction(netServer.playerEntity.getCurrentEquippedItem())
                 && p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.INTERACT;
         if (swappedOffhand) {
-            BattlegearUtils.swapOffhandItem(netServer.playerEntity);
+            BackhandUtils.swapOffhandItem(netServer.playerEntity);
         }
 
         if (entity != null)
@@ -575,7 +575,7 @@ public class MysteriumPatchesFixesO {
                         netServer.kickPlayerFromServer("Attempting to attack an invalid entity");
                         netServer.serverController.logWarning("Player " + netServer.playerEntity.getCommandSenderName() + " tried to attack an invalid entity");
                         if (swappedOffhand) {
-                            BattlegearUtils.swapOffhandItem(netServer.playerEntity);
+                            BackhandUtils.swapOffhandItem(netServer.playerEntity);
                         }
                     }
 
@@ -585,7 +585,7 @@ public class MysteriumPatchesFixesO {
         }
 
         if (swappedOffhand) {
-            BattlegearUtils.swapOffhandItem(netServer.playerEntity);
+            BackhandUtils.swapOffhandItem(netServer.playerEntity);
         }
     }
 
@@ -616,7 +616,7 @@ public class MysteriumPatchesFixesO {
     @Fix(insertOnExit=true,returnSetting=EnumReturnSetting.ON_NOT_NULL)
     public static ItemStack getCurrentItem(InventoryPlayer inv)
     {
-        return inv.currentItem < 9 && inv.currentItem >= 0 ? inv.mainInventory[inv.currentItem] : inv.currentItem == InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT ? BattlegearUtils.getOffhandItem(inv.player) : null;
+        return inv.currentItem < 9 && inv.currentItem >= 0 ? inv.mainInventory[inv.currentItem] : inv.currentItem == InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT ? BackhandUtils.getOffhandItem(inv.player) : null;
     }
 
     private static final MethodHandle fieldGetSection;
@@ -736,7 +736,7 @@ public class MysteriumPatchesFixesO {
     public static int getLightLevel(Entity entity, @ReturnedValue int returned) {
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            ItemStack offhand = BattlegearUtils.getOffhandItem(player);
+            ItemStack offhand = BackhandUtils.getOffhandItem(player);
             try {
                 Method getLightLevel = Class.forName("DynamicLights").getMethod("getLightLevel",ItemStack.class);
                 int levelMain = (int) getLightLevel.invoke(null,offhand);

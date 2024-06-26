@@ -3,7 +3,7 @@ package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.InventoryPlayerBattle;
 import net.minecraft.entity.player.EntityPlayer;
 import xonin.backhand.client.ClientTickHandler;
@@ -35,7 +35,7 @@ public final class OffhandSwapClientPacket extends AbstractPacket {
             int slot = inputStream.readInt();
             if(InventoryPlayerBattle.isValidSwitch(slot))
                 this.player.inventory.currentItem = slot;
-            BattlegearUtils.swapOffhandItem(player);
+            BackhandUtils.swapOffhandItem(player);
         }
         ClientTickHandler.allowSwap = true;
     }

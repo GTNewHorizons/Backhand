@@ -2,7 +2,7 @@ package xonin.backhand.client;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;
@@ -34,7 +34,7 @@ public class ClientEventHandler {
 
     protected void renderHotbar(GuiIngame gui, int width, int height, float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
-        ItemStack itemstack = BattlegearUtils.getOffhandItem(mc.thePlayer);
+        ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
         if (itemstack == null) {
             return;
         }
@@ -65,7 +65,7 @@ public class ClientEventHandler {
 
     protected void renderOffhandInventorySlot(int p_73832_2_, int p_73832_3_, float p_73832_4_) {
         Minecraft mc = Minecraft.getMinecraft();
-        ItemStack itemstack = BattlegearUtils.getOffhandItem(mc.thePlayer);
+        ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
 
         if (itemstack != null)
         {
@@ -106,7 +106,7 @@ public class ClientEventHandler {
         if(event.entity instanceof EntityPlayer) {
             EntityPlayer entityPlayer = (EntityPlayer) event.entity;
             renderingPlayer = entityPlayer;
-            ItemStack offhand = BattlegearUtils.getOffhandItem(entityPlayer);
+            ItemStack offhand = BackhandUtils.getOffhandItem(entityPlayer);
             if (offhand != null && event.renderer instanceof RenderPlayer) {
                 RenderPlayer renderer = ((RenderPlayer) event.renderer);
                 renderer.modelArmorChestplate.heldItemLeft = renderer.modelArmor.heldItemLeft = renderer.modelBipedMain.heldItemLeft = 1;
@@ -134,7 +134,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void render3rdPersonOffhand(RenderPlayerEvent.Specials.Post event) {
-        if (!Backhand.EmptyOffhand && BattlegearUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!Backhand.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 

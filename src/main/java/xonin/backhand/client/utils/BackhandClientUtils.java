@@ -1,6 +1,6 @@
 package xonin.backhand.client.utils;
 
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.item.ItemStack;
 
@@ -13,8 +13,8 @@ public final class BackhandClientUtils {
      */
     public static boolean entityOtherPlayerIsItemInUseHook(EntityOtherPlayerMP player, boolean isItemInUse){
         ItemStack itemStack = player.getCurrentEquippedItem();
-        ItemStack offhand = BattlegearUtils.getOffhandItem(player);
-        if(BattlegearUtils.usagePriorAttack(offhand))
+        ItemStack offhand = BackhandUtils.getOffhandItem(player);
+        if(BackhandUtils.usagePriorAttack(offhand))
             itemStack = offhand;
         if (!isItemInUse && player.isEating() && itemStack != null){
             player.setItemInUse(itemStack, itemStack.getMaxItemUseDuration());

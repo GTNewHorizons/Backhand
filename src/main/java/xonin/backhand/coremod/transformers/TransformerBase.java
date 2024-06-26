@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class TransformerBase implements IClassTransformer, Opcodes {
-    public static final String UTILITY_CLASS = "xonin/backhand/api/core/BattlegearUtils";
+    public static final String UTILITY_CLASS = "xonin/backhand/api/core/BackhandUtils";
     public static final String SIMPLEST_METHOD_DESC = "()V";
     public Logger logger = LogManager.getLogger("battlegear2");
     protected final String classPath;

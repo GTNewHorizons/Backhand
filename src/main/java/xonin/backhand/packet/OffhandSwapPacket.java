@@ -2,7 +2,7 @@ package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -36,12 +36,12 @@ public class OffhandSwapPacket extends AbstractPacket {
         this.user = ByteBufUtils.readUTF8String(inputStream);
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
-            ItemStack offhandItem = BattlegearUtils.getOffhandItem(this.player);
+            ItemStack offhandItem = BackhandUtils.getOffhandItem(this.player);
             if (Backhand.isOffhandBlacklisted(player.getCurrentEquippedItem()) || Backhand.isOffhandBlacklisted(offhandItem))
                 return;
 
-            BattlegearUtils.setPlayerOffhandItem(this.player,this.player.getCurrentEquippedItem());
-            BattlegearUtils.setPlayerCurrentItem(this.player,offhandItem);
+            BackhandUtils.setPlayerOffhandItem(this.player,this.player.getCurrentEquippedItem());
+            BackhandUtils.setPlayerCurrentItem(this.player,offhandItem);
             Backhand.packetHandler.sendPacketToPlayer(new OffhandSwapClientPacket(this.player).generatePacket(), (EntityPlayerMP) player);
         }
     }

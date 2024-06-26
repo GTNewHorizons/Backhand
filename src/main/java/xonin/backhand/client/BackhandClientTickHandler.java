@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
-import xonin.backhand.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBattlePlayer;
 import xonin.backhand.api.core.InventoryPlayerBattle;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
@@ -59,9 +59,9 @@ public final class BackhandClientTickHandler {
     @SideOnly(Side.CLIENT)
     public void tickStart(EntityPlayer player) {
         ItemStack mainhand = player.getCurrentEquippedItem();
-        ItemStack offhand = BattlegearUtils.getOffhandItem(player);
-        boolean mainhandUse = BattlegearUtils.checkForRightClickFunction(mainhand);
-        boolean offhandUse = BattlegearUtils.checkForRightClickFunction(offhand);
+        ItemStack offhand = BackhandUtils.getOffhandItem(player);
+        boolean mainhandUse = BackhandUtils.checkForRightClickFunction(mainhand);
+        boolean offhandUse = BackhandUtils.checkForRightClickFunction(offhand);
         if (attackDelay > 0) {
             attackDelay--;
         }
@@ -108,7 +108,7 @@ public final class BackhandClientTickHandler {
         }
 
         ItemStack mainHandItem = player.getCurrentEquippedItem();
-        if (mainHandItem != null && (BattlegearUtils.checkForRightClickFunction(mainHandItem)
+        if (mainHandItem != null && (BackhandUtils.checkForRightClickFunction(mainHandItem)
                     || HookContainerClass.isItemBlock(mainHandItem.getItem()) || player.getItemInUse() == mainHandItem)) {
             ticksBeforeUse = 10;
             return false;
@@ -116,8 +116,8 @@ public final class BackhandClientTickHandler {
 
         if (mouseOver != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
         {
-            if (BattlegearUtils.blockHasUse(player.worldObj.getBlock(mouseOver.blockX, mouseOver.blockY,mouseOver.blockZ))
-                && !BattlegearUtils.getOffhandItem(player).getItem().doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY,mouseOver.blockZ, player)
+            if (BackhandUtils.blockHasUse(player.worldObj.getBlock(mouseOver.blockX, mouseOver.blockY,mouseOver.blockZ))
+                && !BackhandUtils.getOffhandItem(player).getItem().doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY,mouseOver.blockZ, player)
                 && !(offhandItem.getItem() instanceof ItemBlock)) {
                 ticksBeforeUse = 4;
                 return false;
@@ -125,7 +125,7 @@ public final class BackhandClientTickHandler {
         }
 
         boolean interacted = false;
-        if (BattlegearUtils.usagePriorAttack(offhandItem)) {
+        if (BackhandUtils.usagePriorAttack(offhandItem)) {
             boolean flag = true;
             if (mouseOver != null)
             {
@@ -139,14 +139,14 @@ public final class BackhandClientTickHandler {
 
                 if (flag)
                 {
-                    offhandItem = BattlegearUtils.getOffhandItem(player);
+                    offhandItem = BackhandUtils.getOffhandItem(player);
                     PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, player.worldObj), offhandItem);
                     if (offhandItem != null && !MinecraftForge.EVENT_BUS.post(useItemEvent)) {
                         interacted = HookContainerClass.tryUseItem(player, offhandItem, Side.CLIENT);
                     }
                 }
 
-                offhandItem = BattlegearUtils.getOffhandItem(player);
+                offhandItem = BackhandUtils.getOffhandItem(player);
                 if (offhandItem != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
                 {
                     int j = mouseOver.blockX;
@@ -164,7 +164,7 @@ public final class BackhandClientTickHandler {
                         }
                         if (offhandItem.stackSize == 0)
                         {
-                            BattlegearUtils.setPlayerOffhandItem(player, null);
+                            BackhandUtils.setPlayerOffhandItem(player, null);
                         }
                     }
                 }
@@ -260,7 +260,7 @@ public final class BackhandClientTickHandler {
             if (ClientTickHandler.delay <= 0) {
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
-                if (!(BattlegearUtils.usagePriorAttack(offhandItem)) && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
+                if (!(BackhandUtils.usagePriorAttack(offhandItem)) && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
                     PlayerControllerMP.clickBlockCreative(mcInstance, mcInstance.playerController, i, j, k, objectMouseOver.sideHit);
                     HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
                     mcInstance.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(2, i, j, k, objectMouseOver.sideHit));
@@ -295,7 +295,7 @@ public final class BackhandClientTickHandler {
                     }
 
                     mcInstance.thePlayer.inventory.currentItem = InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT;
-                    mcInstance.playerController.currentItemHittingBlock = BattlegearUtils.getOffhandItem(mcInstance.thePlayer);
+                    mcInstance.playerController.currentItemHittingBlock = BackhandUtils.getOffhandItem(mcInstance.thePlayer);
                     mcInstance.playerController.syncCurrentPlayItem();
                 }
 
@@ -352,7 +352,7 @@ public final class BackhandClientTickHandler {
         mcInstance.playerController.syncCurrentPlayItem();
 
         if (broken) {
-            BattlegearUtils.setPlayerOffhandItem(event.player,null);
+            BackhandUtils.setPlayerOffhandItem(event.player,null);
             ((EntityClientPlayerMP)event.player).sendQueue.addToSendQueue(
                     new OffhandToServerPacket(null, event.player).generatePacket()
             );
