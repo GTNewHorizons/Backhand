@@ -1,6 +1,6 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import xonin.backhand.api.core.IBackhandPlayer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
@@ -354,18 +354,18 @@ public final class EntityPlayerTransformer extends TransformerBase {
 
     @Override
     void setupMappings() {
-        entityPlayerClassName = BattlegearTranslator.getMapedClassName("entity.player.EntityPlayer");
-        inventoryClassName = BattlegearTranslator.getMapedClassName("entity.player.InventoryPlayer");
-        inventoryContainerClassName = BattlegearTranslator.getMapedClassName("inventory.ContainerPlayer");
-        itemStackClassName = BattlegearTranslator.getMapedClassName("item.ItemStack");
-        entityClassName = BattlegearTranslator.getMapedClassName("entity.Entity");
-        entityLivingClassName = BattlegearTranslator.getMapedClassName("entity.EntityLivingBase");
+        entityPlayerClassName = BackhandTranslator.getMapedClassName("entity.player.EntityPlayer");
+        inventoryClassName = BackhandTranslator.getMapedClassName("entity.player.InventoryPlayer");
+        inventoryContainerClassName = BackhandTranslator.getMapedClassName("inventory.ContainerPlayer");
+        itemStackClassName = BackhandTranslator.getMapedClassName("item.ItemStack");
+        entityClassName = BackhandTranslator.getMapedClassName("entity.Entity");
+        entityLivingClassName = BackhandTranslator.getMapedClassName("entity.EntityLivingBase");
 
         playerInventoryFieldName = "field_71071_by!inventory";
-        playerItemInUseField = BattlegearTranslator.getMapedFieldName("field_71074_e", "itemInUse");
-        swingProgressBooleanField = BattlegearTranslator.getMapedFieldName("field_82175_bq", "isSwingInProgress");
-        swingProgressIntField = BattlegearTranslator.getMapedFieldName("field_110158_av", "swingProgressInt");
-        swingProgressFloatField = BattlegearTranslator.getMapedFieldName("field_70733_aJ", "swingProgress");
+        playerItemInUseField = BackhandTranslator.getMapedFieldName("field_71074_e", "itemInUse");
+        swingProgressBooleanField = BackhandTranslator.getMapedFieldName("field_82175_bq", "isSwingInProgress");
+        swingProgressIntField = BackhandTranslator.getMapedFieldName("field_110158_av", "swingProgressInt");
+        swingProgressFloatField = BackhandTranslator.getMapedFieldName("field_70733_aJ", "swingProgress");
         onItemFinishMethodName = "func_71036_o!onItemUseFinish";
         setCurrentItemArmourMethodName = "func_70062_b!setCurrentItemOrArmor";
         setCurrentItemArmourMethodDesc = "(IL" + itemStackClassName + ";)V";

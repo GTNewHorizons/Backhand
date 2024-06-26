@@ -28,9 +28,9 @@ import xonin.backhand.Backhand;
 public class BackhandUtils {
 
     private static String[] itemBlackListMethodNames = {
-            BattlegearTranslator.getMapedMethodName("Item", "func_77648_a", "onItemUse"),
-            BattlegearTranslator.getMapedMethodName("Item", "func_77659_a", "onItemRightClick"),
-            BattlegearTranslator.getMapedMethodName("Item", "func_111207_a", "itemInteractionForEntity")
+            BackhandTranslator.getMapedMethodName("Item", "func_77648_a", "onItemUse"),
+            BackhandTranslator.getMapedMethodName("Item", "func_77659_a", "onItemRightClick"),
+            BackhandTranslator.getMapedMethodName("Item", "func_111207_a", "itemInteractionForEntity")
     };
 
     /**
@@ -184,7 +184,7 @@ public class BackhandUtils {
             return false;
         }
         try {
-            String mappedName = BattlegearTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated");
+            String mappedName = BackhandTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated");
             Class[] classParams = new Class[]{World.class, int.class, int.class, int.class, EntityPlayer.class, int.class, float.class, float.class, float.class};
 
             Class c = block.getClass();

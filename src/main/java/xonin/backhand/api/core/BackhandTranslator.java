@@ -2,7 +2,7 @@ package xonin.backhand.api.core;
 
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
-public class BattlegearTranslator {
+public class BackhandTranslator {
    public static boolean debug = false;
    public static boolean obfuscatedEnv;
 

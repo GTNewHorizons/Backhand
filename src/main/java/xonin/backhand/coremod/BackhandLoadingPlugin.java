@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.Name;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 
 import java.io.File;
 import java.util.Map;
@@ -54,7 +54,7 @@ public final class BackhandLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String, Object> data) {
     	debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
-        BattlegearTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
+        BackhandTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
     }
 
 }

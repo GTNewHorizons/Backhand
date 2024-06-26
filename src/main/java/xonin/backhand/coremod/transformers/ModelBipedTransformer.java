@@ -1,6 +1,6 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
@@ -18,8 +18,8 @@ public final class ModelBipedTransformer extends TransformerMethodProcess {
     @Override
     void setupMappings() {
         super.setupMappings();
-        modelBipedClassName = BattlegearTranslator.getMapedClassName("client.model.ModelBiped");
-        entityClassName = BattlegearTranslator.getMapedClassName("entity.Entity");
+        modelBipedClassName = BackhandTranslator.getMapedClassName("client.model.ModelBiped");
+        entityClassName = BackhandTranslator.getMapedClassName("entity.Entity");
         isSneakFieldName = "field_78117_n!isSneak";
     }
 

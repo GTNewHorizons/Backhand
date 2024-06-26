@@ -1,6 +1,6 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import xonin.backhand.coremod.BackhandLoadingPlugin;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.Level;
@@ -53,7 +53,7 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
             cn.accept(cw);
 
             logger.log(success ? Level.INFO : Level.ERROR, "M&B - Patching Class " + unobfClass + (success ? " done" : " FAILED!"));
-            if (!success && BattlegearTranslator.debug) {
+            if (!success && BackhandTranslator.debug) {
                 writeClassFile(cw, unobfClass + " (" + name + ")");
             }
 
@@ -103,7 +103,7 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
                     nextNode.getNext() instanceof FieldInsnNode &&
                     ((FieldInsnNode) nextNode).owner.equals(className) &&
                     (((FieldInsnNode) nextNode).name.equals(fieldName.split("!")[0]) || ((FieldInsnNode) nextNode).name.equals(fieldName.split("!")[1])) &&
-                    ((FieldInsnNode) nextNode.getNext()).owner.equals(BattlegearTranslator.getMapedClassName("entity.player.InventoryPlayer")) &&
+                    ((FieldInsnNode) nextNode.getNext()).owner.equals(BackhandTranslator.getMapedClassName("entity.player.InventoryPlayer")) &&
                     (((FieldInsnNode) nextNode.getNext()).name.equals("field_70462_a") || ((FieldInsnNode) nextNode.getNext()).name.equals("mainInventory"))
                     ) {
 
@@ -122,8 +122,8 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
                 newList.add(new MethodInsnNode(INVOKESTATIC,
                         UTILITY_CLASS,
                         "setPlayerCurrentItem",
-                        "(L" + BattlegearTranslator.getMapedClassName("entity.player.EntityPlayer") +
-                                ";L" + BattlegearTranslator.getMapedClassName("item.ItemStack") + ";)V"));
+                        "(L" + BackhandTranslator.getMapedClassName("entity.player.EntityPlayer") +
+                                ";L" + BackhandTranslator.getMapedClassName("item.ItemStack") + ";)V"));
 
             } else {
                 newList.add(nextNode);

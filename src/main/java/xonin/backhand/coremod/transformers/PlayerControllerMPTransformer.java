@@ -1,6 +1,6 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import org.objectweb.asm.tree.MethodNode;
 
 public final class PlayerControllerMPTransformer extends TransformerMethodProcess {
@@ -21,7 +21,7 @@ public final class PlayerControllerMPTransformer extends TransformerMethodProces
     @Override
     void setupMappings() {
         super.setupMappings();
-        entityPlayerClassName = BattlegearTranslator.getMapedClassName("entity.player.EntityPlayer");
+        entityPlayerClassName = BackhandTranslator.getMapedClassName("entity.player.EntityPlayer");
         playerInventoryFieldName = "field_71071_by!inventory";
     }
 

@@ -146,8 +146,8 @@ public final class HookContainerClass {
     }
 
     private static String[] activatedBlockMethodNames = {
-            BattlegearTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated"),
-            BattlegearTranslator.getMapedMethodName("Block", "func_149699_a", "onBlockClicked")};
+            BackhandTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated"),
+            BackhandTranslator.getMapedMethodName("Block", "func_149699_a", "onBlockClicked")};
     private static Class[][] activatedBlockMethodParams = {
             new Class[]{World.class, int.class, int.class, int.class, EntityPlayer.class, int.class, float.class, float.class, float.class},
             new Class[]{World.class, int.class, int.class, int.class, EntityPlayer.class}};

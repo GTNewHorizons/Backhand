@@ -13,7 +13,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import xonin.backhand.coremod.BackhandLoadingPlugin;
 import net.tclproject.mysteriumlib.asm.core.ASMFix;
 import net.tclproject.mysteriumlib.asm.core.MetaReader;
@@ -162,7 +162,7 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
     public void injectData(Map<String, Object> data) {
         debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
         BackhandLoadingPlugin.debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
-        BattlegearTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
+        BackhandTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
         if (((ArrayList)data.get("coremodList")).contains("DragonAPIASMHandler")) {
             Logger.getGlobal().info("Core: Located DragonAPI in list of coremods");
             foundDragonAPI = true;

@@ -1,6 +1,6 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
@@ -52,14 +52,14 @@ public final class ItemInWorldTransformer extends TransformerMethodProcess {
     @Override
     void setupMappings() {
         super.setupMappings();
-        entityPlayerClassName = BattlegearTranslator.getMapedClassName("entity.player.EntityPlayer");
-        inventoryPlayerClassName = BattlegearTranslator.getMapedClassName("entity.player.InventoryPlayer");
-        itemStackClassName = BattlegearTranslator.getMapedClassName("item.ItemStack");
+        entityPlayerClassName = BackhandTranslator.getMapedClassName("entity.player.EntityPlayer");
+        inventoryPlayerClassName = BackhandTranslator.getMapedClassName("entity.player.InventoryPlayer");
+        itemStackClassName = BackhandTranslator.getMapedClassName("item.ItemStack");
 
         playerInventoryFieldName = "field_71071_by!inventory";
         mainInventoryArrayFieldName = "field_70462_a!mainInventory";
         setInventorySlotMethodName =
-                BattlegearTranslator.getMapedMethodName("func_70299_a", "setInventorySlotContents");
+                BackhandTranslator.getMapedMethodName("func_70299_a", "setInventorySlotContents");
         setInventorySlotMethodDesc = "(IL" + itemStackClassName + ";)V";
     }
 

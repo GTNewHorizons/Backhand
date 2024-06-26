@@ -1,6 +1,6 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
@@ -91,10 +91,10 @@ public final class EntityOtherPlayerMPTransformer extends TransformerBase {
 
     @Override
     void setupMappings() {
-        String itemStackClassName = BattlegearTranslator.getMapedClassName("item.ItemStack");
-        entityOtherPlayerMPClassName = BattlegearTranslator.getMapedClassName("client.entity.EntityOtherPlayerMP");
+        String itemStackClassName = BackhandTranslator.getMapedClassName("item.ItemStack");
+        entityOtherPlayerMPClassName = BackhandTranslator.getMapedClassName("client.entity.EntityOtherPlayerMP");
 
-        isItemInUseFieldName = BattlegearTranslator.getMapedFieldName("field_71186_a", "isItemInUse");
+        isItemInUseFieldName = BackhandTranslator.getMapedFieldName("field_71186_a", "isItemInUse");
         limbSwingFieldName = "field_70754_ba!limbSwing";
         playerInventoryFieldName = "field_71071_by!inventory";
         setCurrentItemMethodName = "func_70062_b!setCurrentItemOrArmor";
