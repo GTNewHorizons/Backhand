@@ -1,7 +1,7 @@
 package xonin.backhand.coremod.transformers;
 
 import xonin.backhand.api.core.BattlegearTranslator;
-import xonin.backhand.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBackhandPlayer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
 import org.apache.logging.log4j.Level;
@@ -40,7 +40,7 @@ public final class EntityPlayerTransformer extends TransformerBase {
 
     @Override
     void addInterface(List<String> interfaces) {
-        interfaces.add(Type.getInternalName(IBattlePlayer.class));
+        interfaces.add(Type.getInternalName(IBackhandPlayer.class));
     }
 
     @Override

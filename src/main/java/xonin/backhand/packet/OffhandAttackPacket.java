@@ -2,7 +2,7 @@ package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -50,7 +50,7 @@ public class OffhandAttackPacket extends AbstractPacket {
             if (target instanceof EntityItem || target instanceof EntityXPOrb || target instanceof EntityArrow || target == player) {
                 return;
             }
-            ((IBattlePlayer) player).attackTargetEntityWithCurrentOffItem(target);
+            ((IBackhandPlayer) player).attackTargetEntityWithCurrentOffItem(target);
             Backhand.packetHandler.sendPacketAround(player, 120, new OffhandAnimationPacket(EnumAnimations.OffHandSwing, player).generatePacket());
         }
     }

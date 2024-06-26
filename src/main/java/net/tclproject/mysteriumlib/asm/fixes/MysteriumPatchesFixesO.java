@@ -9,7 +9,7 @@ import invtweaks.InvTweaksContainerSectionManager;
 import invtweaks.api.container.ContainerSection;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.InventoryPlayerBackhand;
 import xonin.backhand.client.BackhandClientTickHandler;
 import net.minecraft.block.material.Material;
@@ -207,7 +207,7 @@ public class MysteriumPatchesFixesO {
         if (!Backhand.EmptyOffhand && !Backhand.RenderEmptyOffhandAtRest && offhandItem == null) {
             return;
         }
-        if (offhandItem == null && !Backhand.RenderEmptyOffhandAtRest && ((IBattlePlayer)player).getOffSwingProgress(frame) == 0) {
+        if (offhandItem == null && !Backhand.RenderEmptyOffhandAtRest && ((IBackhandPlayer)player).getOffSwingProgress(frame) == 0) {
             return;
         }
         if (mainhandItem != null && mainhandItem.getItem() instanceof ItemMap) {
@@ -231,7 +231,7 @@ public class MysteriumPatchesFixesO {
     public static float getSwingProgress(EntityLivingBase entityLivingBase, float partialTicks, @ReturnedValue float returnedValue)
     {
         if (offhandFPRender) {
-            return ((IBattlePlayer)entityLivingBase).getOffSwingProgress(partialTicks);
+            return ((IBackhandPlayer)entityLivingBase).getOffSwingProgress(partialTicks);
         }
         return returnedValue;
     }
@@ -241,7 +241,7 @@ public class MysteriumPatchesFixesO {
 	public static void doRender(RendererLivingEntity l, EntityLivingBase p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
     {
 		if (p_76986_1_ instanceof EntityPlayer) {
-			onGround2 = ((IBattlePlayer)p_76986_1_).getOffSwingProgress(p_76986_9_);
+			onGround2 = ((IBackhandPlayer)p_76986_1_).getOffSwingProgress(p_76986_9_);
 		}
     }
 
@@ -309,7 +309,7 @@ public class MysteriumPatchesFixesO {
             b.bipedRightArm.rotateAngleZ = MathHelper.sin(b.onGround * (float)Math.PI) * -0.4F;
         }
 
-        if (p_78087_7_ instanceof EntityPlayer && (p_78087_7_ != Minecraft.getMinecraft().thePlayer || ((IBattlePlayer)p_78087_7_).getOffSwingProgress(MysteriumPatchesFixesO.firstPersonFrame) != 0)) {
+        if (p_78087_7_ instanceof EntityPlayer && (p_78087_7_ != Minecraft.getMinecraft().thePlayer || ((IBackhandPlayer)p_78087_7_).getOffSwingProgress(MysteriumPatchesFixesO.firstPersonFrame) != 0)) {
             if (onGround2 > -9990.0F) {
 	        	f6 = onGround2;
 	            b.bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * (float)Math.PI * 2.0F) * 0.2F;

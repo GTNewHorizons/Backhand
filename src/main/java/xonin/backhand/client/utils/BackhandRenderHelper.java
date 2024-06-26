@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import xonin.backhand.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBackhandPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GLAllocation;
@@ -49,8 +49,8 @@ public final class BackhandRenderHelper {
     private static final Vec3 field_82885_c = Vec3.createVectorHelper(-0.20000000298023224D, 1.0D, 0.699999988079071D).normalize();
 
     public static void moveOffHandArm(Entity entity, ModelBiped biped, float frame) {
-        if (entity instanceof IBattlePlayer) {
-            IBattlePlayer player = (IBattlePlayer) entity;
+        if (entity instanceof IBackhandPlayer) {
+            IBackhandPlayer player = (IBackhandPlayer) entity;
             float offhandSwing = 0.0F;
             offhandSwing = player.getOffSwingProgress(frame);
 

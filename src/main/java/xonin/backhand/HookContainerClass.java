@@ -249,14 +249,14 @@ public final class HookContainerClass {
     @SideOnly(Side.CLIENT)
     public static void sendOffSwingEvent(PlayerEvent event, ItemStack mainHandItem, ItemStack offhandItem){
         if(!MinecraftForge.EVENT_BUS.post(new PlayerEventChild.OffhandSwingEvent(event, mainHandItem, offhandItem))){
-            ((IBattlePlayer) event.entityPlayer).swingOffItem();
+            ((IBackhandPlayer) event.entityPlayer).swingOffItem();
             Backhand.proxy.sendAnimationPacket(EnumAnimations.OffHandSwing, event.entityPlayer);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public static void sendOffSwingEventNoCheck(EntityPlayer player, ItemStack mainHandItem, ItemStack offhandItem){
-        ((IBattlePlayer) player).swingOffItem();
+        ((IBackhandPlayer) player).swingOffItem();
         Backhand.proxy.sendAnimationPacket(EnumAnimations.OffHandSwing, player);
     }
 

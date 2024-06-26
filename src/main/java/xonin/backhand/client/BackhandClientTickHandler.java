@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.InventoryPlayerBackhand;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import net.minecraft.block.Block;
@@ -158,7 +158,7 @@ public final class BackhandClientTickHandler {
                         PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, j, k, l, i1, player.worldObj), offhandItem);
                         if (player.capabilities.allowEdit || !HookContainerClass.isItemBlock(offhandItem.getItem())) {
                             if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && onPlayerPlaceBlock(mc.playerController, player, offhandItem, j, k, l, i1, mouseOver.hitVec)) {
-                                ((IBattlePlayer) player).swingOffItem();
+                                ((IBackhandPlayer) player).swingOffItem();
                                 interacted = true;
                             }
                         }

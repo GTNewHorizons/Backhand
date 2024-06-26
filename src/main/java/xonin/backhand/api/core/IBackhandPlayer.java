@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
  * Interface added to EntityPlayer to support offhand management
  * @author GotoLink
  */
-public interface IBattlePlayer{
+public interface IBackhandPlayer {
 
     /**
      * A copied animation for the offhand, similar to EntityPlayer#swingItem()

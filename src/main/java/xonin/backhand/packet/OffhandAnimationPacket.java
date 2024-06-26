@@ -2,7 +2,7 @@ package xonin.backhand.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.WorldServer;
@@ -41,7 +41,7 @@ public final class OffhandAnimationPacket extends AbstractPacket {
                 if (entity.worldObj instanceof WorldServer) {
                     ((WorldServer) entity.worldObj).getEntityTracker().func_151247_a(entity, this.generatePacket());
                 }
-                animation.processAnimation((IBattlePlayer)entity);
+                animation.processAnimation((IBackhandPlayer)entity);
             }
         }
     }
