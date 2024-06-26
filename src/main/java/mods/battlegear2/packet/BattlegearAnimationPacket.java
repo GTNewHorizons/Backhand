@@ -3,7 +3,7 @@ package mods.battlegear2.packet;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.IBattlePlayer;
-import mods.battlegear2.utils.EnumBGAnimations;
+import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.WorldServer;
 
@@ -15,10 +15,10 @@ import net.minecraft.world.WorldServer;
 public final class BattlegearAnimationPacket extends AbstractMBPacket {
 
     public static final String packetName = "MB2|Animation";
-	private EnumBGAnimations animation;
+	private EnumAnimations animation;
 	private String username;
 
-    public BattlegearAnimationPacket(EnumBGAnimations animation, EntityPlayer user) {
+    public BattlegearAnimationPacket(EnumAnimations animation, EntityPlayer user) {
     	this.animation = animation;
     	this.username = user.getCommandSenderName();
     }
@@ -29,7 +29,7 @@ public final class BattlegearAnimationPacket extends AbstractMBPacket {
 	@Override
     public void process(ByteBuf in,EntityPlayer player) {
         try {
-            animation = EnumBGAnimations.values()[in.readInt()];
+            animation = EnumAnimations.values()[in.readInt()];
             username = ByteBufUtils.readUTF8String(in);
         }catch (Exception e){
             e.printStackTrace();

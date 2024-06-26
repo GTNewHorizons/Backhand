@@ -45,7 +45,7 @@ public final class ModelBipedTransformer extends TransformerMethodProcess {
             newInsn.add(new VarInsnNode(ALOAD, 0));
             newInsn.add(new VarInsnNode(FLOAD, 6));
             newInsn.add(new MethodInsnNode(INVOKESTATIC,
-                    "mods/battlegear2/client/utils/BattlegearRenderHelper",
+                    "xonin/backhand/client/utils/BackhandRenderHelper",
                     "moveOffHandArm", "(L" + entityClassName + ";L" + modelBipedClassName + ";F)V"));
             method.instructions.insertBefore(nextInsn, newInsn);
         }

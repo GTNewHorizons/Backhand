@@ -1,8 +1,8 @@
-package mods.battlegear2.utils;
+package xonin.backhand.utils;
 
 import xonin.backhand.api.core.IBattlePlayer;
 
-public enum EnumBGAnimations {
+public enum EnumAnimations {
 
     OffHandSwing {
         @Override

@@ -1,4 +1,4 @@
-package mods.battlegear2.client.gui.controls;
+package xonin.backhand.client.gui.controls;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

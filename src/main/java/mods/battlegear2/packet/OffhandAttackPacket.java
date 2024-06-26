@@ -3,7 +3,7 @@ package mods.battlegear2.packet;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.IBattlePlayer;
-import mods.battlegear2.utils.EnumBGAnimations;
+import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -51,7 +51,7 @@ public class OffhandAttackPacket extends AbstractMBPacket {
                 return;
             }
             ((IBattlePlayer) player).attackTargetEntityWithCurrentOffItem(target);
-            Backhand.packetHandler.sendPacketAround(player, 120, new BattlegearAnimationPacket(EnumBGAnimations.OffHandSwing, player).generatePacket());
+            Backhand.packetHandler.sendPacketAround(player, 120, new BattlegearAnimationPacket(EnumAnimations.OffHandSwing, player).generatePacket());
         }
     }
 }

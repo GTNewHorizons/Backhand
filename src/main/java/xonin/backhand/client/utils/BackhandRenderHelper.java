@@ -1,4 +1,4 @@
-package mods.battlegear2.client.utils;
+package xonin.backhand.client.utils;
 
 import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
@@ -17,7 +17,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 
-public final class BattlegearRenderHelper {
+public final class BackhandRenderHelper {
 
     public static final float RENDER_UNIT = 1F/16F;//0.0625
 

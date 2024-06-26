@@ -1,10 +1,10 @@
-package mods.battlegear2.client.utils;
+package xonin.backhand.client.utils;
 
 import xonin.backhand.api.core.BattlegearUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.item.ItemStack;
 
-public final class BattlegearClientUtils {
+public final class BackhandClientUtils {
     /**
      * Patch over EntityOtherPlayerMP#onUpdate() to update isItemInUse field
      * @param player the player whose #onUpdate method is triggered

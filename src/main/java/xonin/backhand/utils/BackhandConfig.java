@@ -1,11 +1,11 @@
-package mods.battlegear2.utils;
+package xonin.backhand.utils;
 
 import net.minecraftforge.common.config.Configuration;
 import xonin.backhand.Backhand;
 
 import java.util.Arrays;
 
-public class BattlegearConfig {
+public class BackhandConfig {
     private static Configuration file;
     public static String[] blacklistedItems = new String[0];
     private static String[] comments = new String[1];

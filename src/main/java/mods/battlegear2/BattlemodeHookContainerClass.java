@@ -13,7 +13,7 @@ import xonin.backhand.api.PlayerEventChild;
 import mods.battlegear2.packet.BattlegearSyncItemPacket;
 import mods.battlegear2.packet.OffhandConfigSyncPacket;
 import mods.battlegear2.packet.OffhandPlaceBlockPacket;
-import mods.battlegear2.utils.EnumBGAnimations;
+import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -252,14 +252,14 @@ public final class BattlemodeHookContainerClass {
     public static void sendOffSwingEvent(PlayerEvent event, ItemStack mainHandItem, ItemStack offhandItem){
         if(!MinecraftForge.EVENT_BUS.post(new PlayerEventChild.OffhandSwingEvent(event, mainHandItem, offhandItem))){
             ((IBattlePlayer) event.entityPlayer).swingOffItem();
-            Backhand.proxy.sendAnimationPacket(EnumBGAnimations.OffHandSwing, event.entityPlayer);
+            Backhand.proxy.sendAnimationPacket(EnumAnimations.OffHandSwing, event.entityPlayer);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public static void sendOffSwingEventNoCheck(EntityPlayer player, ItemStack mainHandItem, ItemStack offhandItem){
         ((IBattlePlayer) player).swingOffItem();
-        Backhand.proxy.sendAnimationPacket(EnumBGAnimations.OffHandSwing, player);
+        Backhand.proxy.sendAnimationPacket(EnumAnimations.OffHandSwing, player);
     }
 
     @SideOnly(Side.CLIENT)

@@ -9,7 +9,7 @@ import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import mods.battlegear2.BattlemodeHookContainerClass;
 import mods.battlegear2.packet.BattlegearPacketHandler;
-import mods.battlegear2.utils.BattlegearConfig;
+import xonin.backhand.utils.BackhandConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -48,7 +48,7 @@ public class Backhand {
         Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("Backhand");
         ChannelPlayer = NetworkRegistry.INSTANCE.newEventDrivenChannel("BackhandPlayer");
 
-        BattlegearConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
+        BackhandConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
 
         proxy.load();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);

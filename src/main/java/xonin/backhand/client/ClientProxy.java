@@ -4,7 +4,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import mods.battlegear2.client.BattlegearClientTickHandler;
 import mods.battlegear2.packet.BattlegearAnimationPacket;
-import mods.battlegear2.utils.EnumBGAnimations;
+import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
@@ -38,7 +38,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void sendAnimationPacket(EnumBGAnimations animation, EntityPlayer entityPlayer) {
+    public void sendAnimationPacket(EnumAnimations animation, EntityPlayer entityPlayer) {
         if (entityPlayer instanceof EntityClientPlayerMP) {
             ((EntityClientPlayerMP) entityPlayer).sendQueue.addToSendQueue(
                     new BattlegearAnimationPacket(animation, entityPlayer).generatePacket());
