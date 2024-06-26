@@ -12,10 +12,10 @@ import xonin.backhand.Backhand;
  * Time: 3:08 PM
  * Replacement for the player inventory
  */
-public class InventoryPlayerBattle extends InventoryPlayer {
+public class InventoryPlayerBackhand extends InventoryPlayer {
     public static final int OFFHAND_HOTBAR_SLOT = 9;
 
-    public InventoryPlayerBattle(EntityPlayer entityPlayer) {
+    public InventoryPlayerBackhand(EntityPlayer entityPlayer) {
         super(entityPlayer);
     }
 
@@ -116,8 +116,8 @@ public class InventoryPlayerBattle extends InventoryPlayer {
         this.mainInventory = new ItemStack[par1InventoryPlayer.mainInventory.length];
         this.armorInventory = new ItemStack[par1InventoryPlayer.armorInventory.length];
         super.copyInventory(par1InventoryPlayer);
-        if (par1InventoryPlayer instanceof InventoryPlayerBattle) {
-            this.setOffhandItem(ItemStack.copyItemStack(((InventoryPlayerBattle) par1InventoryPlayer).getOffhandItem()));
+        if (par1InventoryPlayer instanceof InventoryPlayerBackhand) {
+            this.setOffhandItem(ItemStack.copyItemStack(((InventoryPlayerBackhand) par1InventoryPlayer).getOffhandItem()));
         }
     }
 

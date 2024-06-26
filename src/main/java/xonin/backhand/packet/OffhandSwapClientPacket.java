@@ -4,7 +4,7 @@ package xonin.backhand.packet;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.InventoryPlayerBattle;
+import xonin.backhand.api.core.InventoryPlayerBackhand;
 import net.minecraft.entity.player.EntityPlayer;
 import xonin.backhand.client.ClientTickHandler;
 
@@ -33,7 +33,7 @@ public final class OffhandSwapClientPacket extends AbstractPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player!=null) {
             int slot = inputStream.readInt();
-            if(InventoryPlayerBattle.isValidSwitch(slot))
+            if(InventoryPlayerBackhand.isValidSwitch(slot))
                 this.player.inventory.currentItem = slot;
             BackhandUtils.swapOffhandItem(player);
         }

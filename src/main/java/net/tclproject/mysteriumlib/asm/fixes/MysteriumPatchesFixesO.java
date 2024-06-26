@@ -10,7 +10,7 @@ import invtweaks.api.container.ContainerSection;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBattlePlayer;
-import xonin.backhand.api.core.InventoryPlayerBattle;
+import xonin.backhand.api.core.InventoryPlayerBackhand;
 import xonin.backhand.client.BackhandClientTickHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -602,7 +602,7 @@ public class MysteriumPatchesFixesO {
     @Fix(returnSetting=EnumReturnSetting.ALWAYS)
     public static void processHeldItemChange(NetHandlerPlayServer server, C09PacketHeldItemChange p_147355_1_)
     {
-        if (p_147355_1_.func_149614_c() >= 0 && p_147355_1_.func_149614_c() < (InventoryPlayer.getHotbarSize()) || p_147355_1_.func_149614_c() == InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT)
+        if (p_147355_1_.func_149614_c() >= 0 && p_147355_1_.func_149614_c() < (InventoryPlayer.getHotbarSize()) || p_147355_1_.func_149614_c() == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT)
         {
             server.playerEntity.inventory.currentItem = p_147355_1_.func_149614_c();
             server.playerEntity.func_143004_u();
@@ -616,7 +616,7 @@ public class MysteriumPatchesFixesO {
     @Fix(insertOnExit=true,returnSetting=EnumReturnSetting.ON_NOT_NULL)
     public static ItemStack getCurrentItem(InventoryPlayer inv)
     {
-        return inv.currentItem < 9 && inv.currentItem >= 0 ? inv.mainInventory[inv.currentItem] : inv.currentItem == InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT ? BackhandUtils.getOffhandItem(inv.player) : null;
+        return inv.currentItem < 9 && inv.currentItem >= 0 ? inv.mainInventory[inv.currentItem] : inv.currentItem == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT ? BackhandUtils.getOffhandItem(inv.player) : null;
     }
 
     private static final MethodHandle fieldGetSection;

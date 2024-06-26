@@ -48,7 +48,7 @@ public class BackhandUtils {
     private static String genericAttack = SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName();
 
     public static boolean hasOffhandInventory(EntityPlayer player) {
-        return player.inventory instanceof InventoryPlayerBattle;
+        return player.inventory instanceof InventoryPlayerBackhand;
     }
 
     public static void swapOffhandItem(EntityPlayer player) {

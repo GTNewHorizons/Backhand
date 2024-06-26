@@ -67,11 +67,11 @@ public final class EntityPlayerTransformer extends TransformerBase {
                     AbstractInsnNode insn = it.next();
                     if (insn instanceof TypeInsnNode) {
                         if (((TypeInsnNode) insn).desc.equals(inventoryClassName)) {
-                            ((TypeInsnNode) insn).desc = "xonin/backhand/api/core/InventoryPlayerBattle";
+                            ((TypeInsnNode) insn).desc = "xonin/backhand/api/core/InventoryPlayerBackhand";
                         }
                     } else if (insn instanceof MethodInsnNode) {
                         if (((MethodInsnNode) insn).owner.equals(inventoryClassName)) {
-                            ((MethodInsnNode) insn).owner = "xonin/backhand/api/core/InventoryPlayerBattle";
+                            ((MethodInsnNode) insn).owner = "xonin/backhand/api/core/InventoryPlayerBackhand";
                         }
                     }
                 }

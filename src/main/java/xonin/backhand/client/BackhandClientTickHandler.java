@@ -20,7 +20,7 @@ import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBattlePlayer;
-import xonin.backhand.api.core.InventoryPlayerBattle;
+import xonin.backhand.api.core.InventoryPlayerBackhand;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -294,7 +294,7 @@ public final class BackhandClientTickHandler {
                         HookContainerClass.changedHeldItemTooltips = true;
                     }
 
-                    mcInstance.thePlayer.inventory.currentItem = InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT;
+                    mcInstance.thePlayer.inventory.currentItem = InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT;
                     mcInstance.playerController.currentItemHittingBlock = BackhandUtils.getOffhandItem(mcInstance.thePlayer);
                     mcInstance.playerController.syncCurrentPlayItem();
                 }

@@ -49,7 +49,7 @@ public final class HookContainerClass {
     public void onEntityJoin(EntityJoinWorldEvent event){
         if (event.entity instanceof EntityPlayer && !(isFake(event.entity))) {
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-                if (!(((EntityPlayer) event.entity).inventory instanceof InventoryPlayerBattle)) {
+                if (!(((EntityPlayer) event.entity).inventory instanceof InventoryPlayerBackhand)) {
                     //throw new RuntimeException("Player inventory has been replaced with " + ((EntityPlayer) event.entity).inventory.getClass());
                     FMLLog.log("Backhand", Level.INFO, "Player inventory has been replaced with " + ((EntityPlayer) event.entity).inventory.getClass());
                 }
