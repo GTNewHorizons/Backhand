@@ -1,7 +1,7 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
-import mods.battlegear2.api.core.IBattlePlayer;
+import xonin.backhand.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.IBattlePlayer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
 import org.apache.logging.log4j.Level;
@@ -67,11 +67,11 @@ public final class EntityPlayerTransformer extends TransformerBase {
                     AbstractInsnNode insn = it.next();
                     if (insn instanceof TypeInsnNode) {
                         if (((TypeInsnNode) insn).desc.equals(inventoryClassName)) {
-                            ((TypeInsnNode) insn).desc = "mods/battlegear2/api/core/InventoryPlayerBattle";
+                            ((TypeInsnNode) insn).desc = "xonin/backhand/api/core/InventoryPlayerBattle";
                         }
                     } else if (insn instanceof MethodInsnNode) {
                         if (((MethodInsnNode) insn).owner.equals(inventoryClassName)) {
-                            ((MethodInsnNode) insn).owner = "mods/battlegear2/api/core/InventoryPlayerBattle";
+                            ((MethodInsnNode) insn).owner = "xonin/backhand/api/core/InventoryPlayerBattle";
                         }
                     }
                 }

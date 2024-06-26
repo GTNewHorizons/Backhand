@@ -9,8 +9,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mods.battlegear2.api.PlayerEventChild;
-import mods.battlegear2.api.core.*;
+import xonin.backhand.api.PlayerEventChild;
 import mods.battlegear2.packet.BattlegearSyncItemPacket;
 import mods.battlegear2.packet.OffhandConfigSyncPacket;
 import mods.battlegear2.packet.OffhandPlaceBlockPacket;
@@ -36,6 +35,7 @@ import net.minecraftforge.event.entity.player.*;
 import org.apache.logging.log4j.Level;
 import xonin.backhand.Backhand;
 import xonin.backhand.CommonProxy;
+import xonin.backhand.api.core.*;
 
 public final class BattlemodeHookContainerClass {
 

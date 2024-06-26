@@ -2,7 +2,7 @@ package mods.battlegear2.packet;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import mods.battlegear2.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBattlePlayer;
 import mods.battlegear2.utils.EnumBGAnimations;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;

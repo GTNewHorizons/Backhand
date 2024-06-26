@@ -1,6 +1,5 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public final class NetClientHandlerTransformer extends TransformerBase {
 
                     if (nextNode instanceof JumpInsnNode && nextNode.getOpcode() == IFLT) {
                         LabelNode label = ((JumpInsnNode) nextNode).label;
-                        newList.add(new MethodInsnNode(INVOKESTATIC, "mods/battlegear2/api/core/InventoryPlayerBattle", "isValidSwitch", "(I)Z"));
+                        newList.add(new MethodInsnNode(INVOKESTATIC, "xonin/backhand/api/core/InventoryPlayerBattle", "isValidSwitch", "(I)Z"));
                         newList.add(new JumpInsnNode(IFEQ, label));//"if equal" branch
 
                         found++;

@@ -1,4 +1,4 @@
-package mods.battlegear2.api.core;
+package xonin.backhand.api.core;
 
 import java.io.Closeable;
 import java.io.IOException;

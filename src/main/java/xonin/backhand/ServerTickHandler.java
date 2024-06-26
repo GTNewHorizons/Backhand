@@ -5,7 +5,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import mods.battlegear2.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BattlegearUtils;
 import mods.battlegear2.packet.BattlegearSyncItemPacket;
 import mods.battlegear2.packet.OffhandWorldHotswapPacket;
 import net.minecraft.entity.player.EntityPlayer;

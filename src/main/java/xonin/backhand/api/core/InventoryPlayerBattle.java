@@ -1,4 +1,4 @@
-package mods.battlegear2.api.core;
+package xonin.backhand.api.core;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

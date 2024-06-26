@@ -1,6 +1,6 @@
 package mods.battlegear2.utils;
 
-import mods.battlegear2.api.core.IBattlePlayer;
+import xonin.backhand.api.core.IBattlePlayer;
 
 public enum EnumBGAnimations {
 

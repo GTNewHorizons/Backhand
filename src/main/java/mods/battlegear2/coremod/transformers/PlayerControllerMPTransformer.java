@@ -1,6 +1,6 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BattlegearTranslator;
 import org.objectweb.asm.tree.MethodNode;
 
 public final class PlayerControllerMPTransformer extends TransformerMethodProcess {

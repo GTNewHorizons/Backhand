@@ -1,14 +1,11 @@
 package xonin.backhand.client.renderer;
 
-import mods.battlegear2.api.core.IBattlePlayer;
-import xonin.backhand.client.ClientEventHandler;
-import mods.battlegear2.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BattlegearUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
@@ -25,7 +21,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
-import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
 
 public class ItemRendererOffhand extends ItemRenderer {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");

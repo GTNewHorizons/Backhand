@@ -1,6 +1,6 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BattlegearTranslator;
 import mods.battlegear2.coremod.BattlegearLoadingPlugin;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.Level;
@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class TransformerBase implements IClassTransformer, Opcodes {
-    public static final String UTILITY_CLASS = "mods/battlegear2/api/core/BattlegearUtils";
+    public static final String UTILITY_CLASS = "xonin/backhand/api/core/BattlegearUtils";
     public static final String SIMPLEST_METHOD_DESC = "()V";
     public Logger logger = LogManager.getLogger("battlegear2");
     protected final String classPath;

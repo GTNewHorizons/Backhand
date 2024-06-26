@@ -2,7 +2,7 @@ package xonin.backhand.client;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mods.battlegear2.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BattlegearUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;

@@ -13,7 +13,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BattlegearTranslator;
 import mods.battlegear2.coremod.BattlegearLoadingPlugin;
 import net.tclproject.mysteriumlib.asm.core.ASMFix;
 import net.tclproject.mysteriumlib.asm.core.MetaReader;
