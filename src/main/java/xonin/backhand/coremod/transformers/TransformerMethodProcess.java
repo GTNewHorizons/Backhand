@@ -1,4 +1,4 @@
-package mods.battlegear2.coremod.transformers;
+package xonin.backhand.coremod.transformers;
 
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;

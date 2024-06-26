@@ -1,4 +1,4 @@
-package mods.battlegear2.coremod.transformers;
+package xonin.backhand.coremod.transformers;
 
 import xonin.backhand.api.core.BattlegearTranslator;
 import org.objectweb.asm.tree.*;

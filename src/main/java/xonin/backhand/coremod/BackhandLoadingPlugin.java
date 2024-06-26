@@ -1,4 +1,4 @@
-package mods.battlegear2.coremod;
+package xonin.backhand.coremod;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.Name;
@@ -9,18 +9,18 @@ import xonin.backhand.api.core.BattlegearTranslator;
 import java.io.File;
 import java.util.Map;
 
-@TransformerExclusions({"mods.battlegear2.coremod"})
+@TransformerExclusions({"xonin.backhand.coremod"})
 @Name("Mine and Blade: Battlegear2")
 @SortingIndex(1500)
-public final class BattlegearLoadingPlugin implements IFMLLoadingPlugin {
+public final class BackhandLoadingPlugin implements IFMLLoadingPlugin {
 
-    public static final String EntityPlayerTransformer = "mods.battlegear2.coremod.transformers.EntityPlayerTransformer";
-    public static final String NetClientHandlerTransformer = "mods.battlegear2.coremod.transformers.NetClientHandlerTransformer";
-    public static final String PlayerControllerMPTransformer = "mods.battlegear2.coremod.transformers.PlayerControllerMPTransformer";
-    public static final String ItemInWorldTransformer = "mods.battlegear2.coremod.transformers.ItemInWorldTransformer";
-    public static final String EntityAIControlledTransformer = "mods.battlegear2.coremod.transformers.EntityAIControlledByPlayerTransformer";
-    public static final String EntityOtherPlayerMPTransformer = "mods.battlegear2.coremod.transformers.EntityOtherPlayerMPTransformer";
-    public static final String AccessTransformer = "mods.battlegear2.coremod.transformers.BattlegearAccessTransformer";
+    public static final String EntityPlayerTransformer = "xonin.backhand.coremod.transformers.EntityPlayerTransformer";
+    public static final String NetClientHandlerTransformer = "xonin.backhand.coremod.transformers.NetClientHandlerTransformer";
+    public static final String PlayerControllerMPTransformer = "xonin.backhand.coremod.transformers.PlayerControllerMPTransformer";
+    public static final String ItemInWorldTransformer = "xonin.backhand.coremod.transformers.ItemInWorldTransformer";
+    public static final String EntityAIControlledTransformer = "xonin.backhand.coremod.transformers.EntityAIControlledByPlayerTransformer";
+    public static final String EntityOtherPlayerMPTransformer = "xonin.backhand.coremod.transformers.EntityOtherPlayerMPTransformer";
+    public static final String AccessTransformer = "xonin.backhand.coremod.transformers.BattlegearAccessTransformer";
     public static File debugOutputLocation;
 
     public static final String[] transformers = 
@@ -43,7 +43,6 @@ public final class BattlegearLoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        //return "mods.battlegear2.coremod.BattlegearCoremodContainer";
         return null;
     }
 

@@ -14,7 +14,7 @@ import cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import xonin.backhand.api.core.BattlegearTranslator;
-import mods.battlegear2.coremod.BattlegearLoadingPlugin;
+import xonin.backhand.coremod.BackhandLoadingPlugin;
 import net.tclproject.mysteriumlib.asm.core.ASMFix;
 import net.tclproject.mysteriumlib.asm.core.MetaReader;
 import net.tclproject.mysteriumlib.asm.core.TargetClassTransformer;
@@ -23,7 +23,7 @@ import net.tclproject.mysteriumlib.asm.core.TargetClassTransformer;
  * Custom IFMLLoadingPlugin implementation.
  * @see IFMLLoadingPlugin
  * */
-@IFMLLoadingPlugin.TransformerExclusions({"net.tclproject", "mods.battlegear2.coremod"})
+@IFMLLoadingPlugin.TransformerExclusions({"net.tclproject", "xonin.backhand.coremod"})
 public class CustomLoadingPlugin implements IFMLLoadingPlugin {
 
     /**A DeobfuscationTransformer instance for use inside this class.*/
@@ -134,7 +134,7 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
     // Only exists in 1.7.10. Comment out if not needed.
     @Override
     public String getAccessTransformerClass() {
-        return "mods.battlegear2.coremod.transformers.BattlegearAccessTransformer";
+        return "xonin.backhand.coremod.transformers.BattlegearAccessTransformer";
     }
 
 
@@ -161,7 +161,7 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String, Object> data) {
         debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
-        BattlegearLoadingPlugin.debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
+        BackhandLoadingPlugin.debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
         BattlegearTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
         if (((ArrayList)data.get("coremodList")).contains("DragonAPIASMHandler")) {
             Logger.getGlobal().info("Core: Located DragonAPI in list of coremods");

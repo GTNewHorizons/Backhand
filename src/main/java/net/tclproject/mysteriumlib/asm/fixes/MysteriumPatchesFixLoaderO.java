@@ -1,9 +1,9 @@
 package net.tclproject.mysteriumlib.asm.fixes;
 
-import mods.battlegear2.coremod.transformers.*;
 import net.tclproject.mysteriumlib.asm.common.CustomClassTransformer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 import net.tclproject.mysteriumlib.asm.common.FirstClassTransformer;
+import xonin.backhand.coremod.transformers.*;
 
 public class MysteriumPatchesFixLoaderO extends CustomLoadingPlugin {
 

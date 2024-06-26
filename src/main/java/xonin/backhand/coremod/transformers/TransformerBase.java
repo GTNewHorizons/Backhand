@@ -1,7 +1,7 @@
-package mods.battlegear2.coremod.transformers;
+package xonin.backhand.coremod.transformers;
 
 import xonin.backhand.api.core.BattlegearTranslator;
-import mods.battlegear2.coremod.BattlegearLoadingPlugin;
+import xonin.backhand.coremod.BackhandLoadingPlugin;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -74,7 +74,7 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
 
     public static void writeClassFile(ClassWriter cw, String name) {
         try {
-            File outDir = BattlegearLoadingPlugin.debugOutputLocation;
+            File outDir = BackhandLoadingPlugin.debugOutputLocation;
             outDir.mkdirs();
             DataOutputStream dout = new DataOutputStream(new FileOutputStream(new File(outDir, name + ".class")));
             dout.write(cw.toByteArray());
