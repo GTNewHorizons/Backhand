@@ -7,7 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaksContainerManager;
 import invtweaks.InvTweaksContainerSectionManager;
 import invtweaks.api.container.ContainerSection;
-import mods.battlegear2.BattlemodeHookContainerClass;
+import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BattlegearUtils;
 import xonin.backhand.api.core.IBattlePlayer;
 import xonin.backhand.api.core.InventoryPlayerBattle;
@@ -97,12 +97,12 @@ public class MysteriumPatchesFixesO {
                     ItemStack mainHandItem = player.getCurrentEquippedItem();
                     if (mainHandItem != null
                             && (BattlegearUtils.checkForRightClickFunctionNoAction(mainHandItem)
-                            || BattlemodeHookContainerClass.isItemBlock(mainHandItem.getItem()))) {
+                            || HookContainerClass.isItemBlock(mainHandItem.getItem()))) {
                         if (itemStack == offhandItem) {
                             return EnumAction.none;
                         }
                     } else if (itemStack == mainHandItem && (!(BattlegearUtils.checkForRightClickFunctionNoAction(offhandItem)
-                            || BattlemodeHookContainerClass.isItemBlock(offhandItem.getItem())) || player.getItemInUse() != mainHandItem)) {
+                            || HookContainerClass.isItemBlock(offhandItem.getItem())) || player.getItemInUse() != mainHandItem)) {
                         return EnumAction.none;
                     }
                 }

@@ -16,7 +16,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mods.battlegear2.BattlemodeHookContainerClass;
+import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BattlegearUtils;
 import xonin.backhand.api.core.IBattlePlayer;
@@ -109,7 +109,7 @@ public final class BackhandClientTickHandler {
 
         ItemStack mainHandItem = player.getCurrentEquippedItem();
         if (mainHandItem != null && (BattlegearUtils.checkForRightClickFunction(mainHandItem)
-                    || BattlemodeHookContainerClass.isItemBlock(mainHandItem.getItem()) || player.getItemInUse() == mainHandItem)) {
+                    || HookContainerClass.isItemBlock(mainHandItem.getItem()) || player.getItemInUse() == mainHandItem)) {
             ticksBeforeUse = 10;
             return false;
         }
@@ -142,7 +142,7 @@ public final class BackhandClientTickHandler {
                     offhandItem = BattlegearUtils.getOffhandItem(player);
                     PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, player.worldObj), offhandItem);
                     if (offhandItem != null && !MinecraftForge.EVENT_BUS.post(useItemEvent)) {
-                        interacted = BattlemodeHookContainerClass.tryUseItem(player, offhandItem, Side.CLIENT);
+                        interacted = HookContainerClass.tryUseItem(player, offhandItem, Side.CLIENT);
                     }
                 }
 
@@ -156,7 +156,7 @@ public final class BackhandClientTickHandler {
                         final int size = offhandItem.stackSize;
                         int i1 = mouseOver.sideHit;
                         PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, j, k, l, i1, player.worldObj), offhandItem);
-                        if (player.capabilities.allowEdit || !BattlemodeHookContainerClass.isItemBlock(offhandItem.getItem())) {
+                        if (player.capabilities.allowEdit || !HookContainerClass.isItemBlock(offhandItem.getItem())) {
                             if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && onPlayerPlaceBlock(mc.playerController, player, offhandItem, j, k, l, i1, mouseOver.hitVec)) {
                                 ((IBattlePlayer) player).swingOffItem();
                                 interacted = true;
@@ -230,7 +230,7 @@ public final class BackhandClientTickHandler {
                 offhand.setItemDamage(i1);
                 offhand.stackSize = j1;
                 if (flag1) {
-                    BattlemodeHookContainerClass.sendOffSwingEventNoCheck(player, offhand, player.getCurrentEquippedItem());
+                    HookContainerClass.sendOffSwingEventNoCheck(player, offhand, player.getCurrentEquippedItem());
                 }
                 return flag1;
             } else {
@@ -240,7 +240,7 @@ public final class BackhandClientTickHandler {
                 if (offhand.stackSize <= 0){
                     ForgeEventFactory.onPlayerDestroyItem(player, offhand);
                 }
-                BattlemodeHookContainerClass.sendOffSwingEventNoCheck(player,offhand,player.getCurrentEquippedItem());
+                HookContainerClass.sendOffSwingEventNoCheck(player,offhand,player.getCurrentEquippedItem());
                 return true;
             }
         }
@@ -262,7 +262,7 @@ public final class BackhandClientTickHandler {
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
                 if (!(BattlegearUtils.usagePriorAttack(offhandItem)) && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
                     PlayerControllerMP.clickBlockCreative(mcInstance, mcInstance.playerController, i, j, k, objectMouseOver.sideHit);
-                    BattlemodeHookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
+                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
                     mcInstance.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(2, i, j, k, objectMouseOver.sideHit));
                 }
                 ClientTickHandler.delay = 20;
@@ -291,7 +291,7 @@ public final class BackhandClientTickHandler {
                 {
                     if (mcInstance.gameSettings.heldItemTooltips) {
                         mcInstance.gameSettings.heldItemTooltips = false;
-                        BattlemodeHookContainerClass.changedHeldItemTooltips = true;
+                        HookContainerClass.changedHeldItemTooltips = true;
                     }
 
                     mcInstance.thePlayer.inventory.currentItem = InventoryPlayerBattle.OFFHAND_HOTBAR_SLOT;
@@ -346,7 +346,7 @@ public final class BackhandClientTickHandler {
             {
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
             }
-            BattlemodeHookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
+            HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
         }
         event.player.inventory.currentItem = prevHeldItem;
         mcInstance.playerController.syncCurrentPlayItem();

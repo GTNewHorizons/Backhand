@@ -5,7 +5,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
-import mods.battlegear2.BattlemodeHookContainerClass;
+import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BattlegearUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,7 +97,7 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             PlayerInteractEvent event = new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, player.getEntityWorld());
             MinecraftForge.EVENT_BUS.post(new PlayerEventChild.UseOffhandItemEvent(event, offhandWeapon));
             if (event.useItem != Event.Result.DENY){
-                BattlemodeHookContainerClass.tryUseItem(player, offhandWeapon, Side.SERVER);
+                HookContainerClass.tryUseItem(player, offhandWeapon, Side.SERVER);
             }
             flag = false;
         }
@@ -138,7 +138,7 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S23PacketBlockChange(i, j, k, player.getEntityWorld()));
         }
         offhandWeapon = BattlegearUtils.getOffhandItem(player);
-        if (offhandWeapon != null && BattlemodeHookContainerClass.isItemBlock(offhandWeapon.getItem())) {
+        if (offhandWeapon != null && HookContainerClass.isItemBlock(offhandWeapon.getItem())) {
             if (offhandWeapon.stackSize <= 0) {
                 BattlegearUtils.setPlayerOffhandItem(player, null);
                 offhandWeapon = null;

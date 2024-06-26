@@ -7,7 +7,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaks;
-import mods.battlegear2.BattlemodeHookContainerClass;
+import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BattlegearUtils;
 import xonin.backhand.packet.OffhandSwapPacket;
 import net.minecraft.client.Minecraft;
@@ -103,8 +103,8 @@ public class ClientTickHandler {
         if (event.player.worldObj.isRemote && Backhand.proxy.getLeftClickCounter() <= 0 && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
             if (event.player.capabilities.allowEdit) {
                 if (Backhand.proxy.isRightClickHeld() && !(mainHandItem != null && BattlegearUtils.isItemBlock(mainHandItem.getItem()))) { // if it's a block and we should try break it
-                    MovingObjectPosition mop = BattlemodeHookContainerClass.getRaytraceBlock(event.player);
-                    if (offhandItem != null && BattlemodeHookContainerClass.isItemBlock(offhandItem.getItem())) {
+                    MovingObjectPosition mop = HookContainerClass.getRaytraceBlock(event.player);
+                    if (offhandItem != null && HookContainerClass.isItemBlock(offhandItem.getItem())) {
                         if (!BattlegearUtils.usagePriorAttack(offhandItem) && mop != null) {
                             BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
@@ -112,7 +112,7 @@ public class ClientTickHandler {
                             mc.playerController.resetBlockRemoving();
                         }
                     } else {
-                        if (mop != null && !BattlegearUtils.usagePriorAttack(offhandItem) && !BattlemodeHookContainerClass.canBlockBeInteractedWith(mc.theWorld, mop.blockX, mop.blockY, mop.blockZ)) {
+                        if (mop != null && !BattlegearUtils.usagePriorAttack(offhandItem) && !HookContainerClass.canBlockBeInteractedWith(mc.theWorld, mop.blockX, mop.blockY, mop.blockZ)) {
                             BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
                         } else {

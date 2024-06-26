@@ -1,4 +1,4 @@
-package mods.battlegear2;
+package xonin.backhand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +33,13 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.*;
 import org.apache.logging.log4j.Level;
-import xonin.backhand.Backhand;
-import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.*;
 
-public final class BattlemodeHookContainerClass {
+public final class HookContainerClass {
 
-    public static final BattlemodeHookContainerClass INSTANCE = new BattlemodeHookContainerClass();
+    public static final HookContainerClass INSTANCE = new HookContainerClass();
 
-    private BattlemodeHookContainerClass(){}
+    private HookContainerClass(){}
 
     private boolean isFake(Entity entity){
         return entity instanceof FakePlayer;
@@ -142,7 +140,7 @@ public final class BattlemodeHookContainerClass {
                 }
             }
             if (event.entityPlayer.worldObj.isRemote && !BattlegearUtils.usagePriorAttack(offhandItem) && Backhand.OffhandAttack && swingHand) {
-                BattlemodeHookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
+                HookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
             }
         }
     }

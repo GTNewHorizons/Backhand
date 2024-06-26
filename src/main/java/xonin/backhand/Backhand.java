@@ -7,7 +7,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import mods.battlegear2.BattlemodeHookContainerClass;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
 import net.minecraft.item.ItemStack;
@@ -56,8 +55,8 @@ public class Backhand {
         MinecraftForge.EVENT_BUS.register(new ServerEventsHandler());
         FMLCommonHandler.instance().bus().register(new ServerTickHandler());
 
-        MinecraftForge.EVENT_BUS.register(BattlemodeHookContainerClass.INSTANCE);
-        FMLCommonHandler.instance().bus().register(BattlemodeHookContainerClass.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(HookContainerClass.INSTANCE);
+        FMLCommonHandler.instance().bus().register(HookContainerClass.INSTANCE);
     }
 
     @Mod.EventHandler
