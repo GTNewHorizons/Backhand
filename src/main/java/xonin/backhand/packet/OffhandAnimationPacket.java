@@ -7,8 +7,6 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.utils.EnumAnimations;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.WorldServer;
 
 /**
  * User: nerd-boy
@@ -18,16 +16,15 @@ import net.minecraft.world.WorldServer;
 public final class OffhandAnimationPacket extends AbstractPacket {
 
     public static final String packetName = "MB2|Animation";
-	private EnumAnimations animation;
-	private String username;
+    private EnumAnimations animation;
+    private String username;
 
     public OffhandAnimationPacket(EnumAnimations animation, EntityPlayer user) {
-    	this.animation = animation;
-    	this.username = user.getCommandSenderName();
+        this.animation = animation;
+        this.username = user.getCommandSenderName();
     }
 
-    public OffhandAnimationPacket() {
-	}
+    public OffhandAnimationPacket() {}
 
     @Override
     public void process(ByteBuf in, EntityPlayer player) {
@@ -45,7 +42,7 @@ public final class OffhandAnimationPacket extends AbstractPacket {
                     ((WorldServer) entity.worldObj).getEntityTracker()
                         .func_151247_a(entity, this.generatePacket());
                 }
-                animation.processAnimation((IBackhandPlayer)entity);
+                animation.processAnimation((IBackhandPlayer) entity);
             }
         }
     }

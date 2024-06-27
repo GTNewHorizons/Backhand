@@ -1,13 +1,11 @@
 package xonin.backhand;
 
-import cpw.mods.fml.common.network.IGuiHandler;
-import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import mods.battlegear2.utils.EnumBGAnimations;
+import xonin.backhand.utils.EnumAnimations;
 
 public class CommonProxy implements IGuiHandler {
 

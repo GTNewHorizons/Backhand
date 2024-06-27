@@ -3,6 +3,7 @@ package xonin.backhand.utils;
 import java.util.Arrays;
 
 public class BackhandConfig {
+
     private static Configuration file;
     public static String[] blacklistedItems = new String[0];
     private static String[] comments = new String[1];

@@ -1,7 +1,5 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BackhandTranslator;
-import xonin.backhand.coremod.BackhandLoadingPlugin;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.apache.logging.log4j.Level;
@@ -10,12 +8,19 @@ import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
-import mods.battlegear2.coremod.BattlegearLoadingPlugin;
+import xonin.backhand.api.core.BackhandTranslator;
+import xonin.backhand.coremod.BackhandLoadingPlugin;
 
 public abstract class TransformerBase implements IClassTransformer, Opcodes {
+
     public static final String UTILITY_CLASS = "xonin/backhand/api/core/BackhandUtils";
     public static final String SIMPLEST_METHOD_DESC = "()V";
     public Logger logger = LogManager.getLogger("battlegear2");
@@ -50,7 +55,9 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             cn.accept(cw);
 
-            logger.log(success ? Level.INFO : Level.ERROR, "M&B - Patching Class " + unobfClass + (success ? " done" : " FAILED!"));
+            logger.log(
+                success ? Level.INFO : Level.ERROR,
+                "M&B - Patching Class " + unobfClass + (success ? " done" : " FAILED!"));
             if (!success && BackhandTranslator.debug) {
                 writeClassFile(cw, unobfClass + " (" + name + ")");
             }
@@ -98,13 +105,14 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
         while (it.hasNext()) {
             AbstractInsnNode nextNode = it.next();
 
-            if (nextNode instanceof FieldInsnNode &&
-                    nextNode.getNext() instanceof FieldInsnNode &&
-                    ((FieldInsnNode) nextNode).owner.equals(className) &&
-                    (((FieldInsnNode) nextNode).name.equals(fieldName.split("!")[0]) || ((FieldInsnNode) nextNode).name.equals(fieldName.split("!")[1])) &&
-                    ((FieldInsnNode) nextNode.getNext()).owner.equals(BackhandTranslator.getMapedClassName("entity.player.InventoryPlayer")) &&
-                    (((FieldInsnNode) nextNode.getNext()).name.equals("field_70462_a") || ((FieldInsnNode) nextNode.getNext()).name.equals("mainInventory"))
-                    ) {
+            if (nextNode instanceof FieldInsnNode && nextNode.getNext() instanceof FieldInsnNode
+                && ((FieldInsnNode) nextNode).owner.equals(className)
+                && (((FieldInsnNode) nextNode).name.equals(fieldName.split("!")[0])
+                    || ((FieldInsnNode) nextNode).name.equals(fieldName.split("!")[1]))
+                && ((FieldInsnNode) nextNode.getNext()).owner
+                    .equals(BackhandTranslator.getMapedClassName("entity.player.InventoryPlayer"))
+                && (((FieldInsnNode) nextNode.getNext()).name.equals("field_70462_a")
+                    || ((FieldInsnNode) nextNode.getNext()).name.equals("mainInventory"))) {
 
                 // skip the next 4
                 for (int i = 0; i < todelete; i++) {
@@ -123,8 +131,10 @@ public abstract class TransformerBase implements IClassTransformer, Opcodes {
                         INVOKESTATIC,
                         UTILITY_CLASS,
                         "setPlayerCurrentItem",
-                        "(L" + BackhandTranslator.getMapedClassName("entity.player.EntityPlayer") +
-                                ";L" + BackhandTranslator.getMapedClassName("item.ItemStack") + ";)V"));
+                        "(L" + BackhandTranslator.getMapedClassName("entity.player.EntityPlayer")
+                            + ";L"
+                            + BackhandTranslator.getMapedClassName("item.ItemStack")
+                            + ";)V"));
 
             } else {
                 newList.add(nextNode);

@@ -1,11 +1,15 @@
 package xonin.backhand.coremod.transformers;
 
-import org.objectweb.asm.tree.*;
-
 import java.util.List;
 import java.util.ListIterator;
 
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
 public final class NetClientHandlerTransformer extends TransformerBase {
 
@@ -34,8 +38,13 @@ public final class NetClientHandlerTransformer extends TransformerBase {
 
                     if (nextNode instanceof JumpInsnNode && nextNode.getOpcode() == IFLT) {
                         LabelNode label = ((JumpInsnNode) nextNode).label;
-                        newList.add(new MethodInsnNode(INVOKESTATIC, "xonin/backhand/api/core/InventoryPlayerBackhand", "isValidSwitch", "(I)Z"));
-                        newList.add(new JumpInsnNode(IFEQ, label));//"if equal" branch
+                        newList.add(
+                            new MethodInsnNode(
+                                INVOKESTATIC,
+                                "xonin/backhand/api/core/InventoryPlayerBackhand",
+                                "isValidSwitch",
+                                "(I)Z"));
+                        newList.add(new JumpInsnNode(IFEQ, label));// "if equal" branch
 
                         found++;
                         nextNode = insn.next();

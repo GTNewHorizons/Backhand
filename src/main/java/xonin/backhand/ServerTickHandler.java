@@ -17,14 +17,6 @@ import cpw.mods.fml.relauncher.Side;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.packet.OffhandSyncItemPacket;
 import xonin.backhand.packet.OffhandWorldHotswapPacket;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-
-import java.util.*;
 
 public class ServerTickHandler {
 
@@ -44,8 +36,12 @@ public class ServerTickHandler {
         if (Backhand.OffhandTickHotswap) {
             List<EntityPlayer> players = event.world.playerEntities;
             for (EntityPlayer player : players) {
-                ItemStack mainhand = player.getCurrentEquippedItem() == null ? null : player.getCurrentEquippedItem().copy();
-                ItemStack offhand = BackhandUtils.getOffhandItem(player) == null ? null : BackhandUtils.getOffhandItem(player).copy();
+                ItemStack mainhand = player.getCurrentEquippedItem() == null ? null
+                    : player.getCurrentEquippedItem()
+                        .copy();
+                ItemStack offhand = BackhandUtils.getOffhandItem(player) == null ? null
+                    : BackhandUtils.getOffhandItem(player)
+                        .copy();
                 if (offhand == null) {
                     continue;
                 }
@@ -72,8 +68,14 @@ public class ServerTickHandler {
 
     public static void resetTickingHotswap(EntityPlayer player) {
         if (tickStartItems.containsKey(player.getUniqueID())) {
-            player.setCurrentItemOrArmor(0, tickStartItems.get(player.getUniqueID()).get(0));
-            BackhandUtils.setPlayerOffhandItem(player, tickStartItems.get(player.getUniqueID()).get(1));
+            player.setCurrentItemOrArmor(
+                0,
+                tickStartItems.get(player.getUniqueID())
+                    .get(0));
+            BackhandUtils.setPlayerOffhandItem(
+                player,
+                tickStartItems.get(player.getUniqueID())
+                    .get(1));
             tickStartItems.remove(player.getUniqueID());
             Backhand.packetHandler
                 .sendPacketToPlayer(new OffhandWorldHotswapPacket(false).generatePacket(), (EntityPlayerMP) player);
@@ -102,7 +104,7 @@ public class ServerTickHandler {
                 if (!ItemStack.areItemStacksEqual(offhand, prevStackInSlot)) {
                     blacklistDelay = 10;
                 } else if (blacklistDelay == 0) {
-                    BackhandUtils.setPlayerOffhandItem(player,null);
+                    BackhandUtils.setPlayerOffhandItem(player, null);
 
                     boolean foundSlot = false;
                     for (int i = 0; i < player.inventory.getSizeInventory() - 4; i++) {
@@ -145,8 +147,15 @@ public class ServerTickHandler {
         } else if (ServerEventsHandler.fireworkHotSwapped == 0) {
             BackhandUtils.swapOffhandItem(player);
             ServerEventsHandler.fireworkHotSwapped--;
-            MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
-                    (int)player.posX, (int)player.posY, (int)player.posZ, -1, player.worldObj));
+            MinecraftForge.EVENT_BUS.post(
+                new PlayerInteractEvent(
+                    player,
+                    PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+                    (int) player.posX,
+                    (int) player.posY,
+                    (int) player.posZ,
+                    -1,
+                    player.worldObj));
             BackhandUtils.swapOffhandItem(player);
         }
     }

@@ -44,7 +44,7 @@ public class MetaReader {
     // TODO: test a static method
     /**
      * Gets a list of local variables (index: , type, name) in a method.
-     * 
+     *
      * @param classBytes    the class that contains the method (bytes).
      * @param methodName    the name of the target method.
      * @param argumentTypes the types of the arguments in the method, represented by Type instances.
@@ -87,7 +87,7 @@ public class MetaReader {
 
     /**
      * Gets a list of local variables (index: , type, name) in a method.
-     * 
+     *
      * @param className     the class that contains the method (full class path without ".class").
      * @param methodName    the name of the target method.
      * @param argumentTypes the types of the arguments in the method, represented by Type instances.
@@ -100,7 +100,7 @@ public class MetaReader {
 
     /**
      * Prints a list of local variables (index: , type, name) in a method.
-     * 
+     *
      * @param classBytes    the class that contains the method (bytes).
      * @param methodName    the name of the target method.
      * @param argumentTypes the types of the arguments in the method, represented by Type instances.
@@ -114,7 +114,7 @@ public class MetaReader {
 
     /**
      * Prints a list of local variables (index: , type, name) in a method.
-     * 
+     *
      * @param className     the class that contains the method (full class path without ".class").
      * @param methodName    the name of the target method.
      * @param argumentTypes the types of the arguments in the method, represented by Type instances.
@@ -125,7 +125,7 @@ public class MetaReader {
 
     /**
      * Gets the passed in class in an InputStream.
-     * 
+     *
      * @param name full class path without ".class".
      * @return the passed in class (InputStream)
      */
@@ -136,7 +136,7 @@ public class MetaReader {
 
     /**
      * Gets the passed in class in bytes.
-     * 
+     *
      * @param name full class path without ".class".
      * @return the passed in class (bytes)
      */
@@ -147,7 +147,7 @@ public class MetaReader {
 
     /**
      * Makes the given visitor visit the Java class.
-     * 
+     *
      * @param classBytes class (bytes).
      * @param visitor    your class visitor.
      */
@@ -157,7 +157,7 @@ public class MetaReader {
 
     /**
      * Makes the given visitor visit the Java class.
-     * 
+     *
      * @param name    full class path without ".class".
      * @param visitor your class visitor.
      */
@@ -167,7 +167,7 @@ public class MetaReader {
 
     /**
      * Makes the given visitor visit the Java class.
-     * 
+     *
      * @param classStream the class as an InputStream.
      * @param visitor     your class visitor.
      */
@@ -183,7 +183,7 @@ public class MetaReader {
 
     /**
      * Finds a method in a Java class. The method must be virtual.
-     * 
+     *
      * @param owner      the class that has the method.
      * @param methodName the method name.
      * @param descriptor the method descriptor.
@@ -204,7 +204,7 @@ public class MetaReader {
 
     /**
      * Helper method to create a MethodReference out of a method, tries Reflection if ASM fails.
-     * 
+     *
      * @param className  full class path without ".class".
      * @param methodName the name of the method.
      * @param descriptor the descriptor of the method.
@@ -220,7 +220,7 @@ public class MetaReader {
 
     /**
      * Helper method to create a MethodReference out of a method, using ASM.
-     * 
+     *
      * @param className  full class path without ".class".
      * @param methodName the name of the method.
      * @param descriptor the descriptor of the method.
@@ -238,7 +238,7 @@ public class MetaReader {
 
     /**
      * Helper method to create a MethodReference out of a method, using Reflection.
-     * 
+     *
      * @param className  full class path without ".class".
      * @param methodName the name of the method.
      * @param descriptor the descriptor of the method.
@@ -258,7 +258,7 @@ public class MetaReader {
 
     /**
      * Checks if two methods are the same.
-     * 
+     *
      * @param sourceName first method name
      * @param sourceDesc first method descriptor
      * @param targetName second method name
@@ -291,7 +291,7 @@ public class MetaReader {
 
     /**
      * Gets the class from the name passed in.
-     * 
+     *
      * @param name full class path without ".class".
      * @return the class.
      */
@@ -316,7 +316,7 @@ public class MetaReader {
 
     /**
      * Gets the super class of the class passed in using all methods (if ASM doesn't work, tries reflection).
-     * 
+     *
      * @param name full class path without ".class".
      * @return full class path of the superclass without ".class".
      */
@@ -330,7 +330,7 @@ public class MetaReader {
 
     /**
      * Gets the super class of the class passed in using ASM using a custom class visitor.
-     * 
+     *
      * @param name full class path without ".class".
      * @return full class path of the superclass without ".class".
      */
@@ -342,7 +342,7 @@ public class MetaReader {
 
     /**
      * Gets the super class of the class passed in using reflection.
-     * 
+     *
      * @param name full class path without ".class".
      * @return full class path of the superclass without ".class".
      */

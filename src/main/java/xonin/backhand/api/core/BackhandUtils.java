@@ -10,7 +10,28 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBed;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBook;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemDoor;
+import net.minecraft.item.ItemEgg;
+import net.minecraft.item.ItemEnderPearl;
+import net.minecraft.item.ItemHangingEntity;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemRedstone;
+import net.minecraft.item.ItemReed;
+import net.minecraft.item.ItemSeedFood;
+import net.minecraft.item.ItemSign;
+import net.minecraft.item.ItemSkull;
+import net.minecraft.item.ItemSnowball;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,10 +50,9 @@ import xonin.backhand.Backhand;
 public class BackhandUtils {
 
     private static String[] itemBlackListMethodNames = {
-            BackhandTranslator.getMapedMethodName("Item", "func_77648_a", "onItemUse"),
-            BackhandTranslator.getMapedMethodName("Item", "func_77659_a", "onItemRightClick"),
-            BackhandTranslator.getMapedMethodName("Item", "func_111207_a", "itemInteractionForEntity")
-    };
+        BackhandTranslator.getMapedMethodName("Item", "func_77648_a", "onItemUse"),
+        BackhandTranslator.getMapedMethodName("Item", "func_77659_a", "onItemRightClick"),
+        BackhandTranslator.getMapedMethodName("Item", "func_111207_a", "itemInteractionForEntity") };
 
     /**
      * Method arguments classes that are not allowed in {@link Item} subclasses for common wielding
@@ -87,7 +107,7 @@ public class BackhandUtils {
 
     /**
      * Defines a generic weapon
-     * 
+     *
      * @param main the item to check
      * @return true if the item is a generic weapon
      */
@@ -103,7 +123,7 @@ public class BackhandUtils {
 
     /**
      * Defines a combination of left hand/right hand items that is valid to wield
-     * 
+     *
      * @param main item to be in the right hand
      * @param off  item to be in the left hand
      * @return true if the right hand item allows left hand item
@@ -120,7 +140,7 @@ public class BackhandUtils {
 
     /**
      * Defines a item which can be wield in the left hand
-     * 
+     *
      * @param off the item to be wield in left hand
      * @return true if the item is allowed in left hand
      */
@@ -134,7 +154,7 @@ public class BackhandUtils {
 
     /**
      * Patch in EntityPlayer#onUpdate() to support hotswap of itemInUse
-     * 
+     *
      * @param entityPlayer
      * @param itemInUse
      * @return
@@ -149,7 +169,7 @@ public class BackhandUtils {
 
     /**
      * Defines a item which "use" (effect on right click) should have priority over its "attack" (effect on left click)
-     * 
+     *
      * @param itemStack the item which will be "used", instead of attacking
      * @return true if such item prefer being "used"
      */
@@ -167,7 +187,7 @@ public class BackhandUtils {
 
     /**
      * Defines items that are usually usable (the vanilla instances do, at least)
-     * 
+     *
      * @param item the instance to consider for usability
      * @return true if it is commonly usable
      */
@@ -194,7 +214,7 @@ public class BackhandUtils {
 
     /**
      * Defines a bow
-     * 
+     *
      * @param item the instance
      * @return true if it is considered a generic enough bow
      */
@@ -218,7 +238,8 @@ public class BackhandUtils {
         }
         try {
             String mappedName = BackhandTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated");
-            Class[] classParams = new Class[]{World.class, int.class, int.class, int.class, EntityPlayer.class, int.class, float.class, float.class, float.class};
+            Class[] classParams = new Class[] { World.class, int.class, int.class, int.class, EntityPlayer.class,
+                int.class, float.class, float.class, float.class };
 
             Class c = block.getClass();
             while (!(c.equals(Block.class))) {
@@ -357,7 +378,7 @@ public class BackhandUtils {
 
     /**
      * Writes a {@link ItemStack} to the OutputStream
-     * 
+     *
      * @param par1DataOutputStream the output stream
      * @param par0ItemStack        to write
      * @throws IOException
@@ -386,7 +407,7 @@ public class BackhandUtils {
 
     /**
      * Writes a compressed {@link NBTTagCompound} to the output
-     * 
+     *
      * @param par0NBTTagCompound
      * @param par1DataOutputStream
      * @throws IOException
@@ -408,17 +429,16 @@ public class BackhandUtils {
      * selected item
      * Reset everything back if the attack is cancelled by {@link AttackEntityEvent} or
      * {@link Item#onLeftClickEntity(ItemStack, EntityPlayer, Entity)}
-     * 
+     *
      * @param player     the attacker
      * @param par1Entity the attacked
      */
     public static void attackTargetEntityWithCurrentOffItem(EntityPlayer player, Entity par1Entity) {
         final ItemStack oldItem = player.getCurrentEquippedItem();
         final ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!Backhand.OffhandAttack || (offhandItem == null && !Backhand.EmptyOffhand))
-            return;
+        if (!Backhand.OffhandAttack || (offhandItem == null && !Backhand.EmptyOffhand)) return;
 
-        BackhandUtils.setPlayerCurrentItem(player,offhandItem);
+        BackhandUtils.setPlayerCurrentItem(player, offhandItem);
         refreshAttributes(player.getAttributeMap(), oldItem, player.getCurrentEquippedItem());
 
         int prevDamage = offhandItem != null ? offhandItem.getItemDamage() : 0;
@@ -426,7 +446,7 @@ public class BackhandUtils {
         player.attackTargetEntityWithCurrentItem(par1Entity);
 
         refreshAttributes(player.getAttributeMap(), player.getCurrentEquippedItem(), oldItem);
-        BackhandUtils.setPlayerCurrentItem(player,oldItem);
+        BackhandUtils.setPlayerCurrentItem(player, oldItem);
 
         if (offhandItem != null && damage <= 0 && offhandItem.getItemDamage() < prevDamage) {
             BackhandUtils.setPlayerOffhandItem(player, null);
@@ -436,7 +456,7 @@ public class BackhandUtils {
 
     /**
      * Refresh the attribute map by removing from the old item and applying the current item
-     * 
+     *
      * @param attributeMap the map to refresh
      * @param oldItem      the old item whose attributes will be removed
      * @param currentItem  the current item whose attributes will be applied
@@ -448,7 +468,7 @@ public class BackhandUtils {
 
     /**
      * Helper to close a stream fail-safely by printing the error stack trace
-     * 
+     *
      * @param c the stream to close
      */
     public static void closeStream(Closeable c) {
@@ -463,7 +483,7 @@ public class BackhandUtils {
 
     /**
      * Patch over the PlayerUseItemEvent.Finish in EntityPlayer#onItemUseFinish() to pass the previous stacksize
-     * 
+     *
      * @param entityPlayer      the {@link EntityPlayer} who finished using the itemInUse
      * @param itemInUse         the {@link ItemStack} which finished being used
      * @param itemInUseCount    the {@link EntityPlayer} item use count

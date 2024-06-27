@@ -1,9 +1,5 @@
 package xonin.backhand.packet;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -12,11 +8,12 @@ import net.minecraft.entity.projectile.EntityArrow;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import mods.battlegear2.api.core.IBattlePlayer;
-import mods.battlegear2.utils.EnumBGAnimations;
 import xonin.backhand.Backhand;
+import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.utils.EnumAnimations;
 
 public class OffhandAttackPacket extends AbstractPacket {
+
     public static final String packetName = "MB2|Attack";
     private String user;
     private int targetId;
@@ -57,7 +54,10 @@ public class OffhandAttackPacket extends AbstractPacket {
                 return;
             }
             ((IBackhandPlayer) player).attackTargetEntityWithCurrentOffItem(target);
-            Backhand.packetHandler.sendPacketAround(player, 120, new OffhandAnimationPacket(EnumAnimations.OffHandSwing, player).generatePacket());
+            Backhand.packetHandler.sendPacketAround(
+                player,
+                120,
+                new OffhandAnimationPacket(EnumAnimations.OffHandSwing, player).generatePacket());
         }
     }
 }

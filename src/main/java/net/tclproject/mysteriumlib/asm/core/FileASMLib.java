@@ -49,7 +49,7 @@ public class FileASMLib {
 
     /**
      * Gets a list of files in a directory and all it's subdirectories that end with a specific string.
-     * 
+     *
      * @param extension The string with which the files have to end with to match.
      * @param directory the directory in which to search for files.
      * @return A list of files.

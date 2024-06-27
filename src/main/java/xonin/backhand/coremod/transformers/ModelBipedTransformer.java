@@ -1,9 +1,13 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BackhandTranslator;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 
 public final class ModelBipedTransformer extends TransformerMethodProcess {
 
@@ -49,9 +53,12 @@ public final class ModelBipedTransformer extends TransformerMethodProcess {
             newInsn.add(new VarInsnNode(ALOAD, 7));
             newInsn.add(new VarInsnNode(ALOAD, 0));
             newInsn.add(new VarInsnNode(FLOAD, 6));
-            newInsn.add(new MethodInsnNode(INVOKESTATIC,
+            newInsn.add(
+                new MethodInsnNode(
+                    INVOKESTATIC,
                     "xonin/backhand/client/utils/BackhandRenderHelper",
-                    "moveOffHandArm", "(L" + entityClassName + ";L" + modelBipedClassName + ";F)V"));
+                    "moveOffHandArm",
+                    "(L" + entityClassName + ";L" + modelBipedClassName + ";F)V"));
             method.instructions.insertBefore(nextInsn, newInsn);
         }
     }

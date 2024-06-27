@@ -1,16 +1,21 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BackhandTranslator;
-import xonin.backhand.api.core.IBackhandPlayer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
-import mods.battlegear2.api.core.IBattlePlayer;
+import xonin.backhand.api.core.BackhandTranslator;
+import xonin.backhand.api.core.IBackhandPlayer;
 
 public final class EntityPlayerTransformer extends TransformerBase {
 

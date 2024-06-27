@@ -11,13 +11,9 @@ import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import xonin.backhand.CommonProxy;
 import xonin.backhand.packet.OffhandAnimationPacket;
 import xonin.backhand.utils.EnumAnimations;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.client.settings.KeyBinding;
-import org.lwjgl.input.Keyboard;
-import xonin.backhand.CommonProxy;
 
 public class ClientProxy extends CommonProxy {
 
@@ -29,8 +25,12 @@ public class ClientProxy extends CommonProxy {
 
     public void load() {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-        FMLCommonHandler.instance().bus().register(new ClientTickHandler());
-        FMLCommonHandler.instance().bus().register(new BackhandClientTickHandler());
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new ClientTickHandler());
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new BackhandClientTickHandler());
 
         ClientRegistry.registerKeyBinding(swapOffhand);
     }
@@ -48,8 +48,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void sendAnimationPacket(EnumAnimations animation, EntityPlayer entityPlayer) {
         if (entityPlayer instanceof EntityClientPlayerMP) {
-            ((EntityClientPlayerMP) entityPlayer).sendQueue.addToSendQueue(
-                    new OffhandAnimationPacket(animation, entityPlayer).generatePacket());
+            ((EntityClientPlayerMP) entityPlayer).sendQueue
+                .addToSendQueue(new OffhandAnimationPacket(animation, entityPlayer).generatePacket());
         }
     }
 

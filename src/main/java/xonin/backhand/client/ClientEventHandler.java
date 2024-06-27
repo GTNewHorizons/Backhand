@@ -1,8 +1,5 @@
 package xonin.backhand.client;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;
@@ -13,15 +10,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mods.battlegear2.api.core.BattlegearUtils;
 import xonin.backhand.Backhand;
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.renderer.RenderOffhandPlayer;
 
 public class ClientEventHandler {

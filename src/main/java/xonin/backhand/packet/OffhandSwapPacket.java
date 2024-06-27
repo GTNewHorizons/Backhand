@@ -6,13 +6,11 @@ import net.minecraft.item.ItemStack;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.api.core.BackhandUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import xonin.backhand.Backhand;
+import xonin.backhand.api.core.BackhandUtils;
 
 public class OffhandSwapPacket extends AbstractPacket {
+
     public static final String packetName = "MB2|Swap";
 
     private String user;
@@ -41,12 +39,13 @@ public class OffhandSwapPacket extends AbstractPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
             ItemStack offhandItem = BackhandUtils.getOffhandItem(this.player);
-            if (Backhand.isOffhandBlacklisted(player.getCurrentEquippedItem()) || Backhand.isOffhandBlacklisted(offhandItem))
-                return;
+            if (Backhand.isOffhandBlacklisted(player.getCurrentEquippedItem())
+                || Backhand.isOffhandBlacklisted(offhandItem)) return;
 
-            BackhandUtils.setPlayerOffhandItem(this.player,this.player.getCurrentEquippedItem());
-            BackhandUtils.setPlayerCurrentItem(this.player,offhandItem);
-            Backhand.packetHandler.sendPacketToPlayer(new OffhandSwapClientPacket(this.player).generatePacket(), (EntityPlayerMP) player);
+            BackhandUtils.setPlayerOffhandItem(this.player, this.player.getCurrentEquippedItem());
+            BackhandUtils.setPlayerCurrentItem(this.player, offhandItem);
+            Backhand.packetHandler
+                .sendPacketToPlayer(new OffhandSwapClientPacket(this.player).generatePacket(), (EntityPlayerMP) player);
         }
     }
 }

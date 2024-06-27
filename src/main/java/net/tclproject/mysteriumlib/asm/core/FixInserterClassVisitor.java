@@ -44,7 +44,7 @@ public class FixInserterClassVisitor extends ClassVisitor {
     /**
      * Visits a method of the class but instead of returning a normal MethodVisitor returns a FixInserter from the set
      * factory, if the method is to be fixed.
-     * 
+     *
      * @param access     the method's access flags (see Opcodes). This parameter also indicates if the method is
      *                   synthetic and/or deprecated.
      * @param name       the method's name.

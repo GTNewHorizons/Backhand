@@ -57,7 +57,7 @@ public class FixParser {
 
     /**
      * Parses a class for fix methods via a FixClassVisitor.
-     * 
+     *
      * @param className The full name of the class.
      */
     protected void parseForFixes(String className) {
@@ -71,7 +71,7 @@ public class FixParser {
 
     /**
      * Parses a class for fix methods via a FixClassVisitor.
-     * 
+     *
      * @param classBytes The class (bytes).
      */
     protected void parseForFixes(byte[] classBytes) {
@@ -90,7 +90,7 @@ public class FixParser {
 
     /**
      * Displays a warning about an invalid fix method, e.g. if it's not public and static.
-     * 
+     *
      * @param message A message to add to the warning.
      */
     private void warnInvalidFix(String message) {

@@ -1,9 +1,12 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BackhandTranslator;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 
 public final class ItemInWorldTransformer extends TransformerMethodProcess {
 
@@ -67,8 +70,7 @@ public final class ItemInWorldTransformer extends TransformerMethodProcess {
 
         playerInventoryFieldName = "field_71071_by!inventory";
         mainInventoryArrayFieldName = "field_70462_a!mainInventory";
-        setInventorySlotMethodName =
-                BackhandTranslator.getMapedMethodName("func_70299_a", "setInventorySlotContents");
+        setInventorySlotMethodName = BackhandTranslator.getMapedMethodName("func_70299_a", "setInventorySlotContents");
         setInventorySlotMethodDesc = "(IL" + itemStackClassName + ";)V";
     }
 

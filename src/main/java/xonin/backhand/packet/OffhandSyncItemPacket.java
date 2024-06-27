@@ -7,9 +7,6 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.BackhandUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 
 /**
  * User: nerd-boy
@@ -23,7 +20,7 @@ public final class OffhandSyncItemPacket extends AbstractPacket {
     private InventoryPlayer inventory;
     private EntityPlayer player;
 
-    public OffhandSyncItemPacket(EntityPlayer player){
+    public OffhandSyncItemPacket(EntityPlayer player) {
         this(player.getCommandSenderName(), player.inventory, player);
     }
 
@@ -33,8 +30,7 @@ public final class OffhandSyncItemPacket extends AbstractPacket {
         this.player = player;
     }
 
-    public OffhandSyncItemPacket() {
-	}
+    public OffhandSyncItemPacket() {}
 
     @Override
     public void process(ByteBuf inputStream, EntityPlayer player) {
@@ -43,7 +39,7 @@ public final class OffhandSyncItemPacket extends AbstractPacket {
         if (this.player != null) {
             ItemStack offhandItem = ByteBufUtils.readItemStack(inputStream);
             BackhandUtils.setPlayerOffhandItem(this.player, offhandItem);
-            if(!player.worldObj.isRemote){//Using data sent only by client
+            if (!player.worldObj.isRemote) {// Using data sent only by client
                 try {
                     ItemStack itemInUse = ByteBufUtils.readItemStack(inputStream);
                     int itemUseCount = inputStream.readInt();
@@ -62,7 +58,7 @@ public final class OffhandSyncItemPacket extends AbstractPacket {
     public void write(ByteBuf out) {
         ByteBufUtils.writeUTF8String(out, user);
         ByteBufUtils.writeItemStack(out, BackhandUtils.getOffhandItem(player));
-        if(player.worldObj.isRemote){//client-side only thing
+        if (player.worldObj.isRemote) {// client-side only thing
             ByteBufUtils.writeItemStack(out, player.getItemInUse());
             out.writeInt(player.getItemInUseCount());
         }

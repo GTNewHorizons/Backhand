@@ -1,17 +1,25 @@
 package xonin.backhand.client.renderer;
 
-import xonin.backhand.api.core.BackhandUtils;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -21,7 +29,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
+import xonin.backhand.api.core.BackhandUtils;
 
 public class ItemRendererOffhand extends ItemRenderer {
 

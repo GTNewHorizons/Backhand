@@ -19,16 +19,13 @@ import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import xonin.backhand.api.core.BackhandTranslator;
 import xonin.backhand.coremod.BackhandLoadingPlugin;
-import net.tclproject.mysteriumlib.asm.core.ASMFix;
-import net.tclproject.mysteriumlib.asm.core.MetaReader;
-import net.tclproject.mysteriumlib.asm.core.TargetClassTransformer;
 
 /**
  * Custom IFMLLoadingPlugin implementation.
- * 
+ *
  * @see IFMLLoadingPlugin
- * */
-@IFMLLoadingPlugin.TransformerExclusions({"net.tclproject", "xonin.backhand.coremod"})
+ */
+@IFMLLoadingPlugin.TransformerExclusions({ "net.tclproject", "xonin.backhand.coremod" })
 public class CustomLoadingPlugin implements IFMLLoadingPlugin {
 
     /** A DeobfuscationTransformer instance for use inside this class. */
@@ -55,7 +52,7 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
     /**
      * Returns the transformer that we are using at the current moment in time to modify classes.
      * See why we have to use two separate ones in the documentation for FirstClassTransformer.
-     * 
+     *
      * @return FirstClassTransformer if our built-in fixes haven't been applied, otherwise - CustomClassTransformer.
      */
     public static TargetClassTransformer getTransformer() {
@@ -117,7 +114,7 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
     /**
      * If the obfuscation has not yet been checked, checks and returns it.
      * If it has, returns the value that the previous check returned.
-     * 
+     *
      * @return If the mod is run in an obfuscated environment.
      */
     public static boolean isObfuscated() {
@@ -169,11 +166,18 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
-        BackhandLoadingPlugin.debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
+        debugOutputLocation = new File(
+            data.get("mcLocation")
+                .toString(),
+            "bg edited classes");
+        BackhandLoadingPlugin.debugOutputLocation = new File(
+            data.get("mcLocation")
+                .toString(),
+            "bg edited classes");
         BackhandTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
-        if (((ArrayList)data.get("coremodList")).contains("DragonAPIASMHandler")) {
-            Logger.getGlobal().info("Core: Located DragonAPI in list of coremods");
+        if (((ArrayList) data.get("coremodList")).contains("DragonAPIASMHandler")) {
+            Logger.getGlobal()
+                .info("Core: Located DragonAPI in list of coremods");
             foundDragonAPI = true;
         }
 

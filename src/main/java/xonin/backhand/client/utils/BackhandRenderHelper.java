@@ -2,9 +2,6 @@ package xonin.backhand.client.utils;
 
 import java.nio.FloatBuffer;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import xonin.backhand.api.core.IBackhandPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GLAllocation;
@@ -15,6 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import xonin.backhand.api.core.IBackhandPlayer;
 
 public final class BackhandRenderHelper {
 

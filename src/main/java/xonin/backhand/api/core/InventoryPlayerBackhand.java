@@ -14,6 +14,7 @@ import xonin.backhand.Backhand;
  * Replacement for the player inventory
  */
 public class InventoryPlayerBackhand extends InventoryPlayer {
+
     public static final int OFFHAND_HOTBAR_SLOT = 9;
 
     public InventoryPlayerBackhand(EntityPlayer entityPlayer) {
@@ -22,7 +23,7 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
 
     /**
      * Patch used for "set current slot" vanilla packets
-     * 
+     *
      * @param id the value to test for currentItem setting
      * @return true if it is possible for currentItem to be set with this value
      */
@@ -30,12 +31,14 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
         return (id >= 0 && id < getHotbarSize()) || id == OFFHAND_HOTBAR_SLOT;
     }
 
-    public ItemStack getOffhandItem(){
-        return BackhandUtils.getOffhandEP(player).getOffhandItem();
+    public ItemStack getOffhandItem() {
+        return BackhandUtils.getOffhandEP(player)
+            .getOffhandItem();
     }
 
     public void setOffhandItem(ItemStack stack) {
-        BackhandUtils.getOffhandEP(player).setOffhandItem(stack);
+        BackhandUtils.getOffhandEP(player)
+            .setOffhandItem(stack);
     }
 
     public int clearInventory(Item item, int metadata) {
@@ -76,7 +79,8 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
                 if (this.getOffhandItem().stackSize + itemStack.stackSize > this.getOffhandItem()
                     .getMaxStackSize()) {
                     itemStack.stackSize -= this.getOffhandItem().stackSize;
-                    this.getOffhandItem().stackSize = this.getOffhandItem().getMaxStackSize();
+                    this.getOffhandItem().stackSize = this.getOffhandItem()
+                        .getMaxStackSize();
                     BackhandUtils.getOffhandEP(player).syncOffhand = true;
                     return super.addItemStackToInventory(itemStack);
                 } else {
@@ -113,7 +117,7 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
 
     /**
      * Copy the slots content from another instance, usually for changing dimensions
-     * 
+     *
      * @param par1InventoryPlayer the instance to copy from
      */
     @Override
@@ -122,7 +126,8 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
         this.armorInventory = new ItemStack[par1InventoryPlayer.armorInventory.length];
         super.copyInventory(par1InventoryPlayer);
         if (par1InventoryPlayer instanceof InventoryPlayerBackhand) {
-            this.setOffhandItem(ItemStack.copyItemStack(((InventoryPlayerBackhand) par1InventoryPlayer).getOffhandItem()));
+            this.setOffhandItem(
+                ItemStack.copyItemStack(((InventoryPlayerBackhand) par1InventoryPlayer).getOffhandItem()));
         }
     }
 

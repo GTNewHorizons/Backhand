@@ -89,7 +89,7 @@ public class FirstClassTransformer extends TargetClassTransformer implements ICl
 
     /**
      * Returns an obfuscated equivalent of a type.
-     * 
+     *
      * @param type A type.
      * @return an obfuscated equivalent of the type.
      */

@@ -1,10 +1,5 @@
 package xonin.backhand;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBow;
@@ -20,7 +15,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
-import mods.battlegear2.api.core.BattlegearUtils;
+import xonin.backhand.api.core.BackhandUtils;
 
 public class ServerEventsHandler {
 
@@ -34,7 +29,8 @@ public class ServerEventsHandler {
             EntityPlayer player = event.entityPlayer;
             ItemStack mainhandItem = player.getHeldItem();
             ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-            if((mainhandItem == null || mainhandItem.getItem() != Items.fireworks) && offhandItem != null && offhandItem.getItem() == Items.fireworks) {
+            if ((mainhandItem == null || mainhandItem.getItem() != Items.fireworks) && offhandItem != null
+                && offhandItem.getItem() == Items.fireworks) {
                 BackhandUtils.swapOffhandItem(player);
                 fireworkHotSwapped = 1;
             }
@@ -49,7 +45,7 @@ public class ServerEventsHandler {
         if (!BackhandUtils.hasOffhandInventory(player)) {
             ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
             player.func_146097_a(offhandItem, true, false);
-            BackhandUtils.setPlayerOffhandItem(player,null);
+            BackhandUtils.setPlayerOffhandItem(player, null);
         }
     }
 
@@ -66,7 +62,8 @@ public class ServerEventsHandler {
                 return;
             }
 
-            if (totemItem.isInstance(offhandItem.getItem()) && (mainhandItem == null || !totemItem.isInstance(mainhandItem.getItem()))) {
+            if (totemItem.isInstance(offhandItem.getItem())
+                && (mainhandItem == null || !totemItem.isInstance(mainhandItem.getItem()))) {
                 BackhandUtils.swapOffhandItem(player);
                 regularHotSwap = true;
                 MinecraftForge.EVENT_BUS.post(event);
@@ -80,7 +77,7 @@ public class ServerEventsHandler {
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         ItemStack mainhandItem = player.getCurrentEquippedItem();
 
-        //boolean offHandUse = BattlegearUtils.checkForRightClickFunction(offhandItem);
+        // boolean offHandUse = BattlegearUtils.checkForRightClickFunction(offhandItem);
         boolean mainhandUse = BackhandUtils.checkForRightClickFunction(mainhandItem);
 
         if (offhandItem != null && !mainhandUse) {
@@ -127,7 +124,8 @@ public class ServerEventsHandler {
         if (offhandItem == null || mainhandUse) {
             return;
         }
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID())) {
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID())) {
             BackhandUtils.swapOffhandItem(player);
             regularHotSwap = true;
         }

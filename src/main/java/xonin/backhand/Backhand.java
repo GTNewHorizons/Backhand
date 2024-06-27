@@ -14,10 +14,6 @@ import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 
 @Mod(
     modid = "backhand",
@@ -67,7 +63,9 @@ public class Backhand {
             .register(new ServerTickHandler());
 
         MinecraftForge.EVENT_BUS.register(HookContainerClass.INSTANCE);
-        FMLCommonHandler.instance().bus().register(HookContainerClass.INSTANCE);
+        FMLCommonHandler.instance()
+            .bus()
+            .register(HookContainerClass.INSTANCE);
     }
 
     @Mod.EventHandler

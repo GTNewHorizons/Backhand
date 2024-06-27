@@ -1,13 +1,5 @@
 package xonin.backhand.packet;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
-import xonin.backhand.HookContainerClass;
-import xonin.backhand.api.PlayerEventChild;
-import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -21,7 +13,17 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
+import xonin.backhand.HookContainerClass;
+import xonin.backhand.api.PlayerEventChild;
+import xonin.backhand.api.core.BackhandUtils;
+
 public final class OffhandPlaceBlockPacket extends AbstractPacket {
+
     public static final String packetName = "MB2|Place";
     private int xPosition;
     private int yPosition;
@@ -81,11 +83,9 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
         } catch (Exception io) {
             return;
         }
-        if(!(player instanceof EntityPlayerMP))
-            return;
+        if (!(player instanceof EntityPlayerMP)) return;
         ItemStack offhandWeapon = BackhandUtils.getOffhandItem(player);
-        if(offhandWeapon!=null && !BackhandUtils.usagePriorAttack(offhandWeapon))
-            return;
+        if (offhandWeapon != null && !BackhandUtils.usagePriorAttack(offhandWeapon)) return;
         boolean flag = true;
         int i = xPosition;
         int j = yPosition;
@@ -103,7 +103,7 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
                 -1,
                 player.getEntityWorld());
             MinecraftForge.EVENT_BUS.post(new PlayerEventChild.UseOffhandItemEvent(event, offhandWeapon));
-            if (event.useItem != Event.Result.DENY){
+            if (event.useItem != Event.Result.DENY) {
                 HookContainerClass.tryUseItem(player, offhandWeapon, Side.SERVER);
             }
             flag = false;
@@ -157,7 +157,8 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             }
             if (offhandWeapon == null || offhandWeapon.getMaxItemUseDuration() == 0) {
                 ((EntityPlayerMP) player).isChangingQuantityOnly = true;
-                BackhandUtils.setPlayerOffhandItem(player, ItemStack.copyItemStack(BackhandUtils.getOffhandItem(player)));
+                BackhandUtils
+                    .setPlayerOffhandItem(player, ItemStack.copyItemStack(BackhandUtils.getOffhandItem(player)));
                 player.openContainer.detectAndSendChanges();
                 ((EntityPlayerMP) player).isChangingQuantityOnly = false;
             }

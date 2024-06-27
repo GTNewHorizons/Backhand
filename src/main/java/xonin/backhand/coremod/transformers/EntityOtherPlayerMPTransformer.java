@@ -1,14 +1,18 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BackhandTranslator;
-import org.objectweb.asm.tree.*;
-
 import java.util.Iterator;
 import java.util.List;
 
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 
 public final class EntityOtherPlayerMPTransformer extends TransformerBase {
 
@@ -44,7 +48,12 @@ public final class EntityOtherPlayerMPTransformer extends TransformerBase {
                 newList.add(new VarInsnNode(ALOAD, 0));
 
                 newList.add(new FieldInsnNode(GETFIELD, entityOtherPlayerMPClassName, isItemInUseFieldName, "Z"));
-                newList.add(new MethodInsnNode(INVOKESTATIC, "xonin/backhand/client/utils/BackhandClientUtils", "entityOtherPlayerIsItemInUseHook", "(L" + entityOtherPlayerMPClassName + ";Z)Z"));
+                newList.add(
+                    new MethodInsnNode(
+                        INVOKESTATIC,
+                        "xonin/backhand/client/utils/BackhandClientUtils",
+                        "entityOtherPlayerIsItemInUseHook",
+                        "(L" + entityOtherPlayerMPClassName + ";Z)Z"));
                 newList.add(new FieldInsnNode(PUTFIELD, entityOtherPlayerMPClassName, isItemInUseFieldName, "Z"));
 
                 node = it.next();

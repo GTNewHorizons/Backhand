@@ -3,17 +3,6 @@ package xonin.backhand;
 import java.util.ArrayList;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import xonin.backhand.api.PlayerEventChild;
-import xonin.backhand.packet.OffhandSyncItemPacket;
-import xonin.backhand.packet.OffhandConfigSyncPacket;
-import xonin.backhand.packet.OffhandPlaceBlockPacket;
-import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -21,7 +10,17 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemDoor;
+import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemRedstone;
+import net.minecraft.item.ItemReed;
+import net.minecraft.item.ItemSeedFood;
+import net.minecraft.item.ItemSign;
+import net.minecraft.item.ItemSkull;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -31,16 +30,34 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import org.apache.logging.log4j.Level;
-import xonin.backhand.api.core.*;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import xonin.backhand.api.PlayerEventChild;
+import xonin.backhand.api.core.BackhandTranslator;
+import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.api.core.InventoryPlayerBackhand;
+import xonin.backhand.api.core.OffhandExtendedProperty;
+import xonin.backhand.packet.OffhandConfigSyncPacket;
+import xonin.backhand.packet.OffhandPlaceBlockPacket;
+import xonin.backhand.packet.OffhandSyncItemPacket;
+import xonin.backhand.utils.EnumAnimations;
 
 public final class HookContainerClass {
 
     public static final HookContainerClass INSTANCE = new HookContainerClass();
 
-    private HookContainerClass(){}
+    private HookContainerClass() {}
 
     private boolean isFake(Entity entity) {
         return entity instanceof FakePlayer;
@@ -49,10 +66,16 @@ public final class HookContainerClass {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityJoin(EntityJoinWorldEvent event) {
         if (event.entity instanceof EntityPlayer && !(isFake(event.entity))) {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+            if (FMLCommonHandler.instance()
+                .getEffectiveSide() == Side.SERVER) {
                 if (!(((EntityPlayer) event.entity).inventory instanceof InventoryPlayerBackhand)) {
-                    //throw new RuntimeException("Player inventory has been replaced with " + ((EntityPlayer) event.entity).inventory.getClass());
-                    FMLLog.log("Backhand", Level.INFO, "Player inventory has been replaced with " + ((EntityPlayer) event.entity).inventory.getClass());
+                    // throw new RuntimeException("Player inventory has been replaced with " + ((EntityPlayer)
+                    // event.entity).inventory.getClass());
+                    FMLLog.log(
+                        "Backhand",
+                        Level.INFO,
+                        "Player inventory has been replaced with "
+                            + ((EntityPlayer) event.entity).inventory.getClass());
                 }
                 Backhand.packetHandler.sendPacketToPlayer(
                     new OffhandConfigSyncPacket((EntityPlayer) event.entity).generatePacket(),
@@ -60,7 +83,7 @@ public final class HookContainerClass {
             }
             ItemStack offhandItem = BackhandUtils.getOffhandItem((EntityPlayer) event.entity);
             if (Backhand.isOffhandBlacklisted(offhandItem)) {
-                BackhandUtils.setPlayerOffhandItem((EntityPlayer) event.entity,null);
+                BackhandUtils.setPlayerOffhandItem((EntityPlayer) event.entity, null);
                 if (!((EntityPlayer) event.entity).inventory.addItemStackToInventory(offhandItem)) {
                     event.entity.entityDropItem(offhandItem, 0);
                 }
@@ -109,7 +132,8 @@ public final class HookContainerClass {
             ItemStack mainHandItem = event.entityPlayer.getCurrentEquippedItem();
             ItemStack offhandItem = BackhandUtils.getOffhandItem(event.entityPlayer);
 
-            if (mainHandItem != null && (BackhandUtils.checkForRightClickFunction(mainHandItem) || offhandItem == null)) {
+            if (mainHandItem != null
+                && (BackhandUtils.checkForRightClickFunction(mainHandItem) || offhandItem == null)) {
                 return;
             }
 
@@ -144,15 +168,17 @@ public final class HookContainerClass {
                     swingHand = false;
                 }
             }
-            if (event.entityPlayer.worldObj.isRemote && !BackhandUtils.usagePriorAttack(offhandItem) && Backhand.OffhandAttack && swingHand) {
+            if (event.entityPlayer.worldObj.isRemote && !BackhandUtils.usagePriorAttack(offhandItem)
+                && Backhand.OffhandAttack
+                && swingHand) {
                 HookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
             }
         }
     }
 
     private static String[] activatedBlockMethodNames = {
-            BackhandTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated"),
-            BackhandTranslator.getMapedMethodName("Block", "func_149699_a", "onBlockClicked")};
+        BackhandTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated"),
+        BackhandTranslator.getMapedMethodName("Block", "func_149699_a", "onBlockClicked") };
     private static Class[][] activatedBlockMethodParams = {
         new Class[] { World.class, int.class, int.class, int.class, EntityPlayer.class, int.class, float.class,
             float.class, float.class },
@@ -221,8 +247,8 @@ public final class HookContainerClass {
         ItemStack itemUsed = player.getCurrentEquippedItem()
             .copy();
         ItemStack itemStackResult = itemStack.useItemRightClick(player.getEntityWorld(), player);
-        if (!ItemStack.areItemStacksEqual(itemUsed,itemStackResult)) {
-            BackhandUtils.setPlayerOffhandItem(player,itemStackResult);
+        if (!ItemStack.areItemStacksEqual(itemUsed, itemStackResult)) {
+            BackhandUtils.setPlayerOffhandItem(player, itemStackResult);
             BackhandUtils.getOffhandEP(player).syncOffhand = true;
             if (player.getCurrentEquippedItem() == null || player.getCurrentEquippedItem().stackSize == 0) {
                 ForgeEventFactory.onPlayerDestroyItem(player, player.getCurrentEquippedItem());
@@ -236,20 +262,17 @@ public final class HookContainerClass {
             && (!side.isServer()
                 || itemStackResult.getMaxItemUseDuration() <= 0 && itemStackResult.getItemDamage() == j)) {
             return false;
-        }
-        else
-        {
+        } else {
             BackhandUtils.setPlayerOffhandItem(player, itemStackResult);
-            if (side.isServer() && (player).capabilities.isCreativeMode)
-            {
+            if (side.isServer() && (player).capabilities.isCreativeMode) {
                 itemStackResult.stackSize = i;
                 if (itemStackResult.isItemStackDamageable()) {
                     itemStackResult.setItemDamage(j);
                 }
             }
             if (itemStackResult.stackSize <= 0) {
-                BackhandUtils.setPlayerOffhandItem(player,null);
-                ForgeEventFactory.onPlayerDestroyItem(player,itemStackResult);
+                BackhandUtils.setPlayerOffhandItem(player, null);
+                ForgeEventFactory.onPlayerDestroyItem(player, itemStackResult);
             }
             if (side.isServer() && !player.isUsingItem()) {
                 ((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
@@ -259,15 +282,15 @@ public final class HookContainerClass {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void sendOffSwingEvent(PlayerEvent event, ItemStack mainHandItem, ItemStack offhandItem){
-        if(!MinecraftForge.EVENT_BUS.post(new PlayerEventChild.OffhandSwingEvent(event, mainHandItem, offhandItem))){
+    public static void sendOffSwingEvent(PlayerEvent event, ItemStack mainHandItem, ItemStack offhandItem) {
+        if (!MinecraftForge.EVENT_BUS.post(new PlayerEventChild.OffhandSwingEvent(event, mainHandItem, offhandItem))) {
             ((IBackhandPlayer) event.entityPlayer).swingOffItem();
             Backhand.proxy.sendAnimationPacket(EnumAnimations.OffHandSwing, event.entityPlayer);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public static void sendOffSwingEventNoCheck(EntityPlayer player, ItemStack mainHandItem, ItemStack offhandItem){
+    public static void sendOffSwingEventNoCheck(EntityPlayer player, ItemStack mainHandItem, ItemStack offhandItem) {
         ((IBackhandPlayer) player).swingOffItem();
         Backhand.proxy.sendAnimationPacket(EnumAnimations.OffHandSwing, player);
     }
@@ -354,9 +377,10 @@ public final class HookContainerClass {
     }
 
     @SubscribeEvent
-    public void addTracking(PlayerEvent.StartTracking event){
-        if(event.target instanceof EntityPlayer && !isFake(event.target)){
-            ((EntityPlayerMP)event.entityPlayer).playerNetServerHandler.sendPacket(new OffhandSyncItemPacket((EntityPlayer) event.target).generatePacket());
+    public void addTracking(PlayerEvent.StartTracking event) {
+        if (event.target instanceof EntityPlayer && !isFake(event.target)) {
+            ((EntityPlayerMP) event.entityPlayer).playerNetServerHandler
+                .sendPacket(new OffhandSyncItemPacket((EntityPlayer) event.target).generatePacket());
         }
     }
 }

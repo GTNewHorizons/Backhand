@@ -3,9 +3,13 @@ package net.tclproject.mysteriumlib.asm.fixes;
 import net.tclproject.mysteriumlib.asm.common.CustomClassTransformer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 import net.tclproject.mysteriumlib.asm.common.FirstClassTransformer;
-import xonin.backhand.coremod.transformers.*;
 
-import mods.battlegear2.coremod.transformers.*;
+import xonin.backhand.coremod.transformers.EntityAIControlledByPlayerTransformer;
+import xonin.backhand.coremod.transformers.EntityOtherPlayerMPTransformer;
+import xonin.backhand.coremod.transformers.EntityPlayerTransformer;
+import xonin.backhand.coremod.transformers.ItemInWorldTransformer;
+import xonin.backhand.coremod.transformers.PlayerControllerMPTransformer;
+import xonin.backhand.coremod.transformers.TransformerBase;
 
 public class MysteriumPatchesFixLoaderO extends CustomLoadingPlugin {
 

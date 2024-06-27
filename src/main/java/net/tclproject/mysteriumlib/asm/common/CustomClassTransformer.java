@@ -56,7 +56,7 @@ public class CustomClassTransformer extends TargetClassTransformer implements IC
 
     /**
      * Loads method indexes and obfuscated method names from a methods.bin file.
-     * 
+     *
      * @throws IOException if the methods.bin file is not found.
      * @return A HashMap of "method index" : "mcp method name" for all the methods in methods.csv.
      */
@@ -117,7 +117,7 @@ public class CustomClassTransformer extends TargetClassTransformer implements IC
 
     /**
      * Gets a method index from a method name.
-     * 
+     *
      * @return the method index (or -1 if it's not found).
      */
     public static int getMethodIndex(String srgName) {

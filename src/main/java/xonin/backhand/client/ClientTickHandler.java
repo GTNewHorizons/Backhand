@@ -14,15 +14,10 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaks;
+import xonin.backhand.Backhand;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.packet.OffhandSwapPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MovingObjectPosition;
-import org.lwjgl.input.Keyboard;
-import xonin.backhand.Backhand;
 
 public class ClientTickHandler {
 
@@ -126,7 +121,11 @@ public class ClientTickHandler {
             && mc.objectMouseOver != null
             && mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
             if (event.player.capabilities.allowEdit) {
-                if (Backhand.proxy.isRightClickHeld() && !(mainHandItem != null && BackhandUtils.isItemBlock(mainHandItem.getItem()))) { // if it's a block and we should try break it
+                if (Backhand.proxy.isRightClickHeld()
+                    && !(mainHandItem != null && BackhandUtils.isItemBlock(mainHandItem.getItem()))) { // if it's a
+                                                                                                       // block and we
+                                                                                                       // should try
+                                                                                                       // break it
                     MovingObjectPosition mop = HookContainerClass.getRaytraceBlock(event.player);
                     if (offhandItem != null && HookContainerClass.isItemBlock(offhandItem.getItem())) {
                         if (!BackhandUtils.usagePriorAttack(offhandItem) && mop != null) {
@@ -136,7 +135,9 @@ public class ClientTickHandler {
                             mc.playerController.resetBlockRemoving();
                         }
                     } else {
-                        if (mop != null && !BackhandUtils.usagePriorAttack(offhandItem) && !HookContainerClass.canBlockBeInteractedWith(mc.theWorld, mop.blockX, mop.blockY, mop.blockZ)) {
+                        if (mop != null && !BackhandUtils.usagePriorAttack(offhandItem)
+                            && !HookContainerClass
+                                .canBlockBeInteractedWith(mc.theWorld, mop.blockX, mop.blockY, mop.blockZ)) {
                             BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
                         } else {

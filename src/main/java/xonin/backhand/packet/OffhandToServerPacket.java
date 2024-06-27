@@ -6,10 +6,9 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.BackhandUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 public class OffhandToServerPacket extends AbstractPacket {
+
     public static final String packetName = "MB2|OffhandToServer";
 
     private ItemStack offhandItem;
@@ -41,7 +40,7 @@ public class OffhandToServerPacket extends AbstractPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
             ItemStack offhandItem = ByteBufUtils.readItemStack(inputStream);
-            BackhandUtils.setPlayerOffhandItem(this.player,offhandItem);
+            BackhandUtils.setPlayerOffhandItem(this.player, offhandItem);
         }
     }
 }

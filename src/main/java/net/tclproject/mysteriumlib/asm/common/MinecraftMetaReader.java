@@ -41,7 +41,7 @@ public class MinecraftMetaReader extends MetaReader {
 
     /**
      * Returns the deobfuscated class (bytes) from a deobfuscated name in an obfuscated environment.
-     * 
+     *
      * @param name The unobfuscated class name.
      * @return The unobfuscated class (bytes).
      */
@@ -56,7 +56,7 @@ public class MinecraftMetaReader extends MetaReader {
      * <p/>
      * NOTE: It does not check the mcp vs srg descriptors, it only checks if they are the same which in most cases will
      * not be the case if it's srg vs mcp.
-     * 
+     *
      * @param obfuscatedName   the obfuscated (srg) name.
      * @param sourceDescriptor the descriptor of the first method.
      * @param mcpName          the deobfuscated (mcp) name.
@@ -75,7 +75,7 @@ public class MinecraftMetaReader extends MetaReader {
      * Forge and others can create methods at runtime.
      * This method gets a method reference, even if the target method is runtime-generated
      * by other mods or forge.
-     * 
+     *
      * @param ownerClass the class inside which the target method is located.
      * @param methodName the name of the target method.
      * @param descriptor the descriptor of the target method.
@@ -94,7 +94,7 @@ public class MinecraftMetaReader extends MetaReader {
 
     /**
      * Returns a deobfuscated version of a class.
-     * 
+     *
      * @param className the name of the class.
      * @param bytes     the class (bytes).
      * @return the deobfuscated class (bytes).
@@ -111,7 +111,7 @@ public class MinecraftMetaReader extends MetaReader {
      * Gets the modified class from a deobfuscated class name.
      * The modified class is the class with all the fixes, mixins, asm etc.
      * applied to it from everywhere.
-     * 
+     *
      * @param name The deobfuscated class name.
      * @return bytes the class (bytes) with all the changes applied to it.
      */
@@ -140,7 +140,7 @@ public class MinecraftMetaReader extends MetaReader {
     /**
      * Returns an obfuscated name from a deobfuscated one if run in an obfuscated environment.
      * If run in a deobfuscated environment, the name stays the same.
-     * 
+     *
      * @param deobfName the deobfuscated name.
      * @return the name that is usable in the environment this method is called.
      */
@@ -153,7 +153,7 @@ public class MinecraftMetaReader extends MetaReader {
 
     /**
      * Checks if two method names are the same, accounting for if the first name is obfuscated.
-     * 
+     *
      * @param srgName the name of the method that might be obfuscated.
      * @param mcpName a deobfuscated method name.
      * @return if the two names are the same.

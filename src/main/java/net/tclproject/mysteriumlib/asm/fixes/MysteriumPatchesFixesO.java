@@ -1,17 +1,5 @@
 package net.tclproject.mysteriumlib.asm.fixes;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import invtweaks.InvTweaksContainerManager;
-import invtweaks.InvTweaksContainerSectionManager;
-import invtweaks.api.container.ContainerSection;
-import xonin.backhand.HookContainerClass;
-import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.api.core.InventoryPlayerBackhand;
-import xonin.backhand.client.BackhandClientTickHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -32,9 +20,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemMap;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.client.*;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.server.MinecraftServer;
@@ -57,12 +50,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaksContainerManager;
 import invtweaks.InvTweaksContainerSectionManager;
 import invtweaks.api.container.ContainerSection;
-import mods.battlegear2.BattlemodeHookContainerClass;
-import mods.battlegear2.api.core.BattlegearUtils;
-import mods.battlegear2.api.core.IBattlePlayer;
-import mods.battlegear2.api.core.InventoryPlayerBattle;
-import mods.battlegear2.client.BattlegearClientTickHandler;
 import xonin.backhand.Backhand;
+import xonin.backhand.HookContainerClass;
+import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.api.core.InventoryPlayerBackhand;
+import xonin.backhand.client.BackhandClientTickHandler;
 import xonin.backhand.client.ClientEventHandler;
 import xonin.backhand.client.renderer.RenderOffhandPlayer;
 
@@ -90,8 +83,8 @@ public class MysteriumPatchesFixesO {
         EntityPlayer player = (EntityPlayer) p_77972_2_;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (offhandItem != null && itemStack == offhandItem && itemStack.stackSize == 0) {
-            BackhandUtils.setPlayerOffhandItem(player,null);
-            ForgeEventFactory.onPlayerDestroyItem(player,offhandItem);
+            BackhandUtils.setPlayerOffhandItem(player, null);
+            ForgeEventFactory.onPlayerDestroyItem(player, offhandItem);
         }
     }
 
@@ -105,16 +98,17 @@ public class MysteriumPatchesFixesO {
 
                 if (offhandItem != null) {
                     ItemStack mainHandItem = player.getCurrentEquippedItem();
-                    if (mainHandItem != null
-                            && (BackhandUtils.checkForRightClickFunctionNoAction(mainHandItem)
-                            || HookContainerClass.isItemBlock(mainHandItem.getItem()))) {
+                    if (mainHandItem != null && (BackhandUtils.checkForRightClickFunctionNoAction(mainHandItem)
+                        || HookContainerClass.isItemBlock(mainHandItem.getItem()))) {
                         if (itemStack == offhandItem) {
                             return EnumAction.none;
                         }
-                    } else if (itemStack == mainHandItem && (!(BackhandUtils.checkForRightClickFunctionNoAction(offhandItem)
-                            || HookContainerClass.isItemBlock(offhandItem.getItem())) || player.getItemInUse() != mainHandItem)) {
-                        return EnumAction.none;
-                    }
+                    } else if (itemStack == mainHandItem
+                        && (!(BackhandUtils.checkForRightClickFunctionNoAction(offhandItem)
+                            || HookContainerClass.isItemBlock(offhandItem.getItem()))
+                            || player.getItemInUse() != mainHandItem)) {
+                                return EnumAction.none;
+                            }
                 }
             }
         }
@@ -215,7 +209,8 @@ public class MysteriumPatchesFixesO {
         if (!Backhand.EmptyOffhand && !Backhand.RenderEmptyOffhandAtRest && offhandItem == null) {
             return;
         }
-        if (offhandItem == null && !Backhand.RenderEmptyOffhandAtRest && ((IBackhandPlayer)player).getOffSwingProgress(frame) == 0) {
+        if (offhandItem == null && !Backhand.RenderEmptyOffhandAtRest
+            && ((IBackhandPlayer) player).getOffSwingProgress(frame) == 0) {
             return;
         }
         if (mainhandItem != null && mainhandItem.getItem() instanceof ItemMap) {
@@ -239,18 +234,18 @@ public class MysteriumPatchesFixesO {
     public static float getSwingProgress(EntityLivingBase entityLivingBase, float partialTicks,
         @ReturnedValue float returnedValue) {
         if (offhandFPRender) {
-            return ((IBackhandPlayer)entityLivingBase).getOffSwingProgress(partialTicks);
+            return ((IBackhandPlayer) entityLivingBase).getOffSwingProgress(partialTicks);
         }
         return returnedValue;
     }
 
-	@Fix
-	@SideOnly(Side.CLIENT)
-	public static void doRender(RendererLivingEntity l, EntityLivingBase p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
-    {
-		if (p_76986_1_ instanceof EntityPlayer) {
-			onGround2 = ((IBackhandPlayer)p_76986_1_).getOffSwingProgress(p_76986_9_);
-		}
+    @Fix
+    @SideOnly(Side.CLIENT)
+    public static void doRender(RendererLivingEntity l, EntityLivingBase p_76986_1_, double p_76986_2_,
+        double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
+        if (p_76986_1_ instanceof EntityPlayer) {
+            onGround2 = ((IBackhandPlayer) p_76986_1_).getOffSwingProgress(p_76986_9_);
+        }
     }
 
     @Fix(returnSetting = EnumReturnSetting.ALWAYS)
@@ -318,7 +313,8 @@ public class MysteriumPatchesFixesO {
             b.bipedRightArm.rotateAngleZ = MathHelper.sin(b.onGround * (float) Math.PI) * -0.4F;
         }
 
-        if (p_78087_7_ instanceof EntityPlayer && (p_78087_7_ != Minecraft.getMinecraft().thePlayer || ((IBackhandPlayer)p_78087_7_).getOffSwingProgress(MysteriumPatchesFixesO.firstPersonFrame) != 0)) {
+        if (p_78087_7_ instanceof EntityPlayer && (p_78087_7_ != Minecraft.getMinecraft().thePlayer
+            || ((IBackhandPlayer) p_78087_7_).getOffSwingProgress(MysteriumPatchesFixesO.firstPersonFrame) != 0)) {
             if (onGround2 > -9990.0F) {
                 f6 = onGround2;
                 b.bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * (float) Math.PI * 2.0F) * 0.2F;
@@ -368,8 +364,10 @@ public class MysteriumPatchesFixesO {
         b.bipedLeftArm.rotateAngleX -= MathHelper.sin(p_78087_3_ * 0.067F) * 0.05F;
 
         if (b.aimedBow) {
-            if (p_78087_7_ instanceof EntityPlayer && p_78087_7_ == Minecraft.getMinecraft().thePlayer && BackhandUtils.getOffhandItem((EntityPlayer) p_78087_7_) != null
-                && ((EntityClientPlayerMP) p_78087_7_).getItemInUse() == BackhandUtils.getOffhandItem((EntityPlayer) p_78087_7_)) {
+            if (p_78087_7_ instanceof EntityPlayer && p_78087_7_ == Minecraft.getMinecraft().thePlayer
+                && BackhandUtils.getOffhandItem((EntityPlayer) p_78087_7_) != null
+                && ((EntityClientPlayerMP) p_78087_7_).getItemInUse()
+                    == BackhandUtils.getOffhandItem((EntityPlayer) p_78087_7_)) {
                 f6 = 0.0F;
                 f7 = 0.0F;
                 b.bipedLeftArm.rotateAngleZ = 0.0F;
@@ -486,9 +484,8 @@ public class MysteriumPatchesFixesO {
         m.tryHarvestBlock(p_73082_1_, p_73082_2_, p_73082_3_);
     }
 
-    @Fix(returnSetting=EnumReturnSetting.ALWAYS, insertOnExit = true)
-    public static void sendContainerAndContentsToPlayer(EntityPlayerMP player, Container p_71110_1_, List p_71110_2_)
-    {
+    @Fix(returnSetting = EnumReturnSetting.ALWAYS, insertOnExit = true)
+    public static void sendContainerAndContentsToPlayer(EntityPlayerMP player, Container p_71110_1_, List p_71110_2_) {
         BackhandUtils.getOffhandEP(player).syncOffhand = true;
     }
 
@@ -540,9 +537,10 @@ public class MysteriumPatchesFixesO {
         Entity entity = p_147340_1_.func_149564_a(worldserver);
         netServer.playerEntity.func_143004_u();
 
-        boolean swappedOffhand = BackhandUtils.checkForRightClickFunction(BackhandUtils.getOffhandItem(netServer.playerEntity))
-                && !BackhandUtils.checkForRightClickFunction(netServer.playerEntity.getCurrentEquippedItem())
-                && p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.INTERACT;
+        boolean swappedOffhand = BackhandUtils
+            .checkForRightClickFunction(BackhandUtils.getOffhandItem(netServer.playerEntity))
+            && !BackhandUtils.checkForRightClickFunction(netServer.playerEntity.getCurrentEquippedItem())
+            && p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.INTERACT;
         if (swappedOffhand) {
             BackhandUtils.swapOffhandItem(netServer.playerEntity);
         }
@@ -591,11 +589,10 @@ public class MysteriumPatchesFixesO {
         return interacted;
     }
 
-    @Fix(returnSetting=EnumReturnSetting.ALWAYS)
-    public static void processHeldItemChange(NetHandlerPlayServer server, C09PacketHeldItemChange p_147355_1_)
-    {
-        if (p_147355_1_.func_149614_c() >= 0 && p_147355_1_.func_149614_c() < (InventoryPlayer.getHotbarSize()) || p_147355_1_.func_149614_c() == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT)
-        {
+    @Fix(returnSetting = EnumReturnSetting.ALWAYS)
+    public static void processHeldItemChange(NetHandlerPlayServer server, C09PacketHeldItemChange p_147355_1_) {
+        if (p_147355_1_.func_149614_c() >= 0 && p_147355_1_.func_149614_c() < (InventoryPlayer.getHotbarSize())
+            || p_147355_1_.func_149614_c() == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT) {
             server.playerEntity.inventory.currentItem = p_147355_1_.func_149614_c();
             server.playerEntity.func_143004_u();
         } else {
@@ -605,10 +602,11 @@ public class MysteriumPatchesFixesO {
         }
     }
 
-    @Fix(insertOnExit=true,returnSetting=EnumReturnSetting.ON_NOT_NULL)
-    public static ItemStack getCurrentItem(InventoryPlayer inv)
-    {
-        return inv.currentItem < 9 && inv.currentItem >= 0 ? inv.mainInventory[inv.currentItem] : inv.currentItem == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT ? BackhandUtils.getOffhandItem(inv.player) : null;
+    @Fix(insertOnExit = true, returnSetting = EnumReturnSetting.ON_NOT_NULL)
+    public static ItemStack getCurrentItem(InventoryPlayer inv) {
+        return inv.currentItem < 9 && inv.currentItem >= 0 ? inv.mainInventory[inv.currentItem]
+            : inv.currentItem == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT ? BackhandUtils.getOffhandItem(inv.player)
+                : null;
     }
 
     private static final MethodHandle fieldGetSection;

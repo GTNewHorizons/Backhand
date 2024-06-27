@@ -1,7 +1,6 @@
 package xonin.backhand.client;
 
-import xonin.backhand.packet.OffhandAttackPacket;
-import xonin.backhand.packet.OffhandToServerPacket;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
@@ -11,7 +10,12 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemSpade;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
@@ -26,33 +30,24 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import xonin.backhand.CommonProxy;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.InventoryPlayerBackhand;
+import xonin.backhand.packet.OffhandAttackPacket;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
-import xonin.backhand.CommonProxy;
+import xonin.backhand.packet.OffhandToServerPacket;
 
 public final class BackhandClientTickHandler {
+
     public final Minecraft mc = Minecraft.getMinecraft();
     public static float ticksBeforeUse = 0;
     public static boolean prevRightClickHeld = false;
     public static int attackDelay = 0;
 
-    public BackhandClientTickHandler() {
-    }
+    public BackhandClientTickHandler() {}
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -118,15 +113,18 @@ public final class BackhandClientTickHandler {
 
         ItemStack mainHandItem = player.getCurrentEquippedItem();
         if (mainHandItem != null && (BackhandUtils.checkForRightClickFunction(mainHandItem)
-                    || HookContainerClass.isItemBlock(mainHandItem.getItem()) || player.getItemInUse() == mainHandItem)) {
+            || HookContainerClass.isItemBlock(mainHandItem.getItem())
+            || player.getItemInUse() == mainHandItem)) {
             ticksBeforeUse = 10;
             return false;
         }
 
-        if (mouseOver != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
-        {
-            if (BackhandUtils.blockHasUse(player.worldObj.getBlock(mouseOver.blockX, mouseOver.blockY,mouseOver.blockZ))
-                && !BackhandUtils.getOffhandItem(player).getItem().doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY,mouseOver.blockZ, player)
+        if (mouseOver != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+            if (BackhandUtils
+                .blockHasUse(player.worldObj.getBlock(mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ))
+                && !BackhandUtils.getOffhandItem(player)
+                    .getItem()
+                    .doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ, player)
                 && !(offhandItem.getItem() instanceof ItemBlock)) {
                 ticksBeforeUse = 4;
                 return false;
@@ -144,18 +142,25 @@ public final class BackhandClientTickHandler {
                     }
                 }
 
-                if (flag)
-                {
+                if (flag) {
                     offhandItem = BackhandUtils.getOffhandItem(player);
-                    PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1, player.worldObj), offhandItem);
+                    PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(
+                        new PlayerInteractEvent(
+                            player,
+                            PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+                            0,
+                            0,
+                            0,
+                            -1,
+                            player.worldObj),
+                        offhandItem);
                     if (offhandItem != null && !MinecraftForge.EVENT_BUS.post(useItemEvent)) {
                         interacted = HookContainerClass.tryUseItem(player, offhandItem, Side.CLIENT);
                     }
                 }
 
                 offhandItem = BackhandUtils.getOffhandItem(player);
-                if (offhandItem != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
-                {
+                if (offhandItem != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
                     int j = mouseOver.blockX;
                     int k = mouseOver.blockY;
                     int l = mouseOver.blockZ;
@@ -163,15 +168,31 @@ public final class BackhandClientTickHandler {
                         .isAir(player.worldObj, j, k, l)) {
                         final int size = offhandItem.stackSize;
                         int i1 = mouseOver.sideHit;
-                        PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, j, k, l, i1, player.worldObj), offhandItem);
+                        PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(
+                            new PlayerInteractEvent(
+                                player,
+                                PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
+                                j,
+                                k,
+                                l,
+                                i1,
+                                player.worldObj),
+                            offhandItem);
                         if (player.capabilities.allowEdit || !HookContainerClass.isItemBlock(offhandItem.getItem())) {
-                            if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && onPlayerPlaceBlock(mc.playerController, player, offhandItem, j, k, l, i1, mouseOver.hitVec)) {
+                            if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && onPlayerPlaceBlock(
+                                mc.playerController,
+                                player,
+                                offhandItem,
+                                j,
+                                k,
+                                l,
+                                i1,
+                                mouseOver.hitVec)) {
                                 ((IBackhandPlayer) player).swingOffItem();
                                 interacted = true;
                             }
                         }
-                        if (offhandItem.stackSize == 0)
-                        {
+                        if (offhandItem.stackSize == 0) {
                             BackhandUtils.setPlayerOffhandItem(player, null);
                         }
                     }
@@ -256,7 +277,7 @@ public final class BackhandClientTickHandler {
                 if (offhand.stackSize <= 0) {
                     ForgeEventFactory.onPlayerDestroyItem(player, offhand);
                 }
-                HookContainerClass.sendOffSwingEventNoCheck(player,offhand,player.getCurrentEquippedItem());
+                HookContainerClass.sendOffSwingEventNoCheck(player, offhand, player.getCurrentEquippedItem());
                 return true;
             }
         }
@@ -276,10 +297,19 @@ public final class BackhandClientTickHandler {
             if (ClientTickHandler.delay <= 0) {
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
-                if (!(BackhandUtils.usagePriorAttack(offhandItem)) && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
-                    PlayerControllerMP.clickBlockCreative(mcInstance, mcInstance.playerController, i, j, k, objectMouseOver.sideHit);
-                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
-                    mcInstance.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(2, i, j, k, objectMouseOver.sideHit));
+                if (!(BackhandUtils.usagePriorAttack(offhandItem))
+                    && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
+                    PlayerControllerMP
+                        .clickBlockCreative(mcInstance, mcInstance.playerController, i, j, k, objectMouseOver.sideHit);
+                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force
+                                                                                                          // offhand
+                                                                                                          // swing
+                                                                                                          // anyway
+                                                                                                          // because we
+                                                                                                          // broke a
+                                                                                                          // block
+                    mcInstance.getNetHandler()
+                        .addToSendQueue(new C07PacketPlayerDigging(2, i, j, k, objectMouseOver.sideHit));
                 }
                 ClientTickHandler.delay = 20;
             }
@@ -308,7 +338,8 @@ public final class BackhandClientTickHandler {
                     }
 
                     mcInstance.thePlayer.inventory.currentItem = InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT;
-                    mcInstance.playerController.currentItemHittingBlock = BackhandUtils.getOffhandItem(mcInstance.thePlayer);
+                    mcInstance.playerController.currentItemHittingBlock = BackhandUtils
+                        .getOffhandItem(mcInstance.thePlayer);
                     mcInstance.playerController.syncCurrentPlayItem();
                 }
 
@@ -367,16 +398,17 @@ public final class BackhandClientTickHandler {
             if (mcInstance.thePlayer.isCurrentToolAdventureModeExempt(i, j, k)) {
                 mcInstance.effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
             }
-            HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing anyway because we broke a block
+            HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force offhand swing
+                                                                                                  // anyway because we
+                                                                                                  // broke a block
         }
         event.player.inventory.currentItem = prevHeldItem;
         mcInstance.playerController.syncCurrentPlayItem();
 
         if (broken) {
-            BackhandUtils.setPlayerOffhandItem(event.player,null);
-            ((EntityClientPlayerMP)event.player).sendQueue.addToSendQueue(
-                    new OffhandToServerPacket(null, event.player).generatePacket()
-            );
+            BackhandUtils.setPlayerOffhandItem(event.player, null);
+            ((EntityClientPlayerMP) event.player).sendQueue
+                .addToSendQueue(new OffhandToServerPacket(null, event.player).generatePacket());
         }
     }
 }

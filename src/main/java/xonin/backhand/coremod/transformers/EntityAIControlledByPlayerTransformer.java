@@ -1,9 +1,8 @@
 package xonin.backhand.coremod.transformers;
 
-import xonin.backhand.api.core.BackhandTranslator;
 import org.objectweb.asm.tree.MethodNode;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import xonin.backhand.api.core.BackhandTranslator;
 
 public final class EntityAIControlledByPlayerTransformer extends TransformerMethodProcess {
 

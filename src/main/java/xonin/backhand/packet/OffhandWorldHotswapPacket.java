@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 
 public class OffhandWorldHotswapPacket extends AbstractPacket {
+
     public static final String packetName = "MB2|WorldHotswap";
 
     boolean ignoreSwitching;
