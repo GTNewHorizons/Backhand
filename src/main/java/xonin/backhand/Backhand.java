@@ -12,9 +12,12 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import mods.battlegear2.BattlemodeHookContainerClass;
-import mods.battlegear2.packet.BattlegearPacketHandler;
-import mods.battlegear2.utils.BattlegearConfig;
+import xonin.backhand.packet.BackhandPacketHandler;
+import xonin.backhand.utils.BackhandConfig;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 
 @Mod(
     modid = "backhand",
@@ -30,7 +33,7 @@ public class Backhand {
 
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
-    public static BattlegearPacketHandler packetHandler;
+    public static BackhandPacketHandler packetHandler;
 
     public static boolean OffhandAttack = false;
     public static boolean EmptyOffhand = false;
@@ -53,7 +56,7 @@ public class Backhand {
         Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("Backhand");
         ChannelPlayer = NetworkRegistry.INSTANCE.newEventDrivenChannel("BackhandPlayer");
 
-        BattlegearConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
+        BackhandConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
 
         proxy.load();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
@@ -63,15 +66,13 @@ public class Backhand {
             .bus()
             .register(new ServerTickHandler());
 
-        MinecraftForge.EVENT_BUS.register(BattlemodeHookContainerClass.INSTANCE);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(BattlemodeHookContainerClass.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(HookContainerClass.INSTANCE);
+        FMLCommonHandler.instance().bus().register(HookContainerClass.INSTANCE);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        packetHandler = new BattlegearPacketHandler();
+        packetHandler = new BackhandPacketHandler();
         packetHandler.register();
     }
 

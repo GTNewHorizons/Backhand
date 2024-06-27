@@ -14,9 +14,17 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import mods.battlegear2.api.core.BattlegearUtils;
-import mods.battlegear2.packet.BattlegearSyncItemPacket;
-import mods.battlegear2.packet.OffhandWorldHotswapPacket;
+import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.packet.OffhandSyncItemPacket;
+import xonin.backhand.packet.OffhandWorldHotswapPacket;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
+import java.util.*;
 
 public class ServerTickHandler {
 
@@ -36,18 +44,14 @@ public class ServerTickHandler {
         if (Backhand.OffhandTickHotswap) {
             List<EntityPlayer> players = event.world.playerEntities;
             for (EntityPlayer player : players) {
-                ItemStack mainhand = player.getCurrentEquippedItem() == null ? null
-                    : player.getCurrentEquippedItem()
-                        .copy();
-                ItemStack offhand = BattlegearUtils.getOffhandItem(player) == null ? null
-                    : BattlegearUtils.getOffhandItem(player)
-                        .copy();
+                ItemStack mainhand = player.getCurrentEquippedItem() == null ? null : player.getCurrentEquippedItem().copy();
+                ItemStack offhand = BackhandUtils.getOffhandItem(player) == null ? null : BackhandUtils.getOffhandItem(player).copy();
                 if (offhand == null) {
                     continue;
                 }
 
                 if (event.phase == TickEvent.Phase.START && !player.isUsingItem()) {
-                    if (!BattlegearUtils.checkForRightClickFunction(mainhand)) {
+                    if (!BackhandUtils.checkForRightClickFunction(mainhand)) {
                         if (!tickStartItems.containsKey(player.getUniqueID())) {
                             Backhand.packetHandler.sendPacketToPlayer(
                                 new OffhandWorldHotswapPacket(true).generatePacket(),
@@ -68,14 +72,8 @@ public class ServerTickHandler {
 
     public static void resetTickingHotswap(EntityPlayer player) {
         if (tickStartItems.containsKey(player.getUniqueID())) {
-            player.setCurrentItemOrArmor(
-                0,
-                tickStartItems.get(player.getUniqueID())
-                    .get(0));
-            BattlegearUtils.setPlayerOffhandItem(
-                player,
-                tickStartItems.get(player.getUniqueID())
-                    .get(1));
+            player.setCurrentItemOrArmor(0, tickStartItems.get(player.getUniqueID()).get(0));
+            BackhandUtils.setPlayerOffhandItem(player, tickStartItems.get(player.getUniqueID()).get(1));
             tickStartItems.remove(player.getUniqueID());
             Backhand.packetHandler
                 .sendPacketToPlayer(new OffhandWorldHotswapPacket(false).generatePacket(), (EntityPlayerMP) player);
@@ -88,13 +86,13 @@ public class ServerTickHandler {
         if (FMLCommonHandler.instance()
             .getEffectiveSide() != Side.SERVER) {
             if (ServerEventsHandler.regularHotSwap) {
-                BattlegearUtils.swapOffhandItem(player);
+                BackhandUtils.swapOffhandItem(player);
                 ServerEventsHandler.regularHotSwap = false;
             }
             return;
         }
 
-        ItemStack offhand = BattlegearUtils.getOffhandItem(player);
+        ItemStack offhand = BackhandUtils.getOffhandItem(player);
 
         if (event.phase == TickEvent.Phase.END) {
             if (blacklistDelay > 0) {
@@ -104,7 +102,7 @@ public class ServerTickHandler {
                 if (!ItemStack.areItemStacksEqual(offhand, prevStackInSlot)) {
                     blacklistDelay = 10;
                 } else if (blacklistDelay == 0) {
-                    BattlegearUtils.setPlayerOffhandItem(player, null);
+                    BackhandUtils.setPlayerOffhandItem(player,null);
 
                     boolean foundSlot = false;
                     for (int i = 0; i < player.inventory.getSizeInventory() - 4; i++) {
@@ -124,39 +122,32 @@ public class ServerTickHandler {
             prevStackInSlot = offhand;
         }
 
-        if (BattlegearUtils.getOffhandEP(player).syncOffhand) {
+        if (BackhandUtils.getOffhandEP(player).syncOffhand) {
             if (!tickStartItems.containsKey(player.getUniqueID())) {
-                Backhand.packetHandler.sendPacketToAll(new BattlegearSyncItemPacket(player).generatePacket());
+                Backhand.packetHandler.sendPacketToAll(new OffhandSyncItemPacket(player).generatePacket());
             }
-            BattlegearUtils.getOffhandEP(player).syncOffhand = false;
+            BackhandUtils.getOffhandEP(player).syncOffhand = false;
         }
 
         if (ServerEventsHandler.arrowHotSwapped) {
             if (offhand != null && offhand.getItem() != Items.arrow) {
-                BattlegearUtils.swapOffhandItem(player);
+                BackhandUtils.swapOffhandItem(player);
             }
             ServerEventsHandler.arrowHotSwapped = false;
         }
         if (ServerEventsHandler.regularHotSwap) {
-            BattlegearUtils.swapOffhandItem(player);
+            BackhandUtils.swapOffhandItem(player);
             ServerEventsHandler.regularHotSwap = false;
         }
 
         if (ServerEventsHandler.fireworkHotSwapped > 0) {
             ServerEventsHandler.fireworkHotSwapped--;
         } else if (ServerEventsHandler.fireworkHotSwapped == 0) {
-            BattlegearUtils.swapOffhandItem(player);
+            BackhandUtils.swapOffhandItem(player);
             ServerEventsHandler.fireworkHotSwapped--;
-            MinecraftForge.EVENT_BUS.post(
-                new PlayerInteractEvent(
-                    player,
-                    PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
-                    (int) player.posX,
-                    (int) player.posY,
-                    (int) player.posZ,
-                    -1,
-                    player.worldObj));
-            BattlegearUtils.swapOffhandItem(player);
+            MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+                    (int)player.posX, (int)player.posY, (int)player.posZ, -1, player.worldObj));
+            BackhandUtils.swapOffhandItem(player);
         }
     }
 }

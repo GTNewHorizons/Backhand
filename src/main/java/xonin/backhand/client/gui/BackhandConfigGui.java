@@ -5,8 +5,11 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import mods.battlegear2.client.gui.controls.GuiToggleButton;
-import mods.battlegear2.utils.BattlegearConfig;
+import xonin.backhand.client.gui.controls.GuiToggleButton;
+import xonin.backhand.utils.BackhandConfig;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import xonin.backhand.Backhand;
 
 public class BackhandConfigGui extends GuiScreen {
@@ -66,6 +69,6 @@ public class BackhandConfigGui extends GuiScreen {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        BattlegearConfig.refreshConfig();
+        BackhandConfig.refreshConfig();
     }
 }

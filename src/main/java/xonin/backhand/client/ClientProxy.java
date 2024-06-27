@@ -11,9 +11,12 @@ import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import mods.battlegear2.client.BattlegearClientTickHandler;
-import mods.battlegear2.packet.BattlegearAnimationPacket;
-import mods.battlegear2.utils.EnumBGAnimations;
+import xonin.backhand.packet.OffhandAnimationPacket;
+import xonin.backhand.utils.EnumAnimations;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.settings.KeyBinding;
+import org.lwjgl.input.Keyboard;
 import xonin.backhand.CommonProxy;
 
 public class ClientProxy extends CommonProxy {
@@ -26,13 +29,8 @@ public class ClientProxy extends CommonProxy {
 
     public void load() {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new ClientTickHandler());
-
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new BattlegearClientTickHandler());
+        FMLCommonHandler.instance().bus().register(new ClientTickHandler());
+        FMLCommonHandler.instance().bus().register(new BackhandClientTickHandler());
 
         ClientRegistry.registerKeyBinding(swapOffhand);
     }
@@ -48,10 +46,10 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void sendAnimationPacket(EnumBGAnimations animation, EntityPlayer entityPlayer) {
+    public void sendAnimationPacket(EnumAnimations animation, EntityPlayer entityPlayer) {
         if (entityPlayer instanceof EntityClientPlayerMP) {
-            ((EntityClientPlayerMP) entityPlayer).sendQueue
-                .addToSendQueue(new BattlegearAnimationPacket(animation, entityPlayer).generatePacket());
+            ((EntityClientPlayerMP) entityPlayer).sendQueue.addToSendQueue(
+                    new OffhandAnimationPacket(animation, entityPlayer).generatePacket());
         }
     }
 

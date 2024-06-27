@@ -1,7 +1,6 @@
 package xonin.backhand.client.renderer;
 
-import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
-
+import xonin.backhand.api.core.BackhandUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -22,7 +21,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import mods.battlegear2.api.core.BattlegearUtils;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 
 public class ItemRendererOffhand extends ItemRenderer {
 
@@ -247,7 +246,7 @@ public class ItemRendererOffhand extends ItemRenderer {
     }
 
     public void renderOffhandItemIn3rdPerson(EntityPlayer player, ModelBiped modelBipedMain, float frame) {
-        ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
+        ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         float f2;
         float f4;
 
@@ -362,7 +361,7 @@ public class ItemRendererOffhand extends ItemRenderer {
     public void updateEquippedItem() {
         this.prevEquippedProgress = this.equippedProgress;
         EntityClientPlayerMP player = this.mc.thePlayer;
-        ItemStack itemstack = BattlegearUtils.getOffhandItem(player);
+        ItemStack itemstack = BackhandUtils.getOffhandItem(player);
         boolean flag = itemstack == this.itemToRender;
 
         if (itemstack != null && this.itemToRender != null

@@ -1,5 +1,7 @@
 package xonin.backhand;
 
+import cpw.mods.fml.common.network.IGuiHandler;
+import xonin.backhand.utils.EnumAnimations;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -35,7 +37,7 @@ public class CommonProxy implements IGuiHandler {
         return null;
     }
 
-    public void sendAnimationPacket(EnumBGAnimations animation, EntityPlayer entityPlayer) {}
+    public void sendAnimationPacket(EnumAnimations animation, EntityPlayer entityPlayer) {}
 
     // Should not be called on the server anyway
     public boolean isRightClickHeld() {

@@ -3,6 +3,7 @@ package net.tclproject.mysteriumlib.asm.fixes;
 import net.tclproject.mysteriumlib.asm.common.CustomClassTransformer;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 import net.tclproject.mysteriumlib.asm.common.FirstClassTransformer;
+import xonin.backhand.coremod.transformers.*;
 
 import mods.battlegear2.coremod.transformers.*;
 
