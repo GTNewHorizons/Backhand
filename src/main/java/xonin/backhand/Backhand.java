@@ -18,7 +18,7 @@ import xonin.backhand.utils.BackhandConfig;
 @Mod(
     modid = "backhand",
     name = "Backhand",
-    version = "$version",
+    version = Tags.VERSION,
     guiFactory = "xonin.backhand.client.gui.BackhandGuiFactory")
 public class Backhand {
 

@@ -3,6 +3,8 @@ package xonin.backhand.packet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 
+import io.netty.buffer.ByteBuf;
+
 public class OffhandWorldHotswapPacket extends AbstractPacket {
 
     public static final String packetName = "MB2|WorldHotswap";

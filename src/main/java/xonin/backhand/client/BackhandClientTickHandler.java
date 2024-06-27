@@ -30,6 +30,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import xonin.backhand.Backhand;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;

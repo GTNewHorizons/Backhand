@@ -35,4 +35,5 @@
  */
 dependencies {
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.6.2:dev")
 }

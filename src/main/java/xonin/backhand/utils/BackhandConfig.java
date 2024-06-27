@@ -2,6 +2,10 @@ package xonin.backhand.utils;
 
 import java.util.Arrays;
 
+import net.minecraftforge.common.config.Configuration;
+
+import xonin.backhand.Backhand;
+
 public class BackhandConfig {
 
     private static Configuration file;

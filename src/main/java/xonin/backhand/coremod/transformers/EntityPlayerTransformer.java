@@ -1,5 +1,8 @@
 package xonin.backhand.coremod.transformers;
 
+import java.util.List;
+import java.util.ListIterator;
+
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
 import org.apache.logging.log4j.Level;

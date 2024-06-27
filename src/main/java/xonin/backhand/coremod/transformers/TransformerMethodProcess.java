@@ -1,5 +1,7 @@
 package xonin.backhand.coremod.transformers;
 
+import java.util.List;
+
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 

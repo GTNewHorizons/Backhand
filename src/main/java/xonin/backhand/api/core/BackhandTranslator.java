@@ -7,9 +7,6 @@ public class BackhandTranslator {
     public static boolean debug = false;
     public static boolean obfuscatedEnv;
 
-    public static boolean debug = false;
-    public static boolean obfuscatedEnv;
-
     /** @deprecated */
     @Deprecated
     public static String getMapedFieldName(String className, String fieldName, String devName) {
