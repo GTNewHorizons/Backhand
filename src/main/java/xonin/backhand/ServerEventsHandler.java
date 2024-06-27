@@ -1,10 +1,5 @@
 package xonin.backhand;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import mods.battlegear2.api.core.BattlegearUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBow;
@@ -12,10 +7,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import mods.battlegear2.api.core.BattlegearUtils;
 
 public class ServerEventsHandler {
 
@@ -25,11 +25,12 @@ public class ServerEventsHandler {
 
     @SubscribeEvent
     public void onPlayerInteractNonVanilla(PlayerInteractEvent event) {
-        if(event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
+        if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
             EntityPlayer player = event.entityPlayer;
             ItemStack mainhandItem = player.getHeldItem();
             ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
-            if((mainhandItem == null || mainhandItem.getItem() != Items.fireworks) && offhandItem != null && offhandItem.getItem() == Items.fireworks) {
+            if ((mainhandItem == null || mainhandItem.getItem() != Items.fireworks) && offhandItem != null
+                && offhandItem.getItem() == Items.fireworks) {
                 BattlegearUtils.swapOffhandItem(player);
                 fireworkHotSwapped = 1;
             }
@@ -38,21 +39,19 @@ public class ServerEventsHandler {
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
-        if (!(event.entityLiving instanceof EntityPlayer))
-            return;
+        if (!(event.entityLiving instanceof EntityPlayer)) return;
 
         EntityPlayer player = (EntityPlayer) event.entityLiving;
         if (!BattlegearUtils.hasOffhandInventory(player)) {
             ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
             player.func_146097_a(offhandItem, true, false);
-            BattlegearUtils.setPlayerOffhandItem(player,null);
+            BattlegearUtils.setPlayerOffhandItem(player, null);
         }
     }
 
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event) {
-        if (!(event.entityLiving instanceof EntityPlayer) || event.entityLiving.getHealth() - event.ammount > 0)
-            return;
+        if (!(event.entityLiving instanceof EntityPlayer) || event.entityLiving.getHealth() - event.ammount > 0) return;
         try {
             Class<?> totemItem = Class.forName("ganymedes01.etfuturum.items.ItemTotemUndying");
 
@@ -63,7 +62,8 @@ public class ServerEventsHandler {
                 return;
             }
 
-            if (totemItem.isInstance(offhandItem.getItem()) && (mainhandItem == null || !totemItem.isInstance(mainhandItem.getItem()))) {
+            if (totemItem.isInstance(offhandItem.getItem())
+                && (mainhandItem == null || !totemItem.isInstance(mainhandItem.getItem()))) {
                 BattlegearUtils.swapOffhandItem(player);
                 regularHotSwap = true;
                 MinecraftForge.EVENT_BUS.post(event);
@@ -77,7 +77,7 @@ public class ServerEventsHandler {
         ItemStack offhandItem = BattlegearUtils.getOffhandItem(player);
         ItemStack mainhandItem = player.getCurrentEquippedItem();
 
-        //boolean offHandUse = BattlegearUtils.checkForRightClickFunction(offhandItem);
+        // boolean offHandUse = BattlegearUtils.checkForRightClickFunction(offhandItem);
         boolean mainhandUse = BattlegearUtils.checkForRightClickFunction(mainhandItem);
 
         if (offhandItem != null && !mainhandUse) {
@@ -107,7 +107,10 @@ public class ServerEventsHandler {
 
             if (overrideWithOffhand) {
                 event.setCanceled(true);
-                event.entityPlayer.setItemInUse(event.result, event.result.getItem().getMaxItemUseDuration(event.result));
+                event.entityPlayer.setItemInUse(
+                    event.result,
+                    event.result.getItem()
+                        .getMaxItemUseDuration(event.result));
             }
         }
     }
@@ -121,7 +124,8 @@ public class ServerEventsHandler {
         if (offhandItem == null || mainhandUse) {
             return;
         }
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID())) {
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID())) {
             BattlegearUtils.swapOffhandItem(player);
             regularHotSwap = true;
         }

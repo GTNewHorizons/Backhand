@@ -1,10 +1,9 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import java.util.List;
+
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import java.util.List;
 
 public abstract class TransformerMethodProcess extends TransformerBase {
 
@@ -23,7 +22,8 @@ public abstract class TransformerMethodProcess extends TransformerBase {
     @Override
     boolean processMethods(List<MethodNode> methods) {
         for (MethodNode method : methods) {
-            if ((method.name.equals(methName.split("!")[0]) || method.name.equals(methName.split("!")[1])) && method.desc.equals(desc)) {
+            if ((method.name.equals(methName.split("!")[0]) || method.name.equals(methName.split("!")[1]))
+                && method.desc.equals(desc)) {
                 processMethod(method);
                 return true;
             }

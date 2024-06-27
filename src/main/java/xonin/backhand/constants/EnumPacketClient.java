@@ -1,4 +1,3 @@
 package xonin.backhand.constants;
 
-public enum EnumPacketClient {
-}
+public enum EnumPacketClient {}

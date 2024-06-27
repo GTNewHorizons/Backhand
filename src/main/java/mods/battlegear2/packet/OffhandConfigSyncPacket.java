@@ -1,10 +1,10 @@
 
 package mods.battlegear2.packet;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ContainerPlayer;
 import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
+
+import io.netty.buffer.ByteBuf;
 import xonin.backhand.Backhand;
 
 public final class OffhandConfigSyncPacket extends AbstractMBPacket {

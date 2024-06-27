@@ -1,12 +1,12 @@
 
 package mods.battlegear2.packet;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import mods.battlegear2.api.core.BattlegearUtils;
 import mods.battlegear2.api.core.InventoryPlayerBattle;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import xonin.backhand.client.ClientTickHandler;
 
 /**
@@ -20,8 +20,7 @@ public final class OffhandSwapClientPacket extends AbstractMBPacket {
     private String user;
     private EntityPlayer player;
 
-    public OffhandSwapClientPacket() {
-    }
+    public OffhandSwapClientPacket() {}
 
     public OffhandSwapClientPacket(EntityPlayer player) {
         this.player = player;
@@ -32,10 +31,9 @@ public final class OffhandSwapClientPacket extends AbstractMBPacket {
     public void process(ByteBuf inputStream, EntityPlayer player) {
         this.user = ByteBufUtils.readUTF8String(inputStream);
         this.player = player.worldObj.getPlayerEntityByName(user);
-        if (this.player!=null) {
+        if (this.player != null) {
             int slot = inputStream.readInt();
-            if(InventoryPlayerBattle.isValidSwitch(slot))
-                this.player.inventory.currentItem = slot;
+            if (InventoryPlayerBattle.isValidSwitch(slot)) this.player.inventory.currentItem = slot;
             BattlegearUtils.swapOffhandItem(player);
         }
         ClientTickHandler.allowSwap = true;

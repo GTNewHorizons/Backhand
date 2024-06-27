@@ -1,8 +1,5 @@
 package xonin.backhand.client;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mods.battlegear2.api.core.BattlegearUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;
@@ -14,12 +11,18 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mods.battlegear2.api.core.BattlegearUtils;
 import xonin.backhand.Backhand;
 import xonin.backhand.client.renderer.RenderOffhandPlayer;
 
 public class ClientEventHandler {
+
     public static RenderOffhandPlayer renderOffhandPlayer = new RenderOffhandPlayer();
     public static EntityPlayer renderingPlayer;
     public static boolean cancelone = false;
@@ -28,7 +31,11 @@ public class ClientEventHandler {
     public void renderHotbarOverlay(RenderGameOverlayEvent event) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
             Minecraft mc = Minecraft.getMinecraft();
-            renderHotbar(mc.ingameGUI, event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
+            renderHotbar(
+                mc.ingameGUI,
+                event.resolution.getScaledWidth(),
+                event.resolution.getScaledHeight(),
+                event.partialTicks);
         }
     }
 
@@ -67,12 +74,10 @@ public class ClientEventHandler {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack itemstack = BattlegearUtils.getOffhandItem(mc.thePlayer);
 
-        if (itemstack != null)
-        {
+        if (itemstack != null) {
             float f1 = itemstack.animationsToGo - p_73832_4_;
 
-            if (f1 > 0.0F)
-            {
+            if (f1 > 0.0F) {
                 GL11.glPushMatrix();
                 float f2 = 1.0F + f1 / 5.0F;
                 GL11.glTranslatef(p_73832_2_ + 8, p_73832_3_ + 12, 0.0F);
@@ -80,18 +85,20 @@ public class ClientEventHandler {
                 GL11.glTranslatef((-(p_73832_2_ + 8)), (-(p_73832_3_ + 12)), 0.0F);
             }
 
-            RenderItem.getInstance().renderItemAndEffectIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemstack, p_73832_2_, p_73832_3_);
+            RenderItem.getInstance()
+                .renderItemAndEffectIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemstack, p_73832_2_, p_73832_3_);
 
-            if (f1 > 0.0F)
-            {
+            if (f1 > 0.0F) {
                 GL11.glPopMatrix();
             }
 
-            RenderItem.getInstance().renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemstack, p_73832_2_, p_73832_3_);
+            RenderItem.getInstance()
+                .renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemstack, p_73832_2_, p_73832_3_);
         }
     }
 
     public static int renderPass;
+
     @SubscribeEvent
     public void onRenderHand(RenderHandEvent event) {
         renderPass = event.renderPass;
@@ -102,8 +109,8 @@ public class ClientEventHandler {
      * And stop the right hand inappropriate bending
      */
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void renderPlayerLeftItemUsage(RenderLivingEvent.Pre event){
-        if(event.entity instanceof EntityPlayer) {
+    public void renderPlayerLeftItemUsage(RenderLivingEvent.Pre event) {
+        if (event.entity instanceof EntityPlayer) {
             EntityPlayer entityPlayer = (EntityPlayer) event.entity;
             renderingPlayer = entityPlayer;
             ItemStack offhand = BattlegearUtils.getOffhandItem(entityPlayer);
@@ -118,7 +125,8 @@ public class ClientEventHandler {
                         renderer.modelArmorChestplate.aimedBow = renderer.modelArmor.aimedBow = renderer.modelBipedMain.aimedBow = true;
                     }
                     ItemStack mainhand = entityPlayer.inventory.getCurrentItem();
-                    renderer.modelArmorChestplate.heldItemRight = renderer.modelArmor.heldItemRight = renderer.modelBipedMain.heldItemRight = mainhand != null ? 1 : 0;
+                    renderer.modelArmorChestplate.heldItemRight = renderer.modelArmor.heldItemRight = renderer.modelBipedMain.heldItemRight = mainhand
+                        != null ? 1 : 0;
                 }
             }
         }
@@ -128,7 +136,7 @@ public class ClientEventHandler {
      * Reset models to default values
      */
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void resetPlayerLeftHand(RenderPlayerEvent.Post event){
+    public void resetPlayerLeftHand(RenderPlayerEvent.Post event) {
         event.renderer.modelArmorChestplate.heldItemLeft = event.renderer.modelArmor.heldItemLeft = event.renderer.modelBipedMain.heldItemLeft = 0;
     }
 
@@ -142,7 +150,8 @@ public class ClientEventHandler {
         ModelBiped biped = (ModelBiped) event.renderer.modelBipedMain;
         RenderOffhandPlayer.itemRenderer.updateEquippedItem();
         renderOffhandPlayer.updateFovModifierHand();
-        RenderOffhandPlayer.itemRenderer.renderOffhandItemIn3rdPerson(event.entityPlayer, biped, event.partialRenderTick);
+        RenderOffhandPlayer.itemRenderer
+            .renderOffhandItemIn3rdPerson(event.entityPlayer, biped, event.partialRenderTick);
         GL11.glPopMatrix();
     }
 }

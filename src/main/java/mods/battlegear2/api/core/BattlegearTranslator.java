@@ -3,36 +3,37 @@ package mods.battlegear2.api.core;
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
 public class BattlegearTranslator {
-   public static boolean debug = false;
-   public static boolean obfuscatedEnv;
 
-   /** @deprecated */
-   @Deprecated
-   public static String getMapedFieldName(String className, String fieldName, String devName) {
-      return getMapedFieldName(fieldName, devName);
-   }
+    public static boolean debug = false;
+    public static boolean obfuscatedEnv;
 
-   public static String getMapedFieldName(String fieldName, String devName) {
-      return CustomLoadingPlugin.isObfuscated() ? fieldName : devName;
-   }
+    /** @deprecated */
+    @Deprecated
+    public static String getMapedFieldName(String className, String fieldName, String devName) {
+        return getMapedFieldName(fieldName, devName);
+    }
 
-   public static String getMapedClassName(String className) {
-      return "net/minecraft/" + className.replace(".", "/");
-   }
+    public static String getMapedFieldName(String fieldName, String devName) {
+        return CustomLoadingPlugin.isObfuscated() ? fieldName : devName;
+    }
 
-   /** @deprecated */
-   @Deprecated
-   public static String getMapedMethodName(String className, String methodName, String devName) {
-      return getMapedMethodName(methodName, devName);
-   }
+    public static String getMapedClassName(String className) {
+        return "net/minecraft/" + className.replace(".", "/");
+    }
 
-   public static String getMapedMethodName(String methodName, String devName) {
-      return CustomLoadingPlugin.isObfuscated() ? methodName : devName;
-   }
+    /** @deprecated */
+    @Deprecated
+    public static String getMapedMethodName(String className, String methodName, String devName) {
+        return getMapedMethodName(methodName, devName);
+    }
 
-   /** @deprecated */
-   @Deprecated
-   public static String getMapedMethodDesc(String className, String methodName, String devDesc) {
-      return devDesc;
-   }
+    public static String getMapedMethodName(String methodName, String devName) {
+        return CustomLoadingPlugin.isObfuscated() ? methodName : devName;
+    }
+
+    /** @deprecated */
+    @Deprecated
+    public static String getMapedMethodDesc(String className, String methodName, String devDesc) {
+        return devDesc;
+    }
 }

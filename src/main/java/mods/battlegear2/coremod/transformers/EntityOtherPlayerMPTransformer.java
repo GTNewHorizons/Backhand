@@ -1,10 +1,11 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
-import org.objectweb.asm.tree.*;
-
 import java.util.Iterator;
 import java.util.List;
+
+import org.objectweb.asm.tree.*;
+
+import mods.battlegear2.api.core.BattlegearTranslator;
 
 public final class EntityOtherPlayerMPTransformer extends TransformerBase {
 
@@ -30,17 +31,22 @@ public final class EntityOtherPlayerMPTransformer extends TransformerBase {
         boolean done = false;
         while (it.hasNext() && !done) {
             AbstractInsnNode node = it.next();
-            if (node instanceof FieldInsnNode &&
-                    node.getOpcode() == PUTFIELD &&
-                    ((FieldInsnNode) node).owner.equals(entityOtherPlayerMPClassName) &&
-                    (((FieldInsnNode) node).name.equals(limbSwingFieldName.split("!")[0]) || ((FieldInsnNode) node).name.equals(limbSwingFieldName.split("!")[1]))) {
+            if (node instanceof FieldInsnNode && node.getOpcode() == PUTFIELD
+                && ((FieldInsnNode) node).owner.equals(entityOtherPlayerMPClassName)
+                && (((FieldInsnNode) node).name.equals(limbSwingFieldName.split("!")[0])
+                    || ((FieldInsnNode) node).name.equals(limbSwingFieldName.split("!")[1]))) {
                 newList.add(node);
                 newList.add(new VarInsnNode(ALOAD, 0));
                 newList.add(new VarInsnNode(ALOAD, 0));
                 newList.add(new VarInsnNode(ALOAD, 0));
 
                 newList.add(new FieldInsnNode(GETFIELD, entityOtherPlayerMPClassName, isItemInUseFieldName, "Z"));
-                newList.add(new MethodInsnNode(INVOKESTATIC, "mods/battlegear2/client/utils/BattlegearClientUtils", "entityOtherPlayerIsItemInUseHook", "(L" + entityOtherPlayerMPClassName + ";Z)Z"));
+                newList.add(
+                    new MethodInsnNode(
+                        INVOKESTATIC,
+                        "mods/battlegear2/client/utils/BattlegearClientUtils",
+                        "entityOtherPlayerIsItemInUseHook",
+                        "(L" + entityOtherPlayerMPClassName + ";Z)Z"));
                 newList.add(new FieldInsnNode(PUTFIELD, entityOtherPlayerMPClassName, isItemInUseFieldName, "Z"));
 
                 node = it.next();
@@ -71,12 +77,15 @@ public final class EntityOtherPlayerMPTransformer extends TransformerBase {
     boolean processMethods(List<MethodNode> methods) {
         int found = 0;
         for (MethodNode mn : methods) {
-            if ((mn.name.equals(setCurrentItemMethodName.split("!")[0]) || mn.name.equals(setCurrentItemMethodName.split("!")[1])) && mn.desc.equals(setCurrentItemMethodDesc)) {
+            if ((mn.name.equals(setCurrentItemMethodName.split("!")[0])
+                || mn.name.equals(setCurrentItemMethodName.split("!")[1]))
+                && mn.desc.equals(setCurrentItemMethodDesc)) {
                 processSetCurrentItemMethod(mn);
                 found++;
             }
 
-            if ((mn.name.equals(onUpdateMethodName.split("!")[0]) || mn.name.equals(onUpdateMethodName.split("!")[1])) && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
+            if ((mn.name.equals(onUpdateMethodName.split("!")[0]) || mn.name.equals(onUpdateMethodName.split("!")[1]))
+                && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
                 processOnUpdateMethod2(mn);
                 found++;
             }

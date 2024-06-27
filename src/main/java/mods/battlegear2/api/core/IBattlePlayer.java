@@ -4,9 +4,10 @@ import net.minecraft.entity.Entity;
 
 /**
  * Interface added to EntityPlayer to support offhand management
+ * 
  * @author GotoLink
  */
-public interface IBattlePlayer{
+public interface IBattlePlayer {
 
     /**
      * A copied animation for the offhand, similar to EntityPlayer#swingItem()
@@ -21,6 +22,7 @@ public interface IBattlePlayer{
     /**
      * Hotswap the EntityPlayer current item to offhand, behaves like
      * EntityPlayer#attackTargetEntityWithCurrentItem(Entity)
+     * 
      * @param target to attack
      */
     void attackTargetEntityWithCurrentOffItem(Entity target);

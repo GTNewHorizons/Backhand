@@ -1,14 +1,18 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import java.util.Iterator;
+
 import org.objectweb.asm.tree.*;
 
-import java.util.Iterator;
+import mods.battlegear2.api.core.BattlegearTranslator;
 
 public final class ModelBipedTransformer extends TransformerMethodProcess {
 
     public ModelBipedTransformer() {
-        super("net.minecraft.client.model.ModelBiped", "func_78087_a", new String[]{"setRotationAngles", "(FFFFFFLnet/minecraft/entity/Entity;)V"});
+        super(
+            "net.minecraft.client.model.ModelBiped",
+            "func_78087_a",
+            new String[] { "setRotationAngles", "(FFFFFFLnet/minecraft/entity/Entity;)V" });
     }
 
     private String modelBipedClassName;
@@ -33,7 +37,9 @@ public final class ModelBipedTransformer extends TransformerMethodProcess {
             nextInsn = it.next();
             if (nextInsn.getOpcode() == ALOAD && ((VarInsnNode) nextInsn).var == 0) {
                 AbstractInsnNode follow = nextInsn.getNext();
-                if (follow.getOpcode() == GETFIELD && ((FieldInsnNode) follow).desc.equals("Z") && (((FieldInsnNode) follow).name.equals(isSneakFieldName.split("!")[0]) || ((FieldInsnNode) follow).name.equals(isSneakFieldName.split("!")[1]))) {
+                if (follow.getOpcode() == GETFIELD && ((FieldInsnNode) follow).desc.equals("Z")
+                    && (((FieldInsnNode) follow).name.equals(isSneakFieldName.split("!")[0])
+                        || ((FieldInsnNode) follow).name.equals(isSneakFieldName.split("!")[1]))) {
                     break;
                 }
             }
@@ -44,9 +50,12 @@ public final class ModelBipedTransformer extends TransformerMethodProcess {
             newInsn.add(new VarInsnNode(ALOAD, 7));
             newInsn.add(new VarInsnNode(ALOAD, 0));
             newInsn.add(new VarInsnNode(FLOAD, 6));
-            newInsn.add(new MethodInsnNode(INVOKESTATIC,
+            newInsn.add(
+                new MethodInsnNode(
+                    INVOKESTATIC,
                     "mods/battlegear2/client/utils/BattlegearRenderHelper",
-                    "moveOffHandArm", "(L" + entityClassName + ";L" + modelBipedClassName + ";F)V"));
+                    "moveOffHandArm",
+                    "(L" + entityClassName + ";L" + modelBipedClassName + ";F)V"));
             method.instructions.insertBefore(nextInsn, newInsn);
         }
     }

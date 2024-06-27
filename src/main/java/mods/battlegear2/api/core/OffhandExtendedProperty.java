@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class OffhandExtendedProperty implements IExtendedEntityProperties {
+
     public EntityPlayer player;
     public boolean syncOffhand = true;
     private ItemStack offhandItem;
@@ -31,15 +32,14 @@ public class OffhandExtendedProperty implements IExtendedEntityProperties {
     }
 
     @Override
-    public void init(Entity entity, World world) {
-    }
+    public void init(Entity entity, World world) {}
 
-    public ItemStack getOffhandItem(){
+    public ItemStack getOffhandItem() {
         return offhandItem;
     }
 
     public void setOffhandItem(ItemStack stack) {
-        if (!ItemStack.areItemStacksEqual(stack,this.offhandItem)) {
+        if (!ItemStack.areItemStacksEqual(stack, this.offhandItem)) {
             this.syncOffhand = true;
         }
         this.offhandItem = stack;

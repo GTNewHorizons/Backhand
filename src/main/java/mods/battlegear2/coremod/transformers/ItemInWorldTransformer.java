@@ -1,14 +1,19 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
+import java.util.Iterator;
+
 import org.objectweb.asm.tree.*;
 
-import java.util.Iterator;
+import mods.battlegear2.api.core.BattlegearTranslator;
 
 public final class ItemInWorldTransformer extends TransformerMethodProcess {
 
     public ItemInWorldTransformer() {
-        super("net.minecraft.server.management.ItemInWorldManager", "func_73085_a", new String[]{"tryUseItem", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;)Z"});
+        super(
+            "net.minecraft.server.management.ItemInWorldManager",
+            "func_73085_a",
+            new String[] { "tryUseItem",
+                "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;)Z" });
     }
 
     private String entityPlayerClassName;
@@ -33,14 +38,19 @@ public final class ItemInWorldTransformer extends TransformerMethodProcess {
         while (it.hasNext()) {
             AbstractInsnNode node = it.next();
 
-            if (node instanceof FieldInsnNode &&
-                    ((FieldInsnNode) node).owner.equals(inventoryPlayerClassName) &&
-                    (((FieldInsnNode) node).name.equals(mainInventoryArrayFieldName.split("!")[0]) || ((FieldInsnNode) node).name.equals(mainInventoryArrayFieldName.split("!")[1])) &&
-                    ((FieldInsnNode) node).desc.equals("[L" + itemStackClassName + ";")) {
+            if (node instanceof FieldInsnNode && ((FieldInsnNode) node).owner.equals(inventoryPlayerClassName)
+                && (((FieldInsnNode) node).name.equals(mainInventoryArrayFieldName.split("!")[0])
+                    || ((FieldInsnNode) node).name.equals(mainInventoryArrayFieldName.split("!")[1]))
+                && ((FieldInsnNode) node).desc.equals("[L" + itemStackClassName + ";")) {
 
-                //Do Nothing
+                // Do Nothing
             } else if (node.getOpcode() == AASTORE) {
-                newList.add(new MethodInsnNode(INVOKEVIRTUAL, inventoryPlayerClassName, setInventorySlotMethodName, setInventorySlotMethodDesc));
+                newList.add(
+                    new MethodInsnNode(
+                        INVOKEVIRTUAL,
+                        inventoryPlayerClassName,
+                        setInventorySlotMethodName,
+                        setInventorySlotMethodDesc));
             } else {
                 newList.add(node);
             }
@@ -58,8 +68,8 @@ public final class ItemInWorldTransformer extends TransformerMethodProcess {
 
         playerInventoryFieldName = "field_71071_by!inventory";
         mainInventoryArrayFieldName = "field_70462_a!mainInventory";
-        setInventorySlotMethodName =
-                BattlegearTranslator.getMapedMethodName("func_70299_a", "setInventorySlotContents");
+        setInventorySlotMethodName = BattlegearTranslator
+            .getMapedMethodName("func_70299_a", "setInventorySlotContents");
         setInventorySlotMethodDesc = "(IL" + itemStackClassName + ";)V";
     }
 

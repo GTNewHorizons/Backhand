@@ -1,12 +1,14 @@
 package mods.battlegear2.packet;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import io.netty.buffer.ByteBuf;
-import mods.battlegear2.api.core.BattlegearUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
+import mods.battlegear2.api.core.BattlegearUtils;
+
 public class OffhandToServerPacket extends AbstractMBPacket {
+
     public static final String packetName = "MB2|OffhandToServer";
 
     private ItemStack offhandItem;
@@ -38,7 +40,7 @@ public class OffhandToServerPacket extends AbstractMBPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
             ItemStack offhandItem = ByteBufUtils.readItemStack(inputStream);
-            BattlegearUtils.setPlayerOffhandItem(this.player,offhandItem);
+            BattlegearUtils.setPlayerOffhandItem(this.player, offhandItem);
         }
     }
 }

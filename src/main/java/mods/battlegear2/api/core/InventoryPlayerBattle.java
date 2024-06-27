@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import xonin.backhand.Backhand;
 
 /**
@@ -13,6 +14,7 @@ import xonin.backhand.Backhand;
  * Replacement for the player inventory
  */
 public class InventoryPlayerBattle extends InventoryPlayer {
+
     public static final int OFFHAND_HOTBAR_SLOT = 9;
 
     public InventoryPlayerBattle(EntityPlayer entityPlayer) {
@@ -21,6 +23,7 @@ public class InventoryPlayerBattle extends InventoryPlayer {
 
     /**
      * Patch used for "set current slot" vanilla packets
+     * 
      * @param id the value to test for currentItem setting
      * @return true if it is possible for currentItem to be set with this value
      */
@@ -28,30 +31,30 @@ public class InventoryPlayerBattle extends InventoryPlayer {
         return (id >= 0 && id < getHotbarSize()) || id == OFFHAND_HOTBAR_SLOT;
     }
 
-    public ItemStack getOffhandItem(){
-        return BattlegearUtils.getOffhandEP(player).getOffhandItem();
+    public ItemStack getOffhandItem() {
+        return BattlegearUtils.getOffhandEP(player)
+            .getOffhandItem();
     }
 
     public void setOffhandItem(ItemStack stack) {
-        BattlegearUtils.getOffhandEP(player).setOffhandItem(stack);
+        BattlegearUtils.getOffhandEP(player)
+            .setOffhandItem(stack);
     }
 
     public int clearInventory(Item item, int metadata) {
         int amount = 0;
         ItemStack itemstack = this.getOffhandItem();
-        if (itemstack != null && (item == null || itemstack.getItem() == item) && (metadata <= -1 || itemstack.getItemDamage() == metadata))
-        {
+        if (itemstack != null && (item == null || itemstack.getItem() == item)
+            && (metadata <= -1 || itemstack.getItemDamage() == metadata)) {
             amount += itemstack.stackSize;
             this.setOffhandItem(null);
         }
 
-        return amount + super.clearInventory(item,metadata);
+        return amount + super.clearInventory(item, metadata);
     }
 
-    public boolean addItemStackToInventory(ItemStack itemStack)
-    {
-        if (itemStack == null || itemStack.stackSize == 0 || itemStack.getItem() == null)
-            return false;
+    public boolean addItemStackToInventory(ItemStack itemStack) {
+        if (itemStack == null || itemStack.stackSize == 0 || itemStack.getItem() == null) return false;
 
         if (!Backhand.isOffhandBlacklisted(itemStack)) {
             if (this.getOffhandItem() == null && getFirstEmptyStack() == -1) {
@@ -61,15 +64,23 @@ public class InventoryPlayerBattle extends InventoryPlayer {
                 return true;
             }
 
-            if (this.getOffhandItem() != null && this.getOffhandItem().getItem() == itemStack.getItem()
-                    && this.getOffhandItem().isStackable() && this.getOffhandItem().stackSize < this.getOffhandItem().getMaxStackSize()
-                    && this.getOffhandItem().stackSize < this.getInventoryStackLimit()
-                    && (!this.getOffhandItem().getHasSubtypes()
-                        || this.getOffhandItem().getItemDamage() == itemStack.getItemDamage())
-                        && ItemStack.areItemStackTagsEqual(this.getOffhandItem(), itemStack)) {
-                if (this.getOffhandItem().stackSize + itemStack.stackSize > this.getOffhandItem().getMaxStackSize()) {
+            if (this.getOffhandItem() != null && this.getOffhandItem()
+                .getItem() == itemStack.getItem()
+                && this.getOffhandItem()
+                    .isStackable()
+                && this.getOffhandItem().stackSize < this.getOffhandItem()
+                    .getMaxStackSize()
+                && this.getOffhandItem().stackSize < this.getInventoryStackLimit()
+                && (!this.getOffhandItem()
+                    .getHasSubtypes()
+                    || this.getOffhandItem()
+                        .getItemDamage() == itemStack.getItemDamage())
+                && ItemStack.areItemStackTagsEqual(this.getOffhandItem(), itemStack)) {
+                if (this.getOffhandItem().stackSize + itemStack.stackSize > this.getOffhandItem()
+                    .getMaxStackSize()) {
                     itemStack.stackSize -= this.getOffhandItem().stackSize;
-                    this.getOffhandItem().stackSize = this.getOffhandItem().getMaxStackSize();
+                    this.getOffhandItem().stackSize = this.getOffhandItem()
+                        .getMaxStackSize();
                     BattlegearUtils.getOffhandEP(player).syncOffhand = true;
                     return super.addItemStackToInventory(itemStack);
                 } else {
@@ -83,12 +94,10 @@ public class InventoryPlayerBattle extends InventoryPlayer {
         return super.addItemStackToInventory(itemStack);
     }
 
-    public boolean consumeInventoryItem(Item item)
-    {
-        if (this.getOffhandItem() != null && this.getOffhandItem().getItem() == item)
-        {
-            if (--this.getOffhandItem().stackSize <= 0)
-            {
+    public boolean consumeInventoryItem(Item item) {
+        if (this.getOffhandItem() != null && this.getOffhandItem()
+            .getItem() == item) {
+            if (--this.getOffhandItem().stackSize <= 0) {
                 this.setOffhandItem(null);
             }
             return true;
@@ -97,10 +106,9 @@ public class InventoryPlayerBattle extends InventoryPlayer {
         }
     }
 
-    public boolean hasItem(Item item)
-    {
-        if (this.getOffhandItem() != null && this.getOffhandItem().getItem() == item)
-        {
+    public boolean hasItem(Item item) {
+        if (this.getOffhandItem() != null && this.getOffhandItem()
+            .getItem() == item) {
             return true;
         }
 
@@ -109,6 +117,7 @@ public class InventoryPlayerBattle extends InventoryPlayer {
 
     /**
      * Copy the slots content from another instance, usually for changing dimensions
+     * 
      * @param par1InventoryPlayer the instance to copy from
      */
     @Override
@@ -117,12 +126,12 @@ public class InventoryPlayerBattle extends InventoryPlayer {
         this.armorInventory = new ItemStack[par1InventoryPlayer.armorInventory.length];
         super.copyInventory(par1InventoryPlayer);
         if (par1InventoryPlayer instanceof InventoryPlayerBattle) {
-            this.setOffhandItem(ItemStack.copyItemStack(((InventoryPlayerBattle) par1InventoryPlayer).getOffhandItem()));
+            this.setOffhandItem(
+                ItemStack.copyItemStack(((InventoryPlayerBattle) par1InventoryPlayer).getOffhandItem()));
         }
     }
 
-    public void dropAllItems()
-    {
+    public void dropAllItems() {
         super.dropAllItems();
         this.player.func_146097_a(this.getOffhandItem(), true, false);
         this.setOffhandItem(null);

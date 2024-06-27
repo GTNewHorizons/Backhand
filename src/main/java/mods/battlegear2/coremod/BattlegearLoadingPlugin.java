@@ -1,15 +1,15 @@
 package mods.battlegear2.coremod;
 
+import java.io.File;
+import java.util.Map;
+
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.Name;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 import mods.battlegear2.api.core.BattlegearTranslator;
 
-import java.io.File;
-import java.util.Map;
-
-@TransformerExclusions({"mods.battlegear2.coremod"})
+@TransformerExclusions({ "mods.battlegear2.coremod" })
 @Name("Mine and Blade: Battlegear2")
 @SortingIndex(1500)
 public final class BattlegearLoadingPlugin implements IFMLLoadingPlugin {
@@ -23,15 +23,9 @@ public final class BattlegearLoadingPlugin implements IFMLLoadingPlugin {
     public static final String AccessTransformer = "mods.battlegear2.coremod.transformers.BattlegearAccessTransformer";
     public static File debugOutputLocation;
 
-    public static final String[] transformers = 
-    		new String[]{
-		        EntityPlayerTransformer,
-		        NetClientHandlerTransformer,
-		        PlayerControllerMPTransformer,
-		        ItemInWorldTransformer,
-		        EntityAIControlledTransformer,
-		        EntityOtherPlayerMPTransformer
-   			};
+    public static final String[] transformers = new String[] { EntityPlayerTransformer, NetClientHandlerTransformer,
+        PlayerControllerMPTransformer, ItemInWorldTransformer, EntityAIControlledTransformer,
+        EntityOtherPlayerMPTransformer };
 
     @Override
     public String[] getASMTransformerClass() {
@@ -39,11 +33,13 @@ public final class BattlegearLoadingPlugin implements IFMLLoadingPlugin {
     }
 
     @Override
-    public String getAccessTransformerClass() { return AccessTransformer; }
+    public String getAccessTransformerClass() {
+        return AccessTransformer;
+    }
 
     @Override
     public String getModContainerClass() {
-        //return "mods.battlegear2.coremod.BattlegearCoremodContainer";
+        // return "mods.battlegear2.coremod.BattlegearCoremodContainer";
         return null;
     }
 
@@ -54,7 +50,10 @@ public final class BattlegearLoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-    	debugOutputLocation = new File(data.get("mcLocation").toString(), "bg edited classes");
+        debugOutputLocation = new File(
+            data.get("mcLocation")
+                .toString(),
+            "bg edited classes");
         BattlegearTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
     }
 

@@ -1,10 +1,12 @@
 package mods.battlegear2.packet;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 
+import io.netty.buffer.ByteBuf;
+
 public class OffhandWorldHotswapPacket extends AbstractMBPacket {
+
     public static final String packetName = "MB2|WorldHotswap";
 
     boolean ignoreSwitching;

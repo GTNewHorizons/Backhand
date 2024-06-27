@@ -1,7 +1,8 @@
 package mods.battlegear2.coremod.transformers;
 
-import mods.battlegear2.api.core.BattlegearTranslator;
-import mods.battlegear2.api.core.IBattlePlayer;
+import java.util.List;
+import java.util.ListIterator;
+
 import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
 
 import org.apache.logging.log4j.Level;
@@ -9,8 +10,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import java.util.List;
-import java.util.ListIterator;
+import mods.battlegear2.api.core.BattlegearTranslator;
+import mods.battlegear2.api.core.IBattlePlayer;
 
 public final class EntityPlayerTransformer extends TransformerBase {
 
@@ -76,48 +77,78 @@ public final class EntityPlayerTransformer extends TransformerBase {
                     }
                 }
                 found++;
-            } else if ((mn.name.equals(onItemFinishMethodName.split("!")[0]) || mn.name.equals(onItemFinishMethodName.split("!")[1])) && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
-                sendPatchLog("onItemUseFinish");
-                InsnList newList = new InsnList();
-                ListIterator<AbstractInsnNode> it = mn.instructions.iterator();
-                while (it.hasNext()) {
-                    AbstractInsnNode next = it.next();
-                    if (next instanceof MethodInsnNode && ((MethodInsnNode) next).owner.equals("net/minecraftforge/event/ForgeEventFactory")) {
-                        found++;
-                        logger.log(Level.INFO, "net/minecraftforge/event/ForgeEventFactory" + " EntityPlayer!!!");
-                        int index = ((MethodInsnNode) next).desc.indexOf(")");
-                        String newDesc = ((MethodInsnNode) next).desc.substring(0, index) + "I" + ((MethodInsnNode) next).desc.substring(index);
-                        newList.add(new VarInsnNode(ILOAD, 1));
-                        newList.add(new MethodInsnNode(INVOKESTATIC, UTILITY_CLASS, "beforeFinishUseEvent", newDesc));
-                    } else {
-                        newList.add(next);
+            } else if ((mn.name.equals(onItemFinishMethodName.split("!")[0])
+                || mn.name.equals(onItemFinishMethodName.split("!")[1])) && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
+                    sendPatchLog("onItemUseFinish");
+                    InsnList newList = new InsnList();
+                    ListIterator<AbstractInsnNode> it = mn.instructions.iterator();
+                    while (it.hasNext()) {
+                        AbstractInsnNode next = it.next();
+                        if (next instanceof MethodInsnNode
+                            && ((MethodInsnNode) next).owner.equals("net/minecraftforge/event/ForgeEventFactory")) {
+                            found++;
+                            logger.log(Level.INFO, "net/minecraftforge/event/ForgeEventFactory" + " EntityPlayer!!!");
+                            int index = ((MethodInsnNode) next).desc.indexOf(")");
+                            String newDesc = ((MethodInsnNode) next).desc.substring(0, index) + "I"
+                                + ((MethodInsnNode) next).desc.substring(index);
+                            newList.add(new VarInsnNode(ILOAD, 1));
+                            newList
+                                .add(new MethodInsnNode(INVOKESTATIC, UTILITY_CLASS, "beforeFinishUseEvent", newDesc));
+                        } else {
+                            newList.add(next);
+                        }
                     }
-                }
-                mn.instructions = newList;
-            } else if ((mn.name.equals(onUpdateMethodName.split("!")[0]) || mn.name.equals(onUpdateMethodName.split("!")[1])) && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
-                sendPatchLog("onUpdate");
-                InsnList newList = new InsnList();
-                ListIterator<AbstractInsnNode> it = mn.instructions.iterator();
-                while (it.hasNext()) {
-                    AbstractInsnNode next = it.next();
-                    if (next instanceof FieldInsnNode && ((FieldInsnNode) next).owner.equals(entityPlayerClassName) && (((FieldInsnNode) next).name.equals(playerInventoryFieldName.split("!")[0]) || ((FieldInsnNode) next).name.equals(playerInventoryFieldName.split("!")[1]))) {
-                        found++;
-                        logger.log(Level.INFO, entityPlayerClassName + "EntityPlayer!!!");
-                        newList.add(new VarInsnNode(ALOAD, 0));
-                        newList.add(new FieldInsnNode(GETFIELD, entityPlayerClassName, playerItemInUseField, "L" + itemStackClassName + ";"));
-                        newList.add(new MethodInsnNode(INVOKESTATIC, UTILITY_CLASS, "getCurrentItemOnUpdate", "(L" + entityPlayerClassName + ";L" + itemStackClassName + ";)L" + itemStackClassName + ";"));
-                        next = it.next();
-                    } else {
-                        newList.add(next);
-                    }
-                }
-                mn.instructions = newList;
-            } else if ((mn.name.equals(setCurrentItemArmourMethodName.split("!")[0]) || mn.name.equals(setCurrentItemArmourMethodName.split("!")[1])) && mn.desc.equals(setCurrentItemArmourMethodDesc)) {
+                    mn.instructions = newList;
+                } else if ((mn.name.equals(onUpdateMethodName.split("!")[0])
+                    || mn.name.equals(onUpdateMethodName.split("!")[1])) && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
+                        sendPatchLog("onUpdate");
+                        InsnList newList = new InsnList();
+                        ListIterator<AbstractInsnNode> it = mn.instructions.iterator();
+                        while (it.hasNext()) {
+                            AbstractInsnNode next = it.next();
+                            if (next instanceof FieldInsnNode
+                                && ((FieldInsnNode) next).owner.equals(entityPlayerClassName)
+                                && (((FieldInsnNode) next).name.equals(playerInventoryFieldName.split("!")[0])
+                                    || ((FieldInsnNode) next).name.equals(playerInventoryFieldName.split("!")[1]))) {
+                                found++;
+                                logger.log(Level.INFO, entityPlayerClassName + "EntityPlayer!!!");
+                                newList.add(new VarInsnNode(ALOAD, 0));
+                                newList.add(
+                                    new FieldInsnNode(
+                                        GETFIELD,
+                                        entityPlayerClassName,
+                                        playerItemInUseField,
+                                        "L" + itemStackClassName + ";"));
+                                newList.add(
+                                    new MethodInsnNode(
+                                        INVOKESTATIC,
+                                        UTILITY_CLASS,
+                                        "getCurrentItemOnUpdate",
+                                        "(L" + entityPlayerClassName
+                                            + ";L"
+                                            + itemStackClassName
+                                            + ";)L"
+                                            + itemStackClassName
+                                            + ";"));
+                                next = it.next();
+                            } else {
+                                newList.add(next);
+                            }
+                        }
+                        mn.instructions = newList;
+                    } else if ((mn.name.equals(setCurrentItemArmourMethodName.split("!")[0])
+                        || mn.name.equals(setCurrentItemArmourMethodName.split("!")[1]))
+                        && mn.desc.equals(setCurrentItemArmourMethodDesc)) {
 
-                sendPatchLog("setCurrentItemOrArmor");
-                replaceInventoryArrayAccess(mn, entityPlayerClassName, playerInventoryFieldName, mn.maxStack, mn.maxLocals);
-                found++;
-            }
+                            sendPatchLog("setCurrentItemOrArmor");
+                            replaceInventoryArrayAccess(
+                                mn,
+                                entityPlayerClassName,
+                                playerInventoryFieldName,
+                                mn.maxStack,
+                                mn.maxLocals);
+                            found++;
+                        }
         }
 
         logger.log(Level.INFO, "\tCreating new methods in EntityPlayer");
@@ -130,13 +161,22 @@ public final class EntityPlayerTransformer extends TransformerBase {
 
     private MethodNode generateAttackOffhandMethod() {
 
-        MethodNode mv = new MethodNode(ACC_PUBLIC, "attackTargetEntityWithCurrentOffItem", "(L" + entityClassName + ";)V", null, null);
+        MethodNode mv = new MethodNode(
+            ACC_PUBLIC,
+            "attackTargetEntityWithCurrentOffItem",
+            "(L" + entityClassName + ";)V",
+            null,
+            null);
         mv.visitCode();
         Label l0 = new Label();
         mv.visitLabel(l0);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKESTATIC, UTILITY_CLASS, "attackTargetEntityWithCurrentOffItem", "(L" + entityPlayerClassName + ";L" + entityClassName + ";)V");
+        mv.visitMethodInsn(
+            INVOKESTATIC,
+            UTILITY_CLASS,
+            "attackTargetEntityWithCurrentOffItem",
+            "(L" + entityPlayerClassName + ";L" + entityClassName + ";)V");
         Label l1 = new Label();
         mv.visitLabel(l1);
         mv.visitInsn(RETURN);
@@ -218,7 +258,7 @@ public final class EntityPlayerTransformer extends TransformerBase {
         mv.visitInsn(FADD);
         mv.visitVarInsn(FSTORE, 2);
         mv.visitLabel(l2);
-        mv.visitFrame(F_APPEND, 1, new Object[]{FLOAT}, 0, null);
+        mv.visitFrame(F_APPEND, 1, new Object[] { FLOAT }, 0, null);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, entityPlayerClassName, "prevOffHandSwingProgress", "F");
         mv.visitVarInsn(FLOAD, 2);
@@ -289,7 +329,7 @@ public final class EntityPlayerTransformer extends TransformerBase {
         mv.visitFieldInsn(PUTFIELD, entityPlayerClassName, "isOffHandSwingInProgress", "Z");
         mv.visitJumpInsn(GOTO, l7);
         mv.visitLabel(l4);
-        mv.visitFrame(F_APPEND, 1, new Object[]{INTEGER}, 0, null);
+        mv.visitFrame(F_APPEND, 1, new Object[] { INTEGER }, 0, null);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitInsn(ICONST_0);
         mv.visitFieldInsn(PUTFIELD, entityPlayerClassName, "offHandSwingProgressInt", "I");
@@ -370,7 +410,8 @@ public final class EntityPlayerTransformer extends TransformerBase {
         setCurrentItemArmourMethodName = "func_70062_b!setCurrentItemOrArmor";
         setCurrentItemArmourMethodDesc = "(IL" + itemStackClassName + ";)V";
         onUpdateMethodName = "func_70071_h_!onUpdate";
-        playerUpdateArmSwingMethodName = CustomLoadingPlugin.isObfuscated() ? "func_82168_bl" : "updateArmSwingProgress";
+        playerUpdateArmSwingMethodName = CustomLoadingPlugin.isObfuscated() ? "func_82168_bl"
+            : "updateArmSwingProgress";
         getArmSwingEndMethodName = CustomLoadingPlugin.isObfuscated() ? "func_82166_i" : "getArmSwingAnimationEnd";
     }
 }

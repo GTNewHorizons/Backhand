@@ -10,4 +10,7 @@ import java.lang.annotation.Target;
  * specifically getLocalVariables.
  */
 @Target(ElementType.PARAMETER)
-public @interface LocalVariable {int number();}
+public @interface LocalVariable {
+
+    int number();
+}

@@ -1,5 +1,10 @@
 package xonin.backhand;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -10,20 +15,20 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import mods.battlegear2.BattlemodeHookContainerClass;
 import mods.battlegear2.packet.BattlegearPacketHandler;
 import mods.battlegear2.utils.BattlegearConfig;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 
-@Mod(modid = "backhand", name = "Backhand", version = "$version", guiFactory = "xonin.backhand.client.gui.BackhandGuiFactory")
+@Mod(
+    modid = "backhand",
+    name = "Backhand",
+    version = "$version",
+    guiFactory = "xonin.backhand.client.gui.BackhandGuiFactory")
 public class Backhand {
+
     public static Backhand Instance;
 
     public static FMLEventChannel Channel;
     public static FMLEventChannel ChannelPlayer;
 
-    @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy",
-                serverSide = "xonin.backhand.CommonProxy")
+    @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
     public static BattlegearPacketHandler packetHandler;
 
@@ -54,10 +59,14 @@ public class Backhand {
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
 
         MinecraftForge.EVENT_BUS.register(new ServerEventsHandler());
-        FMLCommonHandler.instance().bus().register(new ServerTickHandler());
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new ServerTickHandler());
 
         MinecraftForge.EVENT_BUS.register(BattlemodeHookContainerClass.INSTANCE);
-        FMLCommonHandler.instance().bus().register(BattlemodeHookContainerClass.INSTANCE);
+        FMLCommonHandler.instance()
+            .bus()
+            .register(BattlemodeHookContainerClass.INSTANCE);
     }
 
     @Mod.EventHandler
@@ -66,16 +75,16 @@ public class Backhand {
         packetHandler.register();
     }
 
-    public static MinecraftServer getServer(){
+    public static MinecraftServer getServer() {
         return MinecraftServer.getServer();
     }
 
     public static boolean isOffhandBlacklisted(ItemStack stack) {
-        if (stack == null)
-            return false;
+        if (stack == null) return false;
 
         for (String itemName : offhandBlacklist) {
-            if (stack.getItem().delegate.name().equals(itemName)) {
+            if (stack.getItem().delegate.name()
+                .equals(itemName)) {
                 return true;
             }
         }
