@@ -1,0 +1,120 @@
+package xonin.backhand.coremod.transformers;
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
+
+import xonin.backhand.api.core.BackhandTranslator;
+
+public final class EntityOtherPlayerMPTransformer extends TransformerBase {
+
+    public EntityOtherPlayerMPTransformer() {
+        super("net.minecraft.client.entity.EntityOtherPlayerMP");
+    }
+
+    private String entityOtherPlayerMPClassName;
+    private String playerInventoryFieldName;
+    private String onUpdateMethodName;
+    private String setCurrentItemMethodName;
+    private String setCurrentItemMethodDesc;
+    private String isItemInUseFieldName;
+    private String limbSwingFieldName;
+
+    private void processOnUpdateMethod2(MethodNode mn) {
+
+        sendPatchLog("onUpdate");
+        InsnList newList = new InsnList();
+
+        Iterator<AbstractInsnNode> it = mn.instructions.iterator();
+
+        boolean done = false;
+        while (it.hasNext() && !done) {
+            AbstractInsnNode node = it.next();
+            if (node instanceof FieldInsnNode && node.getOpcode() == PUTFIELD
+                && ((FieldInsnNode) node).owner.equals(entityOtherPlayerMPClassName)
+                && (((FieldInsnNode) node).name.equals(limbSwingFieldName.split("!")[0])
+                    || ((FieldInsnNode) node).name.equals(limbSwingFieldName.split("!")[1]))) {
+                newList.add(node);
+                newList.add(new VarInsnNode(ALOAD, 0));
+                newList.add(new VarInsnNode(ALOAD, 0));
+                newList.add(new VarInsnNode(ALOAD, 0));
+
+                newList.add(new FieldInsnNode(GETFIELD, entityOtherPlayerMPClassName, isItemInUseFieldName, "Z"));
+                newList.add(
+                    new MethodInsnNode(
+                        INVOKESTATIC,
+                        "xonin/backhand/client/utils/BackhandClientUtils",
+                        "entityOtherPlayerIsItemInUseHook",
+                        "(L" + entityOtherPlayerMPClassName + ";Z)Z"));
+                newList.add(new FieldInsnNode(PUTFIELD, entityOtherPlayerMPClassName, isItemInUseFieldName, "Z"));
+
+                node = it.next();
+                while (!(node instanceof InsnNode && node.getOpcode() == RETURN)) {
+                    node = it.next();
+                }
+                newList.add(node);
+                while (it.hasNext()) {
+                    node = it.next();
+                    newList.add(node);
+                }
+
+                done = true;
+            } else {
+                newList.add(node);
+            }
+
+        }
+        mn.instructions = newList;
+    }
+
+    private void processSetCurrentItemMethod(MethodNode mn) {
+        sendPatchLog("setCurrentItem");
+        replaceInventoryArrayAccess(mn, entityOtherPlayerMPClassName, playerInventoryFieldName, 4, 3, 3);
+    }
+
+    @Override
+    boolean processMethods(List<MethodNode> methods) {
+        int found = 0;
+        for (MethodNode mn : methods) {
+            if ((mn.name.equals(setCurrentItemMethodName.split("!")[0])
+                || mn.name.equals(setCurrentItemMethodName.split("!")[1]))
+                && mn.desc.equals(setCurrentItemMethodDesc)) {
+                processSetCurrentItemMethod(mn);
+                found++;
+            }
+
+            if ((mn.name.equals(onUpdateMethodName.split("!")[0]) || mn.name.equals(onUpdateMethodName.split("!")[1]))
+                && mn.desc.equals(SIMPLEST_METHOD_DESC)) {
+                processOnUpdateMethod2(mn);
+                found++;
+            }
+        }
+        return found == 2;
+    }
+
+    @Override
+    boolean processFields(List<FieldNode> fields) {
+        return true;
+    }
+
+    @Override
+    void setupMappings() {
+        String itemStackClassName = BackhandTranslator.getMapedClassName("item.ItemStack");
+        entityOtherPlayerMPClassName = BackhandTranslator.getMapedClassName("client.entity.EntityOtherPlayerMP");
+
+        isItemInUseFieldName = BackhandTranslator.getMapedFieldName("field_71186_a", "isItemInUse");
+        limbSwingFieldName = "field_70754_ba!limbSwing";
+        playerInventoryFieldName = "field_71071_by!inventory";
+        setCurrentItemMethodName = "func_70062_b!setCurrentItemOrArmor";
+        setCurrentItemMethodDesc = "(IL" + itemStackClassName + ";)V";
+        onUpdateMethodName = "func_70071_h_!onUpdate";
+    }
+}

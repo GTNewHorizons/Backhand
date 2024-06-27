@@ -1,7 +1,8 @@
 package net.tclproject.mysteriumlib.asm.annotations;
 
 // TODO: Add this everywhere
-/* Copyright TCLProject - All Rights Reserved
+/*
+ * Copyright TCLProject - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by TCLProject <endermcraftmail@gmail.com>, December 2020
@@ -28,17 +29,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Fix {
 
-	/**
+    /**
      * Specifies a condition, on which after the fix method has been called, return will be called.
      * If the target method doesn't return void, by default it will return the value that the fix returned.
      * You can override that using a few parameters in this annotation:
      * anotherMethodReturned, nullReturned and %type%AlwaysReturned.
      */
-	EnumReturnSetting returnSetting() default EnumReturnSetting.NEVER;
+    EnumReturnSetting returnSetting() default EnumReturnSetting.NEVER;
 
     /**
      * Specifies when the fix method will be called.
-     * FIRST will be inserted first, LAST will be inserted last therefore will be the actual first/last set of instructions.
+     * FIRST will be inserted first, LAST will be inserted last therefore will be the actual first/last set of
+     * instructions.
      */
     FixOrder order() default FixOrder.USUAL;
 
@@ -69,10 +71,10 @@ public @interface Fix {
     /**
      * Allows not only to insert fixes into already existing methods, but also add new ones. This can be useful,
      * if you need to override a method of the superclass. Doesn't actually add anything inside the target method except
-     * for a super call (if possible) and a return statement, so you have to insert a fix into the created method to add some functionality.
+     * for a super call (if possible) and a return statement, so you have to insert a fix into the created method to add
+     * some functionality.
      */
     boolean createNewMethod() default false;
-
 
     /**
      * Allows to make the fix mandatory for the game to launch. If the insertion of the fix fails,
@@ -94,7 +96,8 @@ public @interface Fix {
      * <p/>
      * NOTE: the line numbers in mcp and in minecraft are sometimes different, beware.
      */
-    @Deprecated int insertOnLine() default -1;
+    @Deprecated
+    int insertOnLine() default -1;
 
     /**
      * If you specify this name, when return will be called in the target method, this method will be called.
@@ -113,34 +116,42 @@ public @interface Fix {
      */
 
     boolean booleanAlwaysReturned() default false;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     byte byteAlwaysReturned() default 0;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     short shortAlwaysReturned() default 0;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     int intAlwaysReturned() default 0;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     long longAlwaysReturned() default 0L;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     float floatAlwaysReturned() default 0.0F;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     double doubleAlwaysReturned() default 0.0D;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */
     char charAlwaysReturned() default 0;
+
     /**
      * If you specify one of those, it will be returned instead of the original value from the target method.
      */

@@ -1,10 +1,10 @@
 [
 {
-  "modid": "backhand",
-  "name": "Backhand",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "A backport of the vanilla Minecraft offhand for 1.7.10.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
+  "version": "${modVersion}",
+  "mcversion": "${minecraftVersion}",
   "url": "https://modrinth.com/mod/backhand",
   "updateUrl": "",
   "authorList": ["LouisXIV"],
