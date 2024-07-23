@@ -34,6 +34,6 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.6.11-GTNH:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.6.14-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.6.2:dev")
 }
