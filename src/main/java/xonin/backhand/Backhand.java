@@ -13,7 +13,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
@@ -31,30 +30,24 @@ public class Backhand {
     @Mod.Instance
     public static Backhand Instance;
 
-    public static FMLEventChannel Channel;
-    public static FMLEventChannel ChannelPlayer;
-
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
     public static BackhandPacketHandler packetHandler;
 
-    public static boolean OffhandAttack = false;
-    public static boolean EmptyOffhand = false;
-    public static boolean OffhandBreakBlocks = false;
-    public static boolean UseOffhandArrows = true;
-    public static boolean UseOffhandBow = true;
-    public static boolean OffhandTickHotswap = true;
-    public static int AlternateOffhandSlot = 9;
-    public static boolean UseInventorySlot = false;
+    public static boolean OffhandAttack;
+    public static boolean EmptyOffhand;
+    public static boolean OffhandBreakBlocks;
+    public static boolean UseOffhandArrows;
+    public static boolean UseOffhandBow;
+    public static boolean OffhandTickHotswap;
+    public static int AlternateOffhandSlot;
+    public static boolean UseInventorySlot;
     public static String[] offhandBlacklist;
 
-    public static boolean RenderEmptyOffhandAtRest = false;
+    public static boolean RenderEmptyOffhandAtRest;
 
     @Mod.EventHandler
     public void load(FMLPreInitializationEvent event) {
-        Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("Backhand");
-        ChannelPlayer = NetworkRegistry.INSTANCE.newEventDrivenChannel("BackhandPlayer");
-
         BackhandConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
 
         proxy.load();
