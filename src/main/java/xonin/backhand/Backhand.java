@@ -5,6 +5,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -16,12 +19,16 @@ import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
 
 @Mod(
-    modid = "backhand",
+    modid = Backhand.MODID,
     name = "Backhand",
     version = Tags.VERSION,
     guiFactory = "xonin.backhand.client.gui.BackhandGuiFactory")
 public class Backhand {
 
+    public static final String MODID = "backhand";
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
+
+    @Mod.Instance
     public static Backhand Instance;
 
     public static FMLEventChannel Channel;
@@ -42,10 +49,6 @@ public class Backhand {
     public static String[] offhandBlacklist;
 
     public static boolean RenderEmptyOffhandAtRest = false;
-
-    public Backhand() {
-        Instance = this;
-    }
 
     @Mod.EventHandler
     public void load(FMLPreInitializationEvent event) {

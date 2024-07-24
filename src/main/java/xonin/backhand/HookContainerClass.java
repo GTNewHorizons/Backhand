@@ -1,15 +1,11 @@
 package xonin.backhand;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBucket;
@@ -34,10 +30,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import org.apache.logging.log4j.Level;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -65,26 +58,20 @@ public final class HookContainerClass {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEntityJoin(EntityJoinWorldEvent event) {
-        if (event.entity instanceof EntityPlayer && !(isFake(event.entity))) {
+        if (event.entity instanceof EntityPlayer player && !(isFake(player))) {
             if (FMLCommonHandler.instance()
                 .getEffectiveSide() == Side.SERVER) {
-                if (!(((EntityPlayer) event.entity).inventory instanceof InventoryPlayerBackhand)) {
-                    // throw new RuntimeException("Player inventory has been replaced with " + ((EntityPlayer)
-                    // event.entity).inventory.getClass());
-                    FMLLog.log(
-                        "Backhand",
-                        Level.INFO,
-                        "Player inventory has been replaced with "
-                            + ((EntityPlayer) event.entity).inventory.getClass());
+                if (!(player.inventory instanceof InventoryPlayerBackhand)) {
+                    Backhand.LOGGER.info("Player inventory has been replaced with {}", player.inventory.getClass());
                 }
                 Backhand.packetHandler.sendPacketToPlayer(
-                    new OffhandConfigSyncPacket((EntityPlayer) event.entity).generatePacket(),
+                    new OffhandConfigSyncPacket(player).generatePacket(),
                     (EntityPlayerMP) event.entity);
             }
-            ItemStack offhandItem = BackhandUtils.getOffhandItem((EntityPlayer) event.entity);
+            ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
             if (Backhand.isOffhandBlacklisted(offhandItem)) {
-                BackhandUtils.setPlayerOffhandItem((EntityPlayer) event.entity, null);
-                if (!((EntityPlayer) event.entity).inventory.addItemStackToInventory(offhandItem)) {
+                BackhandUtils.setPlayerOffhandItem(player, null);
+                if (!player.inventory.addItemStackToInventory(offhandItem)) {
                     event.entity.entityDropItem(offhandItem, 0);
                 }
             }
@@ -93,9 +80,8 @@ public final class HookContainerClass {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityConstructing(EntityEvent.EntityConstructing event) {
-        if (!(event.entity instanceof EntityPlayer && !(isFake(event.entity)))) return;
-        event.entity
-            .registerExtendedProperties("OffhandStorage", new OffhandExtendedProperty((EntityPlayer) event.entity));
+        if (!(event.entity instanceof EntityPlayer player && !(isFake(event.entity)))) return;
+        event.entity.registerExtendedProperties("OffhandStorage", new OffhandExtendedProperty(player));
     }
 
     public static MovingObjectPosition getRaytraceBlock(EntityPlayer p) {
@@ -116,8 +102,6 @@ public final class HookContainerClass {
         Vec3 testVectorFar = testVector.addVector(vectorX * reachLength, vectorY * reachLength, vectorZ * reachLength);
         return p.worldObj.rayTraceBlocks(testVector, testVectorFar, false);
     }
-
-    public static List<IInventory> tobeclosed = new ArrayList<IInventory>();
 
     @SubscribeEvent
     public void playerInteract(PlayerInteractEvent event) {
