@@ -57,15 +57,18 @@ public class ServerEventsHandler {
 
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         ItemStack mainhandItem = player.getCurrentEquippedItem();
+
         if (offhandItem == null) {
             return;
         }
 
-        Item totem = ModItems.TOTEM_OF_UNDYING.get();
+        if (Backhand.isEFRLoaded) {
+            Item totem = ModItems.TOTEM_OF_UNDYING.get();
 
-        if (offhandItem.getItem() == totem && (mainhandItem == null || mainhandItem.getItem() != totem)) {
-            BackhandUtils.swapOffhandItem(player);
-            regularHotSwap = true;
+            if (offhandItem.getItem() == totem && (mainhandItem == null || mainhandItem.getItem() != totem)) {
+                BackhandUtils.swapOffhandItem(player);
+                regularHotSwap = true;
+            }
         }
     }
 
@@ -92,7 +95,7 @@ public class ServerEventsHandler {
         boolean overrideWithOffhand = false;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(event.entityPlayer);
         if (offhandItem != null) {
-            if (offhandItem.getItem() instanceof ItemArrowTipped) {
+            if (Backhand.isEFRLoaded && offhandItem.getItem() instanceof ItemArrowTipped) {
                 overrideWithOffhand = true;
             }
 
@@ -145,7 +148,7 @@ public class ServerEventsHandler {
         boolean overrideWithOffhand = false;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (offhandItem != null) {
-            if (offhandItem.getItem() instanceof ItemArrowTipped) {
+            if (Backhand.isEFRLoaded && offhandItem.getItem() instanceof ItemArrowTipped) {
                 overrideWithOffhand = true;
             }
 
