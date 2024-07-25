@@ -1,17 +1,13 @@
 package xonin.backhand.client.utils;
 
-import java.nio.FloatBuffer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 
 import org.lwjgl.opengl.GL11;
 
@@ -45,18 +41,11 @@ public final class BackhandRenderHelper {
         }
     }
 
-    private static FloatBuffer colorBuffer = GLAllocation.createDirectFloatBuffer(16);
-    public static boolean renderingItem;
-    private static final Vec3 field_82884_b = Vec3.createVectorHelper(0.20000000298023224D, 1.0D, -0.699999988079071D)
-        .normalize();
-    private static final Vec3 field_82885_c = Vec3.createVectorHelper(-0.20000000298023224D, 1.0D, 0.699999988079071D)
-        .normalize();
-
+    @SuppressWarnings("SuspiciousNameCombination")
     public static void moveOffHandArm(Entity entity, ModelBiped biped, float frame) {
-        if (entity instanceof IBackhandPlayer) {
-            IBackhandPlayer player = (IBackhandPlayer) entity;
-            float offhandSwing = 0.0F;
-            offhandSwing = player.getOffSwingProgress(frame);
+        if (entity instanceof IBackhandPlayer player && (player != Minecraft.getMinecraft().thePlayer
+            || player.getOffSwingProgress(BackhandClientUtils.firstPersonFrame) != 0)) {
+            float offhandSwing = player.getOffSwingProgress(frame);
 
             if (offhandSwing > 0.0F) {
                 if (biped.bipedBody.rotateAngleY != 0.0F) {
@@ -66,14 +55,8 @@ public final class BackhandRenderHelper {
                 biped.bipedBody.rotateAngleY = -MathHelper
                     .sin(MathHelper.sqrt_float(offhandSwing) * (float) Math.PI * 2.0F) * 0.2F;
 
-                // biped.bipedRightArm.rotationPointZ = MathHelper.sin(biped.bipedBody.rotateAngleY) * 5.0F;
-                // biped.bipedRightArm.rotationPointX = -MathHelper.cos(biped.bipedBody.rotateAngleY) * 5.0F;
-
                 biped.bipedLeftArm.rotationPointZ = -MathHelper.sin(biped.bipedBody.rotateAngleY) * 5.0F;
                 biped.bipedLeftArm.rotationPointX = MathHelper.cos(biped.bipedBody.rotateAngleY) * 5.0F;
-
-                // biped.bipedRightArm.rotateAngleY += biped.bipedBody.rotateAngleY;
-                // biped.bipedRightArm.rotateAngleX += biped.bipedBody.rotateAngleY;
                 float f6 = 1.0F - offhandSwing;
                 f6 = 1.0F - f6 * f6 * f6;
                 double f8 = MathHelper.sin(f6 * (float) Math.PI) * 1.2D;

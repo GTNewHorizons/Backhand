@@ -2,10 +2,10 @@
 package xonin.backhand.packet;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.Backhand;
+import xonin.backhand.client.utils.BackhandClientUtils;
 
 public final class OffhandConfigSyncPacket extends AbstractPacket {
 
@@ -28,7 +28,7 @@ public final class OffhandConfigSyncPacket extends AbstractPacket {
         Backhand.OffhandTickHotswap = inputStream.readBoolean();
         Backhand.AlternateOffhandSlot = inputStream.readInt();
         Backhand.UseInventorySlot = inputStream.readBoolean();
-        MysteriumPatchesFixesO.receivedConfigs = true;
+        BackhandClientUtils.receivedConfigs = true;
     }
 
     @Override

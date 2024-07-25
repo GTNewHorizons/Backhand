@@ -494,7 +494,6 @@ public class BackhandUtils {
      */
     public static ItemStack beforeFinishUseEvent(EntityPlayer entityPlayer, ItemStack itemInUse, int itemInUseCount,
         ItemStack result, int previousStackSize) {
-        result = ForgeEventFactory.onItemUseFinish(entityPlayer, itemInUse, itemInUseCount, result);
         if (result != itemInUse || (result != null && result.stackSize != previousStackSize)) {
             // Compare with either hands content
             if (itemInUse == entityPlayer.getCurrentEquippedItem()) {

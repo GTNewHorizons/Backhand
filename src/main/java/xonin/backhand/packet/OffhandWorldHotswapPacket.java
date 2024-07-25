@@ -1,9 +1,9 @@
 package xonin.backhand.packet;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 
 import io.netty.buffer.ByteBuf;
+import xonin.backhand.client.utils.BackhandClientUtils;
 
 public class OffhandWorldHotswapPacket extends AbstractPacket {
 
@@ -29,6 +29,6 @@ public class OffhandWorldHotswapPacket extends AbstractPacket {
 
     @Override
     public void process(ByteBuf inputStream, EntityPlayer player) {
-        MysteriumPatchesFixesO.ignoreSetSlot = inputStream.readBoolean();
+        BackhandClientUtils.ignoreSetSlot = inputStream.readBoolean();
     }
 }
