@@ -37,7 +37,11 @@ public abstract class MixinModelBiped extends ModelBase {
 
     @Inject(
         method = "setRotationAngles",
-        at = @At(value = "FIELD", target = "Lnet/minecraft/client/model/ModelBiped;aimedBow:Z", shift = At.Shift.AFTER),
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/model/ModelBiped;aimedBow:Z",
+            shift = At.Shift.BY,
+            by = 2),
         cancellable = true)
     private void backhand$moveOffhandAimedBow(float f1, float f2, float f3, float f4, float f5, float f6, Entity entity,
         CallbackInfo ci) {
