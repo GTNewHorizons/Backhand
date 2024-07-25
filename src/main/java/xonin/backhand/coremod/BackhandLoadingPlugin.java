@@ -1,59 +1,36 @@
 package xonin.backhand.coremod;
 
-import java.io.File;
-import java.util.Map;
+import net.tclproject.mysteriumlib.asm.common.CustomClassTransformer;
+import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
+import net.tclproject.mysteriumlib.asm.common.FirstClassTransformer;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.Name;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
-import xonin.backhand.api.core.BackhandTranslator;
+import xonin.backhand.coremod.transformers.EntityAIControlledByPlayerTransformer;
+import xonin.backhand.coremod.transformers.EntityOtherPlayerMPTransformer;
+import xonin.backhand.coremod.transformers.EntityPlayerTransformer;
+import xonin.backhand.coremod.transformers.ItemInWorldTransformer;
+import xonin.backhand.coremod.transformers.ModelBipedTransformer;
+import xonin.backhand.coremod.transformers.NetClientHandlerTransformer;
+import xonin.backhand.coremod.transformers.PlayerControllerMPTransformer;
+import xonin.backhand.coremod.transformers.TransformerBase;
 
-@TransformerExclusions({ "xonin.backhand.coremod" })
-@Name("Mine and Blade: Battlegear2")
-@SortingIndex(1500)
-public final class BackhandLoadingPlugin implements IFMLLoadingPlugin {
+public final class BackhandLoadingPlugin extends CustomLoadingPlugin implements IFMLLoadingPlugin {
 
-    public static final String EntityPlayerTransformer = "xonin.backhand.coremod.transformers.EntityPlayerTransformer";
-    public static final String NetClientHandlerTransformer = "xonin.backhand.coremod.transformers.NetClientHandlerTransformer";
-    public static final String PlayerControllerMPTransformer = "xonin.backhand.coremod.transformers.PlayerControllerMPTransformer";
-    public static final String ItemInWorldTransformer = "xonin.backhand.coremod.transformers.ItemInWorldTransformer";
-    public static final String EntityAIControlledTransformer = "xonin.backhand.coremod.transformers.EntityAIControlledByPlayerTransformer";
-    public static final String EntityOtherPlayerMPTransformer = "xonin.backhand.coremod.transformers.EntityOtherPlayerMPTransformer";
-    public static final String AccessTransformer = "xonin.backhand.coremod.transformers.BattlegearAccessTransformer";
-    public static File debugOutputLocation;
-
-    public static final String[] transformers = new String[] { EntityPlayerTransformer, NetClientHandlerTransformer,
-        PlayerControllerMPTransformer, ItemInWorldTransformer, EntityAIControlledTransformer,
-        EntityOtherPlayerMPTransformer };
+    TransformerBase[] bt_transformers = { new EntityPlayerTransformer(), new PlayerControllerMPTransformer(),
+        new ItemInWorldTransformer(), new EntityAIControlledByPlayerTransformer(), new EntityOtherPlayerMPTransformer(),
+        new ModelBipedTransformer(), new NetClientHandlerTransformer() };
 
     @Override
     public String[] getASMTransformerClass() {
-        return transformers;
+        return new String[] { FirstClassTransformer.class.getName() };
     }
 
     @Override
-    public String getAccessTransformerClass() {
-        return AccessTransformer;
-    }
+    public void registerFixes() {
+        for (TransformerBase transformer : bt_transformers) {
+            CustomClassTransformer.registerPostTransformer(transformer);
+        }
 
-    @Override
-    public String getModContainerClass() {
-        return null;
+        registerClassWithFixes("net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO");
     }
-
-    @Override
-    public String getSetupClass() {
-        return null;
-    }
-
-    @Override
-    public void injectData(Map<String, Object> data) {
-        debugOutputLocation = new File(
-            data.get("mcLocation")
-                .toString(),
-            "bg edited classes");
-        BackhandTranslator.obfuscatedEnv = Boolean.class.cast(data.get("runtimeDeobfuscationEnabled"));
-    }
-
 }

@@ -141,13 +141,8 @@ public class CustomLoadingPlugin implements IFMLLoadingPlugin {
     // Only exists in 1.7.10. Comment out if not needed.
     @Override
     public String getAccessTransformerClass() {
-        return "xonin.backhand.coremod.transformers.BattlegearAccessTransformer";
+        return null;
     }
-
-    // This only exists in 1.6.x. Uncomment if needed.
-    // public String[] getLibraryRequestClass() {
-    // return null;
-    // }
 
     @Override
     public String[] getASMTransformerClass() {
