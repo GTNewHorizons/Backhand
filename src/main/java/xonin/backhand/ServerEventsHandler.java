@@ -33,7 +33,6 @@ public class ServerEventsHandler {
             ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
             if ((mainhandItem == null || mainhandItem.getItem() != Items.fireworks) && offhandItem != null
                 && offhandItem.getItem() == Items.fireworks) {
-                BackhandUtils.swapOffhandItem(player);
                 fireworkHotSwapped = 1;
             }
         }
