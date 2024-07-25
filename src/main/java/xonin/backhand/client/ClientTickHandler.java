@@ -40,7 +40,7 @@ public class ClientTickHandler {
                     .getMethod("invTweaksSwapPatch");
                 invTweaksSwapPatch();
             } catch (Exception ignored) {}
-            ((EntityClientPlayerMP) player).sendQueue.addToSendQueue(new OffhandSwapPacket(player).generatePacket());
+            player.sendQueue.addToSendQueue(new OffhandSwapPacket(player).generatePacket());
         }
     }
 
