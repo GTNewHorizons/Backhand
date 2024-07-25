@@ -43,7 +43,8 @@ public final class BackhandRenderHelper {
 
     @SuppressWarnings("SuspiciousNameCombination")
     public static void moveOffHandArm(Entity entity, ModelBiped biped, float frame) {
-        if (entity instanceof IBackhandPlayer player) {
+        if (entity instanceof IBackhandPlayer player && (player != Minecraft.getMinecraft().thePlayer
+            || player.getOffSwingProgress(BackhandClientUtils.firstPersonFrame) != 0)) {
             float offhandSwing = player.getOffSwingProgress(frame);
 
             if (offhandSwing > 0.0F) {

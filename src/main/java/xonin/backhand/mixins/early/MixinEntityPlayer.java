@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -29,8 +28,6 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private int itemInUseCount;
     @Shadow
     public InventoryPlayer inventory = new InventoryPlayerBackhand((EntityPlayer) (Object) this);
-    @Shadow
-    public Container inventoryContainer;
     @Unique
     private float backhand$offHandSwingProgress = 0F;
     @Unique
@@ -51,19 +48,6 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private boolean backhand$isPlayer(boolean original) {
         return false;
     }
-
-    // //TODO: InventoryPlayerBackhand doesn't override setInventorySlotContents so is this even needed?
-    // @ModifyExpressionValue(
-    // method = "setCurrentItemOrArmor",
-    // at = @At(
-    // value = "FIELD",
-    // opcode = Opcodes.GETFIELD,
-    // target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;"))
-    // private ItemStack[] backhand$setCurrentItemOrArmor(ItemStack[] original, @Local(argsOnly = true) ItemStack stack)
-    // {
-    // BackhandUtils.setPlayerCurrentItem((EntityPlayer) (Object) this, stack);
-    // return new ItemStack[inventory.mainInventory.length];
-    // }
 
     @ModifyExpressionValue(
         method = "onItemUseFinish",

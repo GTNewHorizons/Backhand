@@ -136,4 +136,12 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
         this.player.func_146097_a(this.getOffhandItem(), true, false);
         this.setOffhandItem(null);
     }
+
+    @Override
+    public ItemStack getCurrentItem() {
+        if (currentItem == InventoryPlayerBackhand.OFFHAND_HOTBAR_SLOT) {
+            return BackhandUtils.getOffhandItem(player);
+        }
+        return super.getCurrentItem();
+    }
 }

@@ -57,31 +57,4 @@ public abstract class MixinPlayerControllerMP {
         }
         return original;
     }
-
-    // @Inject(
-    // method = "sendUseItem",
-    // at = @At(
-    // value = "FIELD",
-    // opcode = Opcodes.GETFIELD,
-    // target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;"))
-    // private void backhand$sendUseItem(EntityPlayer player, World worldIn, ItemStack itemStackIn,
-    // CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) ItemStack rightClickStack) {
-    // ItemStack stack = rightClickStack.stackSize == 0 ? null : rightClickStack;
-    // BackhandUtils.setPlayerCurrentItem(player, stack);
-    // cir.cancel();
-    // }
-
-    //
-    // @Redirect(
-    // method = "sendUseItem",
-    // at = @At(
-    // value = "FIELD",
-    // opcode = Opcodes.GETFIELD,
-    // target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;"))
-    // private ItemStack[] backhand$sendUseItem(InventoryPlayer inventory, @Local(ordinal = 1) ItemStack
-    // rightClickStack) {
-    // ItemStack stack = rightClickStack.stackSize == 0 ? null : rightClickStack;
-    // BackhandUtils.setPlayerCurrentItem(inventory.player, stack);
-    // return new ItemStack[inventory.mainInventory.length];
-    // }
 }
