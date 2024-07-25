@@ -21,7 +21,7 @@ public abstract class MixinModelBiped {
         BackhandRenderHelper.moveOffHandArm(entity, (ModelBiped) (Object) this, f6);
     }
 
-    // TODO: Decipher this shit
+    // TODO: Decipher this shit & is it even needed in the first place
     // private static void setRotationAngles(ModelBiped b, float p_78087_1_, float p_78087_2_, float p_78087_3_,
     // float p_78087_4_, float p_78087_5_, float p_78087_6_, Entity p_78087_7_) {
     // b.bipedHead.rotateAngleY = p_78087_4_ / (180F / (float) Math.PI);

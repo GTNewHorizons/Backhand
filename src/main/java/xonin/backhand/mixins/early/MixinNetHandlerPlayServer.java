@@ -25,34 +25,6 @@ public abstract class MixinNetHandlerPlayServer {
         return InventoryPlayerBackhand.isValidSwitch(original) ? 0 : -1;
     }
 
-    // @WrapOperation(
-    // method = "processPlayerBlockPlacement",
-    // at = @At(
-    // value = "INVOKE",
-    // target =
-    // "Lnet/minecraft/inventory/Container;getSlotFromInventory(Lnet/minecraft/inventory/IInventory;I)Lnet/minecraft/inventory/Slot;"))
-    // private Slot battlegear2$captureSlotVariable(Container instance, IInventory j, int i, Operation<Slot> original,
-    // @Share("slot") LocalRef<Slot> slotRef) {
-    // Slot slot = original.call(instance, j, i);
-    // slotRef.set(slot);
-    // return slot;
-    // }
-    //
-    // @Inject(
-    // method = "processPlayerBlockPlacement",
-    // at = @At(
-    // value = "FIELD",
-    // target = "Lnet/minecraft/entity/player/EntityPlayerMP;isChangingQuantityOnly:Z",
-    // shift = At.Shift.AFTER,
-    // ordinal = 1),
-    // cancellable = true)
-    // private void battlegear2$fixNPE(C08PacketPlayerBlockPlacement packetIn, CallbackInfo ci,
-    // @Share("slot") LocalRef<Slot> slotRef) {
-    // if (slotRef.get() == null) {
-    // ci.cancel();
-    // }
-    // }
-
     @Redirect(
         method = "processPlayerDigging",
         at = @At(

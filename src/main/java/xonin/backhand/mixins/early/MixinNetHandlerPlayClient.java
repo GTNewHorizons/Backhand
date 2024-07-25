@@ -39,5 +39,4 @@ public abstract class MixinNetHandlerPlayClient {
             ci.cancel();
         }
     }
-
 }
