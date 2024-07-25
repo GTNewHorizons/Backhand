@@ -73,10 +73,13 @@ public class BackhandUtils {
     }
 
     public static void swapOffhandItem(EntityPlayer player) {
-        final ItemStack mainhandItem = player.getCurrentEquippedItem();
-        final ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
+        final ItemStack mainhandItem = getLegalStack(player.getCurrentEquippedItem());
+        final ItemStack offhandItem = getLegalStack(BackhandUtils.getOffhandItem(player));
         BackhandUtils.setPlayerCurrentItem(player, offhandItem);
         BackhandUtils.setPlayerOffhandItem(player, mainhandItem);
+        if (Backhand.UseInventorySlot) {
+            player.inventoryContainer.detectAndSendChanges();
+        }
     }
 
     public static void setPlayerCurrentItem(EntityPlayer player, ItemStack stack) {
@@ -514,5 +517,13 @@ public class BackhandUtils {
         // Reset stuff so that vanilla doesn't do anything
         entityPlayer.clearItemInUse();
         return null;
+    }
+
+    public static ItemStack getLegalStack(ItemStack stack) {
+        if (stack != null && stack.stackSize == 0) {
+            return null;
+        }
+
+        return stack;
     }
 }

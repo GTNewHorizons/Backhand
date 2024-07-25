@@ -148,6 +148,7 @@ public class ServerTickHandler {
         if (ServerEventsHandler.fireworkHotSwapped > 0) {
             ServerEventsHandler.fireworkHotSwapped--;
         } else if (ServerEventsHandler.fireworkHotSwapped == 0) {
+            BackhandUtils.swapOffhandItem(player);
             ServerEventsHandler.fireworkHotSwapped--;
             MinecraftForge.EVENT_BUS.post(
                 new PlayerInteractEvent(
