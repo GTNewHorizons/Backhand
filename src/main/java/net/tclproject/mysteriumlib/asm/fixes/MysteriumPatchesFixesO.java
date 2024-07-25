@@ -4,85 +4,12 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 
-import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.client.C02PacketUseEntity;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.WorldServer;
-import net.tclproject.mysteriumlib.asm.annotations.EnumReturnSetting;
-import net.tclproject.mysteriumlib.asm.annotations.Fix;
-
 import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import invtweaks.InvTweaksContainerManager;
 import invtweaks.InvTweaksContainerSectionManager;
 import invtweaks.api.container.ContainerSection;
-import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.client.ClientEventHandler;
 
 public class MysteriumPatchesFixesO {
-
-    @Fix(returnSetting = EnumReturnSetting.ON_TRUE)
-    @SideOnly(Side.CLIENT)
-    public static boolean addBlockHitEffects(EffectRenderer er, int x, int y, int z, MovingObjectPosition target) {
-        if (ClientEventHandler.cancelone) {
-            return true;
-        }
-        return false;
-    }
-
-    @Fix(returnSetting = EnumReturnSetting.ALWAYS)
-    public static void processUseEntity(NetHandlerPlayServer netServer, C02PacketUseEntity p_147340_1_) {
-        WorldServer worldserver = netServer.serverController.worldServerForDimension(netServer.playerEntity.dimension);
-        Entity entity = p_147340_1_.func_149564_a(worldserver);
-        netServer.playerEntity.func_143004_u();
-
-        boolean swappedOffhand = BackhandUtils
-            .checkForRightClickFunction(BackhandUtils.getOffhandItem(netServer.playerEntity))
-            && !BackhandUtils.checkForRightClickFunction(netServer.playerEntity.getCurrentEquippedItem())
-            && p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.INTERACT;
-        if (swappedOffhand) {
-            BackhandUtils.swapOffhandItem(netServer.playerEntity);
-        }
-
-        if (entity != null) {
-            boolean flag = netServer.playerEntity.canEntityBeSeen(entity);
-            double d0 = 36.0D;
-
-            if (!flag) {
-                d0 = 9.0D;
-            }
-
-            if (netServer.playerEntity.getDistanceSqToEntity(entity) < d0) {
-                if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.INTERACT) {
-                    netServer.playerEntity.interactWith(entity);
-                } else if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.ATTACK) {
-                    if (entity instanceof EntityItem || entity instanceof EntityXPOrb
-                        || entity instanceof EntityArrow
-                        || entity == netServer.playerEntity) {
-                        netServer.kickPlayerFromServer("Attempting to attack an invalid entity");
-                        netServer.serverController.logWarning(
-                            "Player " + netServer.playerEntity.getCommandSenderName()
-                                + " tried to attack an invalid entity");
-                        if (swappedOffhand) {
-                            BackhandUtils.swapOffhandItem(netServer.playerEntity);
-                        }
-                    }
-
-                    netServer.playerEntity.attackTargetEntityWithCurrentItem(entity);
-                }
-            }
-        }
-
-        if (swappedOffhand) {
-            BackhandUtils.swapOffhandItem(netServer.playerEntity);
-        }
-    }
 
     private static final MethodHandle fieldGetSection;
     private static final MethodHandle fieldGetContainerMgr;
