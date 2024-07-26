@@ -22,7 +22,7 @@ public abstract class MixinNetHandlerPlayClient {
             value = "INVOKE",
             target = "Lnet/minecraft/network/play/server/S09PacketHeldItemChange;func_149385_c()I",
             ordinal = 1))
-    private int backhand$isValidIventorySlot(int original) {
+    private int backhand$isValidInventorySlot(int original) {
         // return a valid int e.g. between 0 and < 9
         return InventoryPlayerBackhand.isValidSwitch(original) ? 0 : -1;
     }
