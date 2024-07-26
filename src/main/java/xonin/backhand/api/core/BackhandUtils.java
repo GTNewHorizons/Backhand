@@ -3,6 +3,8 @@ package xonin.backhand.api.core;
 import java.io.Closeable;
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -36,6 +38,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
@@ -93,7 +96,9 @@ public class BackhandUtils {
         }
     }
 
-    public static ItemStack getOffhandItem(EntityPlayer player) {
+    public static @Nullable ItemStack getOffhandItem(EntityPlayer player) {
+        if (player instanceof FakePlayer) return null;
+
         if (Backhand.UseInventorySlot) {
             return player.inventory.getStackInSlot(Backhand.AlternateOffhandSlot);
         } else {
