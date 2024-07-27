@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.tclproject.mysteriumlib.asm.fixes.MysteriumPatchesFixesO;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -37,6 +36,7 @@ import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.InventoryPlayerBackhand;
+import xonin.backhand.client.utils.BackhandClientUtils;
 import xonin.backhand.packet.OffhandAttackPacket;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import xonin.backhand.packet.OffhandToServerPacket;
@@ -349,7 +349,7 @@ public final class BackhandClientTickHandler {
                     mcInstance.playerController.isHittingBlock = false;
                     return;
                 }
-                MysteriumPatchesFixesO.countToCancel = 5;
+                BackhandClientUtils.countToCancel = 5;
                 mcInstance.playerController.curBlockDamageMP += block
                     .getPlayerRelativeBlockHardness(mcInstance.thePlayer, mcInstance.thePlayer.worldObj, i, j, k);
 

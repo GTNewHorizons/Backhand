@@ -1,21 +1,14 @@
 package xonin.backhand.api.core;
 
-import net.tclproject.mysteriumlib.asm.common.CustomLoadingPlugin;
+import net.minecraft.launchwrapper.Launch;
 
 public class BackhandTranslator {
 
-    public static boolean debug = false;
+    static {
+        obfuscatedEnv = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+    }
+
     public static boolean obfuscatedEnv;
-
-    /** @deprecated */
-    @Deprecated
-    public static String getMapedFieldName(String className, String fieldName, String devName) {
-        return getMapedFieldName(fieldName, devName);
-    }
-
-    public static String getMapedFieldName(String fieldName, String devName) {
-        return CustomLoadingPlugin.isObfuscated() ? fieldName : devName;
-    }
 
     public static String getMapedClassName(String className) {
         return "net/minecraft/" + className.replace(".", "/");
@@ -28,7 +21,7 @@ public class BackhandTranslator {
     }
 
     public static String getMapedMethodName(String methodName, String devName) {
-        return CustomLoadingPlugin.isObfuscated() ? methodName : devName;
+        return obfuscatedEnv ? devName : methodName;
     }
 
     /** @deprecated */
