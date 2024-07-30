@@ -17,6 +17,7 @@ import invtweaks.InvTweaks;
 import xonin.backhand.Backhand;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.client.utils.BackhandClientUtils;
 import xonin.backhand.packet.OffhandSwapPacket;
 
 public class ClientTickHandler {
@@ -122,10 +123,7 @@ public class ClientTickHandler {
             && mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
             if (event.player.capabilities.allowEdit) {
                 if (Backhand.proxy.isRightClickHeld()
-                    && !(mainHandItem != null && BackhandUtils.isItemBlock(mainHandItem.getItem()))) { // if it's a
-                                                                                                       // block and we
-                                                                                                       // should try
-                                                                                                       // break it
+                    && !(mainHandItem != null && BackhandUtils.isItemBlock(mainHandItem.getItem()))) {
                     MovingObjectPosition mop = HookContainerClass.getRaytraceBlock(event.player);
                     if (offhandItem != null && HookContainerClass.isItemBlock(offhandItem.getItem())) {
                         if (!BackhandUtils.usagePriorAttack(offhandItem) && mop != null) {
@@ -136,8 +134,7 @@ public class ClientTickHandler {
                         }
                     } else {
                         if (mop != null && !BackhandUtils.usagePriorAttack(offhandItem)
-                            && !HookContainerClass
-                                .canBlockBeInteractedWith(mc.theWorld, mop.blockX, mop.blockY, mop.blockZ)) {
+                            && !BackhandClientUtils.canBlockBeInteractedWith(mop.blockX, mop.blockY, mop.blockZ)) {
                             BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
                         } else {

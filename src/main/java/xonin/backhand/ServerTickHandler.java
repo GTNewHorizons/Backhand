@@ -18,81 +18,76 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.OffhandExtendedProperty;
 import xonin.backhand.packet.OffhandSyncItemPacket;
-import xonin.backhand.packet.OffhandWorldHotswapPacket;
 
 public class ServerTickHandler {
 
     public ItemStack prevStackInSlot;
     public int blacklistDelay = -1;
 
-    public static HashMap<UUID, List<ItemStack>> tickStartItems = new HashMap<>();
+    public static final HashMap<UUID, List<ItemStack>> tickStartItems = new HashMap<>();
+
+    public static void resetTickingHotswap(EntityPlayer player) {
+        List<ItemStack> tickedItems = tickStartItems.get(player.getUniqueID());
+        if (tickedItems != null) {
+            BackhandUtils.getOffhandEP(player).ignoreSetSlot = false;
+            player.setCurrentItemOrArmor(0, tickedItems.get(0));
+            BackhandUtils.setPlayerOffhandItem(player, tickedItems.get(1));
+            tickStartItems.remove(player.getUniqueID());
+        }
+    }
+
+    public static void tickHotswap(EntityPlayerMP player) {
+        ItemStack mainhand = player.getCurrentEquippedItem() == null ? null
+            : player.getCurrentEquippedItem()
+                .copy();
+        ItemStack offhand = BackhandUtils.getOffhandItem(player);
+        if (offhand == null || player.currentWindowId != 0) return;
+        UUID key = player.getUniqueID();
+        if (!BackhandUtils.checkForRightClickFunction(mainhand)) {
+            if (!tickStartItems.containsKey(key)) {
+                BackhandUtils.getOffhandEP(player).ignoreSetSlot = true;
+            }
+            tickStartItems.put(key, Arrays.asList(mainhand, offhand));
+            player.setCurrentItemOrArmor(
+                0,
+                tickStartItems.get(key)
+                    .get(1));
+            BackhandUtils.getOffhandEP(player).activeSlot = player.inventory.currentItem
+                + player.inventory.mainInventory.length;
+        }
+    }
 
     @SubscribeEvent
-    @SuppressWarnings("unchecked")
     public void onUpdateWorld(TickEvent.WorldTickEvent event) {
         if (FMLCommonHandler.instance()
             .getEffectiveSide() != Side.SERVER) {
             return;
         }
-
         if (Backhand.OffhandTickHotswap) {
-            List<EntityPlayer> players = event.world.playerEntities;
-            for (EntityPlayer player : players) {
-                ItemStack mainhand = player.getCurrentEquippedItem() == null ? null
-                    : player.getCurrentEquippedItem()
-                        .copy();
-                ItemStack offhand = BackhandUtils.getOffhandItem(player) == null ? null
-                    : BackhandUtils.getOffhandItem(player)
-                        .copy();
-                if (offhand == null) {
-                    continue;
-                }
+            for (EntityPlayer player : event.world.playerEntities) {
+                if (!(player instanceof EntityPlayerMP playerMP)) continue;
 
                 if (event.phase == TickEvent.Phase.START && !player.isUsingItem()) {
-                    if (!BackhandUtils.checkForRightClickFunction(mainhand)) {
-                        if (!tickStartItems.containsKey(player.getUniqueID())) {
-                            Backhand.packetHandler.sendPacketToPlayer(
-                                new OffhandWorldHotswapPacket(true).generatePacket(),
-                                (EntityPlayerMP) player);
-                        }
-                        tickStartItems.put(player.getUniqueID(), Arrays.asList(mainhand, offhand));
-                        player.setCurrentItemOrArmor(
-                            0,
-                            tickStartItems.get(player.getUniqueID())
-                                .get(1));
-                    }
+                    tickHotswap(playerMP);
                 } else {
-                    ServerTickHandler.resetTickingHotswap(player);
+                    resetTickingHotswap(playerMP);
                 }
             }
-        }
-    }
-
-    public static void resetTickingHotswap(EntityPlayer player) {
-        if (tickStartItems.containsKey(player.getUniqueID())) {
-            player.setCurrentItemOrArmor(
-                0,
-                tickStartItems.get(player.getUniqueID())
-                    .get(0));
-            BackhandUtils.setPlayerOffhandItem(
-                player,
-                tickStartItems.get(player.getUniqueID())
-                    .get(1));
-            tickStartItems.remove(player.getUniqueID());
-            Backhand.packetHandler
-                .sendPacketToPlayer(new OffhandWorldHotswapPacket(false).generatePacket(), (EntityPlayerMP) player);
         }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onUpdatePlayer(TickEvent.PlayerTickEvent event) {
         EntityPlayer player = event.player;
+        OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
+
         if (FMLCommonHandler.instance()
             .getEffectiveSide() != Side.SERVER) {
-            if (ServerEventsHandler.regularHotSwap) {
+            if (offhandProp.regularHotSwap) {
                 BackhandUtils.swapOffhandItem(player);
-                ServerEventsHandler.regularHotSwap = false;
+                offhandProp.regularHotSwap = false;
             }
             return;
         }
@@ -127,22 +122,22 @@ public class ServerTickHandler {
             prevStackInSlot = offhand;
         }
 
-        if (BackhandUtils.getOffhandEP(player).syncOffhand) {
+        if (offhandProp.syncOffhand) {
             if (!tickStartItems.containsKey(player.getUniqueID())) {
                 Backhand.packetHandler.sendPacketToAll(new OffhandSyncItemPacket(player).generatePacket());
             }
-            BackhandUtils.getOffhandEP(player).syncOffhand = false;
+            offhandProp.syncOffhand = false;
         }
 
-        if (ServerEventsHandler.arrowHotSwapped) {
+        if (offhandProp.arrowHotSwapped) {
             if (offhand != null && offhand.getItem() != Items.arrow) {
                 BackhandUtils.swapOffhandItem(player);
             }
-            ServerEventsHandler.arrowHotSwapped = false;
+            offhandProp.arrowHotSwapped = false;
         }
-        if (ServerEventsHandler.regularHotSwap) {
+        if (offhandProp.regularHotSwap) {
             BackhandUtils.swapOffhandItem(player);
-            ServerEventsHandler.regularHotSwap = false;
+            offhandProp.regularHotSwap = false;
         }
 
         if (ServerEventsHandler.fireworkHotSwapped > 0) {

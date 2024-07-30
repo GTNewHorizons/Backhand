@@ -2,12 +2,12 @@ package xonin.backhand;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
-import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.utils.EnumAnimations;
 
-public class CommonProxy implements IGuiHandler {
+public class CommonProxy {
 
     public static ItemStack offhandItemUsed;
 
@@ -15,20 +15,13 @@ public class CommonProxy implements IGuiHandler {
 
     }
 
-    @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        /*
-         * if(ID > EnumGuiType.values().length)
-         * return null;
-         * EnumGuiType gui = EnumGuiType.values()[ID];
-         * return getContainer(gui, player, x, y, z, npc);
-         */
-        return null;
-    }
-
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        return null;
+    public void onServerStopping(FMLServerStoppingEvent event) {
+        for (EntityPlayer player : Backhand.getServer()
+            .getConfigurationManager().playerEntityList) {
+            if (BackhandUtils.getOffhandItem(player) != null) {
+                ServerTickHandler.resetTickingHotswap(player);
+            }
+        }
     }
 
     public EntityPlayer getClientPlayer() {

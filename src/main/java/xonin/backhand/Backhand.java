@@ -14,7 +14,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -55,7 +55,6 @@ public class Backhand {
         BackhandConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
 
         proxy.load();
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
 
         MinecraftForge.EVENT_BUS.register(new ServerEventsHandler());
         FMLCommonHandler.instance()
@@ -74,8 +73,14 @@ public class Backhand {
         packetHandler.register();
     }
 
+    @Mod.EventHandler
+    public void onServerStopping(FMLServerStoppingEvent event) {
+        proxy.onServerStopping(event);
+    }
+
     public static MinecraftServer getServer() {
-        return MinecraftServer.getServer();
+        return FMLCommonHandler.instance()
+            .getMinecraftServerInstance();
     }
 
     public static boolean isOffhandBlacklisted(ItemStack stack) {

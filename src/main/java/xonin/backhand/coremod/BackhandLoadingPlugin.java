@@ -47,6 +47,7 @@ public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMix
         mixins.add("MixinEntityPlayerMP");
         mixins.add("MixinItemStack");
         mixins.add("MixinNetHandlerPlayServer");
+        mixins.add("MixinEntityItem");
         if (FMLLaunchHandler.side()
             .isClient()) {
             mixins.add("MixinEntityOtherPlayerMP");

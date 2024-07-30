@@ -12,6 +12,10 @@ public class OffhandExtendedProperty implements IExtendedEntityProperties {
     public EntityPlayer player;
     public boolean syncOffhand = true;
     private ItemStack offhandItem;
+    public boolean ignoreSetSlot = false;
+    public int activeSlot = -1;
+    public boolean arrowHotSwapped = false;
+    public boolean regularHotSwap = false;
 
     public OffhandExtendedProperty(EntityPlayer player) {
         this.player = player;

@@ -5,13 +5,11 @@ import java.io.IOException;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBed;
@@ -38,6 +36,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -110,7 +109,13 @@ public class BackhandUtils {
     }
 
     public static OffhandExtendedProperty getOffhandEP(EntityPlayer player) {
-        return ((OffhandExtendedProperty) player.getExtendedProperties("OffhandStorage"));
+        IExtendedEntityProperties prop = player.getExtendedProperties("OffhandStorage");
+
+        if (prop instanceof OffhandExtendedProperty offhandProp) {
+            return offhandProp;
+        }
+        // Probably a fake player, return a dummy property
+        return new OffhandExtendedProperty(player);
     }
 
     /**
@@ -238,33 +243,6 @@ public class BackhandUtils {
             || item instanceof ItemRedstone
             || item instanceof ItemBucket
             || item instanceof ItemSkull;
-    }
-
-    public static boolean blockHasUse(Block block) {
-        if (block == null || block == Blocks.air) {
-            return false;
-        }
-        try {
-            String mappedName = BackhandTranslator.getMapedMethodName("Block", "func_149727_a", "onBlockActivated");
-            Class[] classParams = new Class[] { World.class, int.class, int.class, int.class, EntityPlayer.class,
-                int.class, float.class, float.class, float.class };
-
-            Class c = block.getClass();
-            while (!(c.equals(Block.class))) {
-                try {
-                    try {
-                        c.getDeclaredMethod(mappedName, classParams);
-                        return true;
-                    } catch (NoSuchMethodException ignored) {}
-                } catch (NoClassDefFoundError ignored) {}
-
-                c = c.getSuperclass();
-            }
-
-            return false;
-        } catch (NullPointerException e) {
-            return true;
-        }
     }
 
     @SuppressWarnings("unchecked")

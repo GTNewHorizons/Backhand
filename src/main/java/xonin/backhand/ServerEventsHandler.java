@@ -1,10 +1,12 @@
 package xonin.backhand;
 
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.RegistrySimple;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -16,13 +18,11 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import ganymedes01.etfuturum.ModItems;
-import ganymedes01.etfuturum.items.ItemArrowTipped;
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.OffhandExtendedProperty;
 
 public class ServerEventsHandler {
 
-    public static boolean arrowHotSwapped = false;
-    public static boolean regularHotSwap = false;
     public static int fireworkHotSwapped = -1;
 
     @SubscribeEvent
@@ -31,7 +31,9 @@ public class ServerEventsHandler {
             EntityPlayer player = event.entityPlayer;
             ItemStack mainhandItem = player.getHeldItem();
             ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-            if ((mainhandItem == null || mainhandItem.getItem() != Items.fireworks) && offhandItem != null
+            if ((mainhandItem == null
+                || mainhandItem.getItem() != Items.fireworks && !BackhandUtils.usagePriorAttack(mainhandItem))
+                && offhandItem != null
                 && offhandItem.getItem() == Items.fireworks) {
                 fireworkHotSwapped = 1;
             }
@@ -56,6 +58,7 @@ public class ServerEventsHandler {
 
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         ItemStack mainhandItem = player.getCurrentEquippedItem();
+        OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
 
         if (offhandItem == null) {
             return;
@@ -66,7 +69,7 @@ public class ServerEventsHandler {
 
             if (offhandItem.getItem() == totem && (mainhandItem == null || mainhandItem.getItem() != totem)) {
                 BackhandUtils.swapOffhandItem(player);
-                regularHotSwap = true;
+                offhandProp.regularHotSwap = true;
             }
         }
     }
@@ -76,8 +79,6 @@ public class ServerEventsHandler {
         EntityPlayer player = event.entityPlayer;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         ItemStack mainhandItem = player.getCurrentEquippedItem();
-
-        // boolean offHandUse = BattlegearUtils.checkForRightClickFunction(offhandItem);
         boolean mainhandUse = BackhandUtils.checkForRightClickFunction(mainhandItem);
 
         if (offhandItem != null && !mainhandUse) {
@@ -90,25 +91,18 @@ public class ServerEventsHandler {
         if (!Backhand.UseOffhandArrows) {
             return;
         }
-
-        boolean overrideWithOffhand = false;
-        ItemStack offhandItem = BackhandUtils.getOffhandItem(event.entityPlayer);
+        EntityPlayer player = event.entityPlayer;
+        ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (offhandItem != null) {
-            if (Backhand.isEFRLoaded && offhandItem.getItem() instanceof ItemArrowTipped) {
-                overrideWithOffhand = true;
+            if (!((RegistrySimple) BlockDispenser.dispenseBehaviorRegistry).containsKey(offhandItem.getItem())) {
+                return;
             }
 
-            if (Items.arrow == offhandItem.getItem()) {
-                overrideWithOffhand = true;
-            }
-
-            if (overrideWithOffhand) {
-                event.setCanceled(true);
-                event.entityPlayer.setItemInUse(
-                    event.result,
-                    event.result.getItem()
-                        .getMaxItemUseDuration(event.result));
-            }
+            event.setCanceled(true);
+            player.setItemInUse(
+                event.result,
+                event.result.getItem()
+                    .getMaxItemUseDuration(event.result));
         }
     }
 
@@ -117,14 +111,15 @@ public class ServerEventsHandler {
         EntityPlayer player = event.entityPlayer;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         ItemStack mainhandItem = player.getCurrentEquippedItem();
+        OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
         boolean mainhandUse = BackhandUtils.checkForRightClickFunction(mainhandItem);
-        if (offhandItem == null || mainhandUse) {
+        if (offhandItem == null || mainhandUse || offhandProp == null) {
             return;
         }
         if (FMLCommonHandler.instance()
             .getEffectiveSide() == Side.SERVER && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID())) {
             BackhandUtils.swapOffhandItem(player);
-            regularHotSwap = true;
+            offhandProp.regularHotSwap = true;
         }
     }
 
@@ -132,34 +127,29 @@ public class ServerEventsHandler {
     public void onItemStop(PlayerUseItemEvent.Stop event) {
         EntityPlayer player = event.entityPlayer;
         ItemStack mainhandItem = player.getCurrentEquippedItem();
+        OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
         boolean skip = BackhandUtils.checkForRightClickFunction(mainhandItem)
             || BackhandUtils.getOffhandItem(player) == null;
 
-        if (!skip && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID()) && !regularHotSwap) {
+        if (!skip && !ServerTickHandler.tickStartItems.containsKey(player.getUniqueID())
+            && !offhandProp.regularHotSwap) {
             BackhandUtils.swapOffhandItem(player);
-            regularHotSwap = true;
+            offhandProp.regularHotSwap = true;
         }
 
         if (!Backhand.UseOffhandArrows || !(event.item.getItem() instanceof ItemBow)) {
             return;
         }
 
-        boolean overrideWithOffhand = false;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (offhandItem != null) {
-            if (Backhand.isEFRLoaded && offhandItem.getItem() instanceof ItemArrowTipped) {
-                overrideWithOffhand = true;
+            if (!((RegistrySimple) BlockDispenser.dispenseBehaviorRegistry).containsKey(offhandItem.getItem())) {
+                return;
             }
 
-            if (Items.arrow == offhandItem.getItem()) {
-                overrideWithOffhand = true;
-            }
-
-            if (overrideWithOffhand) {
-                arrowHotSwapped = true;
-                if (offhandItem.getItem() != Items.arrow) {
-                    BackhandUtils.swapOffhandItem(event.entityPlayer);
-                }
+            offhandProp.arrowHotSwapped = true;
+            if (offhandItem.getItem() != Items.arrow) {
+                BackhandUtils.swapOffhandItem(player);
             }
         }
     }

@@ -67,6 +67,9 @@ public final class HookContainerClass {
                 Backhand.packetHandler.sendPacketToPlayer(
                     new OffhandConfigSyncPacket(player).generatePacket(),
                     (EntityPlayerMP) event.entity);
+                Backhand.packetHandler.sendPacketToPlayer(
+                    new OffhandSyncItemPacket(player).generatePacket(),
+                    (EntityPlayerMP) event.entity);
             }
             ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
             if (Backhand.isOffhandBlacklisted(offhandItem)) {

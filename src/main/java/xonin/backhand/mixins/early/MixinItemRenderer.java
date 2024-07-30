@@ -43,7 +43,6 @@ public abstract class MixinItemRenderer {
         }
 
         BackhandClientUtils.firstPersonFrame = frame;
-        BackhandClientUtils.onGround2 = 0;
         RenderOffhandPlayer.itemRenderer.updateEquippedItem();
         BackhandClientUtils.offhandFPRender = true;
         GL11.glEnable(GL11.GL_CULL_FACE);

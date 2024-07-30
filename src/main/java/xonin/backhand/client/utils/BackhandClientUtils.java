@@ -1,22 +1,23 @@
 package xonin.backhand.client.utils;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.client.world.ClientFakePlayer;
+import xonin.backhand.client.world.DummyWorld;
 
 public final class BackhandClientUtils {
 
     public static boolean disableMainhandAnimation = false;
     public static int countToCancel = 0;
-    public static float onGround2;
     public static float firstPersonFrame;
     public static boolean offhandFPRender;
-    public static boolean ignoreSetSlot = false;
     public static boolean receivedConfigs = false;
-
-    /** If we have hotswapped the breaking item with the one in offhand and should hotswap it back when called next */
-    public static boolean hotSwapped = false;
 
     /**
      * Patch over EntityOtherPlayerMP#onUpdate() to update isItemInUse field
@@ -38,5 +39,26 @@ public final class BackhandClientUtils {
         } else {
             return isItemInUse;
         }
+    }
+
+    public static boolean canBlockBeInteractedWith(int x, int y, int z) {
+        Minecraft mc = Minecraft.getMinecraft();
+        MovingObjectPosition mop = mc.objectMouseOver;
+
+        if (mop == null) return false;
+
+        float subX = (float) mc.objectMouseOver.hitVec.xCoord - x;
+        float subY = (float) mc.objectMouseOver.hitVec.yCoord - y;
+        float subZ = (float) mc.objectMouseOver.hitVec.zCoord - z;
+
+        Block block = mc.theWorld.getBlock(x, y, z);
+
+        if (block == null || block == Blocks.air) return false;
+
+        int meta = mc.theWorld.getBlockMetadata(x, y, z);
+        DummyWorld.INSTANCE.setBlock(x, y, z, block, meta, 3);
+
+        return block
+            .onBlockActivated(DummyWorld.INSTANCE, x, y, z, ClientFakePlayer.INSTANCE, mop.sideHit, subX, subY, subZ);
     }
 }

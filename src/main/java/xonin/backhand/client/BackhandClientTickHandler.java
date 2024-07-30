@@ -121,8 +121,7 @@ public final class BackhandClientTickHandler {
         }
 
         if (mouseOver != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            if (BackhandUtils
-                .blockHasUse(player.worldObj.getBlock(mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ))
+            if (BackhandClientUtils.canBlockBeInteractedWith(mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ)
                 && !BackhandUtils.getOffhandItem(player)
                     .getItem()
                     .doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ, player)
@@ -302,13 +301,7 @@ public final class BackhandClientTickHandler {
                     && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
                     PlayerControllerMP
                         .clickBlockCreative(mcInstance, mcInstance.playerController, i, j, k, objectMouseOver.sideHit);
-                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force
-                                                                                                          // offhand
-                                                                                                          // swing
-                                                                                                          // anyway
-                                                                                                          // because we
-                                                                                                          // broke a
-                                                                                                          // block
+                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem);
                     mcInstance.getNetHandler()
                         .addToSendQueue(new C07PacketPlayerDigging(2, i, j, k, objectMouseOver.sideHit));
                 }
