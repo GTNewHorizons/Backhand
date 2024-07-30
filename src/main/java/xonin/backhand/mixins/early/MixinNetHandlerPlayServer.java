@@ -27,6 +27,9 @@ public abstract class MixinNetHandlerPlayServer {
     @Shadow
     public EntityPlayerMP playerEntity;
 
+    @Unique
+    private boolean backhand$swappedOffhand = false;
+
     @ModifyExpressionValue(
         method = "processHeldItemChange",
         at = @At(
@@ -52,17 +55,25 @@ public abstract class MixinNetHandlerPlayServer {
         instance.tryHarvestBlock(x, y, z);
     }
 
+    @Inject(method = "processUseEntity", at = @At("HEAD"))
+    private void backhand$hotswapOnEntityInteract(C02PacketUseEntity packetIn, CallbackInfo ci) {
+        if (backhand$shouldSwapOffhand(packetIn.func_149565_c())) {
+            BackhandUtils.swapOffhandItem(playerEntity);
+        }
+    }
+
     @Inject(
         method = "processUseEntity",
         at = {
             @At(
                 value = "INVOKE",
                 target = "Lnet/minecraft/network/NetHandlerPlayServer;kickPlayerFromServer(Ljava/lang/String;)V"),
-            @At(value = "TAIL"), @At("HEAD") })
-    private void backhand$hotswapOnEntityInteract(C02PacketUseEntity packetIn, CallbackInfo ci) {
-        if (backhand$swapOffhand(packetIn.func_149565_c())) {
+            @At(value = "TAIL") })
+    private void backhand$swapBackPostEntityInteract(C02PacketUseEntity packetIn, CallbackInfo ci) {
+        if (backhand$swappedOffhand) {
             BackhandUtils.swapOffhandItem(playerEntity);
         }
+        backhand$swappedOffhand = false;
     }
 
     @Inject(method = "sendPacket", at = @At(value = "HEAD"), cancellable = true)
@@ -75,8 +86,9 @@ public abstract class MixinNetHandlerPlayServer {
     }
 
     @Unique
-    private boolean backhand$swapOffhand(C02PacketUseEntity.Action action) {
-        return BackhandUtils.checkForRightClickFunction(BackhandUtils.getOffhandItem(playerEntity))
+    private boolean backhand$shouldSwapOffhand(C02PacketUseEntity.Action action) {
+        return !playerEntity.isUsingItem()
+            && BackhandUtils.checkForRightClickFunction(BackhandUtils.getOffhandItem(playerEntity))
             && !BackhandUtils.checkForRightClickFunction(playerEntity.getCurrentEquippedItem())
             && action == C02PacketUseEntity.Action.INTERACT;
     }
