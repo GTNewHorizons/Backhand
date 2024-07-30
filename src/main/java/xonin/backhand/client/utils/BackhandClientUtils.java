@@ -47,9 +47,9 @@ public final class BackhandClientUtils {
 
         if (mop == null) return false;
 
-        float subX = (float) mc.objectMouseOver.hitVec.xCoord - x;
-        float subY = (float) mc.objectMouseOver.hitVec.yCoord - y;
-        float subZ = (float) mc.objectMouseOver.hitVec.zCoord - z;
+        float subX = (float) mop.hitVec.xCoord - x;
+        float subY = (float) mop.hitVec.yCoord - y;
+        float subZ = (float) mop.hitVec.zCoord - z;
 
         Block block = mc.theWorld.getBlock(x, y, z);
 
@@ -57,7 +57,7 @@ public final class BackhandClientUtils {
 
         int meta = mc.theWorld.getBlockMetadata(x, y, z);
         DummyWorld.INSTANCE.setBlock(x, y, z, block, meta, 3);
-
+        ClientFakePlayer.INSTANCE.setSneaking(mc.thePlayer.isSneaking());
         return block
             .onBlockActivated(DummyWorld.INSTANCE, x, y, z, ClientFakePlayer.INSTANCE, mop.sideHit, subX, subY, subZ);
     }
