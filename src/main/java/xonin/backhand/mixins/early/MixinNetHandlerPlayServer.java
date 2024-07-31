@@ -59,6 +59,7 @@ public abstract class MixinNetHandlerPlayServer {
     private void backhand$hotswapOnEntityInteract(C02PacketUseEntity packetIn, CallbackInfo ci) {
         if (backhand$shouldSwapOffhand(packetIn.func_149565_c())) {
             BackhandUtils.swapOffhandItem(playerEntity);
+            backhand$swappedOffhand = true;
         }
     }
 
