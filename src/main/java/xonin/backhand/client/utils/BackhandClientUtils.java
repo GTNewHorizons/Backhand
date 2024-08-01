@@ -41,9 +41,10 @@ public final class BackhandClientUtils {
         }
     }
 
-    public static boolean canBlockBeInteractedWith(int x, int y, int z) {
+    public static boolean canBlockBeInteractedWith(ItemStack offhand, int x, int y, int z) {
         Minecraft mc = Minecraft.getMinecraft();
         MovingObjectPosition mop = mc.objectMouseOver;
+        ItemStack stack = ItemStack.copyItemStack(offhand);
 
         if (mop == null) return false;
 
@@ -55,9 +56,10 @@ public final class BackhandClientUtils {
 
         if (block == null || block == Blocks.air) return false;
 
-        int meta = mc.theWorld.getBlockMetadata(x, y, z);
+        int meta = block.getDamageValue(mc.theWorld, x, y, z);
         DummyWorld.INSTANCE.setBlock(x, y, z, block, meta, 3);
         ClientFakePlayer.INSTANCE.setSneaking(mc.thePlayer.isSneaking());
+        ClientFakePlayer.INSTANCE.setCurrentItemOrArmor(0, stack);
         return block
             .onBlockActivated(DummyWorld.INSTANCE, x, y, z, ClientFakePlayer.INSTANCE, mop.sideHit, subX, subY, subZ);
     }

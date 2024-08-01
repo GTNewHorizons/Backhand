@@ -288,7 +288,7 @@ public final class HookContainerClass {
 
     public boolean interactWithNoEvent(EntityPlayer pl, Entity p_70998_1_) {
         ItemStack itemstack = pl.getCurrentEquippedItem();
-        ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
+        ItemStack itemstack1 = ItemStack.copyItemStack(itemstack);
 
         if (!p_70998_1_.interactFirst(pl)) {
             if (itemstack != null && p_70998_1_ instanceof EntityLivingBase) {

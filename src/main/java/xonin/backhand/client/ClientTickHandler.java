@@ -134,7 +134,8 @@ public class ClientTickHandler {
                         }
                     } else {
                         if (mop != null && !BackhandUtils.usagePriorAttack(offhandItem)
-                            && !BackhandClientUtils.canBlockBeInteractedWith(mop.blockX, mop.blockY, mop.blockZ)) {
+                            && !BackhandClientUtils
+                                .canBlockBeInteractedWith(offhandItem, mop.blockX, mop.blockY, mop.blockZ)) {
                             BackhandClientTickHandler.tryBreakBlockOffhand(mop, offhandItem, mainHandItem, event);
                             Backhand.proxy.setLeftClickCounter(10);
                         } else {

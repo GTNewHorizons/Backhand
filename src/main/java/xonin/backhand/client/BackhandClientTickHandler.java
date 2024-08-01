@@ -121,7 +121,8 @@ public final class BackhandClientTickHandler {
         }
 
         if (mouseOver != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            if (BackhandClientUtils.canBlockBeInteractedWith(mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ)
+            if (BackhandClientUtils
+                .canBlockBeInteractedWith(offhandItem, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ)
                 && !BackhandUtils.getOffhandItem(player)
                     .getItem()
                     .doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ, player)
@@ -166,7 +167,6 @@ public final class BackhandClientTickHandler {
                     int l = mouseOver.blockZ;
                     if (!player.worldObj.getBlock(j, k, l)
                         .isAir(player.worldObj, j, k, l)) {
-                        final int size = offhandItem.stackSize;
                         int i1 = mouseOver.sideHit;
                         PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(
                             new PlayerInteractEvent(
@@ -241,16 +241,7 @@ public final class BackhandClientTickHandler {
             .onItemUseFirst(offhand, player, worldObj, i, j, k, l, f, f1, f2)) {
             return true;
         }
-        /*
-         * if (!player.isSneaking() || BattlegearUtils.getOffhandItem(player) == null ||
-         * BattlegearUtils.getOffhandItem(player).getItem().doesSneakBypassUse(worldObj, i, j, k, player)){
-         * if (!b.isAir(worldObj, i, j, k)){
-         * flag = true;
-         * }
-         * }
-         */
-        if (!flag && offhand.getItem() instanceof ItemBlock) {
-            ItemBlock itemblock = (ItemBlock) offhand.getItem();
+        if (!flag && offhand.getItem() instanceof ItemBlock itemblock) {
             if (!itemblock.func_150936_a(worldObj, i, j, k, l, player, offhand)) {
                 return false;
             }

@@ -1,6 +1,7 @@
 package xonin.backhand.mixins.early;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
@@ -88,8 +89,9 @@ public abstract class MixinNetHandlerPlayServer {
 
     @Unique
     private boolean backhand$shouldSwapOffhand(C02PacketUseEntity.Action action) {
-        return !playerEntity.isUsingItem()
-            && BackhandUtils.checkForRightClickFunction(BackhandUtils.getOffhandItem(playerEntity))
+        ItemStack offhandStack = BackhandUtils.getOffhandItem(playerEntity);
+        return !playerEntity.isUsingItem() && BackhandUtils.checkForRightClickFunction(offhandStack)
+            && offhandStack.getItemUseAction() != EnumAction.bow
             && !BackhandUtils.checkForRightClickFunction(playerEntity.getCurrentEquippedItem())
             && action == C02PacketUseEntity.Action.INTERACT;
     }

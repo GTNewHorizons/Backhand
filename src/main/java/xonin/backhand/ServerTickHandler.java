@@ -39,9 +39,7 @@ public class ServerTickHandler {
     }
 
     public static void tickHotswap(EntityPlayerMP player) {
-        ItemStack mainhand = player.getCurrentEquippedItem() == null ? null
-            : player.getCurrentEquippedItem()
-                .copy();
+        ItemStack mainhand = ItemStack.copyItemStack(player.getCurrentEquippedItem());
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (offhand == null || player.currentWindowId != 0) return;
         UUID key = player.getUniqueID();
