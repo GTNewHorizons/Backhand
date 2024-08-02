@@ -30,8 +30,8 @@ public class DummyWorld extends World {
 
     public static final DummyWorld INSTANCE = new DummyWorld();
 
-    public Block boundBlock;
-    public Vec3 boundBlockPos;
+    private Block boundBlock;
+    private final Vec3 boundBlockPos = Vec3.createVectorHelper(0, 0, 0);
 
     public DummyWorld() {
         super(new DummySaveHandler(), "DummyServer", DEFAULT_SETTINGS, new WorldProviderSurface(), new Profiler());
@@ -123,12 +123,16 @@ public class DummyWorld extends World {
 
     public void setBoundBlock(Block block, int x, int y, int z) {
         boundBlock = block;
-        boundBlockPos = Vec3.createVectorHelper(x, y, z);
+        boundBlockPos.xCoord = x;
+        boundBlockPos.yCoord = y;
+        boundBlockPos.zCoord = z;
     }
 
     public void reset() {
         boundBlock = null;
-        boundBlockPos = null;
+        boundBlockPos.xCoord = 0;
+        boundBlockPos.yCoord = 0;
+        boundBlockPos.zCoord = 0;
     }
 
 }
