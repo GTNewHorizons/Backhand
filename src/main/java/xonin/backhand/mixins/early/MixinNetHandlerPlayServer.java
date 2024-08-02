@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
+import xonin.backhand.ServerTickHandler;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.InventoryPlayerBackhand;
 
@@ -54,6 +55,16 @@ public abstract class MixinNetHandlerPlayServer {
         int z = packetIn.func_149502_e();
         instance.theWorld.destroyBlockInWorldPartially(instance.thisPlayerMP.getEntityId(), x, y, z, -1);
         instance.tryHarvestBlock(x, y, z);
+    }
+
+    @Inject(
+        method = "processPlayerDigging",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/player/EntityPlayerMP;dropOneItem(Z)Lnet/minecraft/entity/item/EntityItem;"))
+    private void backhand$playerDropItem(C07PacketPlayerDigging packetIn, CallbackInfo ci) {
+        ServerTickHandler.resetTickingHotswap(playerEntity);
+        BackhandUtils.getOffhandEP(playerEntity).hotswapDelay = 5;
     }
 
     @Inject(method = "processUseEntity", at = @At("HEAD"))

@@ -66,10 +66,12 @@ public class ServerTickHandler {
         if (Backhand.OffhandTickHotswap) {
             for (EntityPlayer player : event.world.playerEntities) {
                 if (!(player instanceof EntityPlayerMP playerMP)) continue;
+                OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
 
-                if (event.phase == TickEvent.Phase.START && !player.isUsingItem()) {
+                if (event.phase == TickEvent.Phase.START && !player.isUsingItem() && offhandProp.hotswapDelay <= 0) {
                     tickHotswap(playerMP);
                 } else {
+                    if (offhandProp.hotswapDelay > 0) offhandProp.hotswapDelay--;
                     resetTickingHotswap(playerMP);
                 }
             }
