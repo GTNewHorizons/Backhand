@@ -51,7 +51,7 @@ public final class BackhandClientUtils {
         float subY = (float) mop.hitVec.yCoord - y;
         float subZ = (float) mop.hitVec.zCoord - z;
 
-        Block block = DummyWorld.INSTANCE.copyAndSetBlock(mc.theWorld, x, y, z);
+        Block block = DummyWorld.INSTANCE.copyAndSetBlock(mc.theWorld, x, y, z, mop);
         if (block == null) return false;
         ClientFakePlayer.INSTANCE.prepareForInteraction(mc.thePlayer, stack);
 
