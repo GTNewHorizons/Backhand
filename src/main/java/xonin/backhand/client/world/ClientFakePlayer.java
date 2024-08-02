@@ -3,6 +3,7 @@ package xonin.backhand.client.world;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
@@ -64,5 +65,11 @@ public class ClientFakePlayer extends EntityPlayer {
     @Override
     public void travelToDimension(int dim) {
         return;
+    }
+
+    public void prepareForInteraction(EntityPlayer player, ItemStack stack) {
+        this.setPositionAndRotation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
+        this.setCurrentItemOrArmor(0, stack);
+        this.setSneaking(player.isSneaking());
     }
 }

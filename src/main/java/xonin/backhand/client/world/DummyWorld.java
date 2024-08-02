@@ -2,8 +2,12 @@ package xonin.backhand.client.world;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProviderSurface;
@@ -65,4 +69,24 @@ public class DummyWorld extends World {
     public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_) {
         return true;
     }
+
+    public Block copyAndSetBlock(World world, int x, int y, int z) {
+        setBlockToAir(x, y, z);
+        Block block = world.getBlock(x, y, z);
+
+        if (block == null || block == Blocks.air) return null;
+
+        int meta = block.getDamageValue(world, x, y, z);
+        DummyWorld.INSTANCE.setBlock(x, y, z, block, meta, 3);
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile != null) {
+            NBTTagCompound tag = new NBTTagCompound();
+            tile.writeToNBT(tag);
+            TileEntity dummyTile = TileEntity.createAndLoadEntity(tag);
+            DummyWorld.INSTANCE.setTileEntity(x, y, z, dummyTile);
+        }
+
+        return getBlock(x, y, z);
+    }
+
 }

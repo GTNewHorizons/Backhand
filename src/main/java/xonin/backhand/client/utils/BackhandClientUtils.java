@@ -3,7 +3,6 @@ package xonin.backhand.client.utils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 
@@ -52,14 +51,10 @@ public final class BackhandClientUtils {
         float subY = (float) mop.hitVec.yCoord - y;
         float subZ = (float) mop.hitVec.zCoord - z;
 
-        Block block = mc.theWorld.getBlock(x, y, z);
+        Block block = DummyWorld.INSTANCE.copyAndSetBlock(mc.theWorld, x, y, z);
+        if (block == null) return false;
+        ClientFakePlayer.INSTANCE.prepareForInteraction(mc.thePlayer, stack);
 
-        if (block == null || block == Blocks.air) return false;
-
-        int meta = block.getDamageValue(mc.theWorld, x, y, z);
-        DummyWorld.INSTANCE.setBlock(x, y, z, block, meta, 3);
-        ClientFakePlayer.INSTANCE.setSneaking(mc.thePlayer.isSneaking());
-        ClientFakePlayer.INSTANCE.setCurrentItemOrArmor(0, stack);
         return block
             .onBlockActivated(DummyWorld.INSTANCE, x, y, z, ClientFakePlayer.INSTANCE, mop.sideHit, subX, subY, subZ);
     }
