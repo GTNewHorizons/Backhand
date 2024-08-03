@@ -19,7 +19,7 @@ public class CommonProxy {
         for (EntityPlayer player : Backhand.getServer()
             .getConfigurationManager().playerEntityList) {
             if (BackhandUtils.getOffhandItem(player) != null) {
-                ServerTickHandler.resetTickingHotswap(player);
+                BackhandUtils.resetAndDelayHotswap(player, 0);
             }
         }
     }

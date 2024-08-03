@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -28,7 +27,7 @@ public class ServerTickHandler {
 
     public static final HashMap<UUID, List<ItemStack>> tickStartItems = new HashMap<>();
 
-    public static void resetTickingHotswap(EntityPlayer player) {
+    public static void resetTickingHotswap(EntityPlayerMP player) {
         List<ItemStack> tickedItems = tickStartItems.get(player.getUniqueID());
         if (tickedItems != null) {
             BackhandUtils.getOffhandEP(player).ignoreSetSlot = false;
@@ -68,10 +67,11 @@ public class ServerTickHandler {
                 if (!(player instanceof EntityPlayerMP playerMP)) continue;
                 OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
 
-                if (event.phase == TickEvent.Phase.START && !player.isUsingItem() && offhandProp.hotswapDelay <= 0) {
+                if (event.phase == TickEvent.Phase.START && !player.isUsingItem()
+                    && offhandProp.tickingHotswapDelay <= 0) {
                     tickHotswap(playerMP);
                 } else {
-                    if (offhandProp.hotswapDelay > 0) offhandProp.hotswapDelay--;
+                    if (offhandProp.tickingHotswapDelay > 0) offhandProp.tickingHotswapDelay--;
                     resetTickingHotswap(playerMP);
                 }
             }
@@ -129,14 +129,8 @@ public class ServerTickHandler {
             offhandProp.syncOffhand = false;
         }
 
-        if (offhandProp.arrowHotSwapped) {
-            if (offhand != null && offhand.getItem() != Items.arrow) {
-                BackhandUtils.swapOffhandItem(player);
-            }
-            offhandProp.arrowHotSwapped = false;
-        }
         if (offhandProp.regularHotSwap) {
-            BackhandUtils.swapOffhandItem(player);
+            BackhandUtils.swapOffhandItem(player, 5);
             offhandProp.regularHotSwap = false;
         }
 

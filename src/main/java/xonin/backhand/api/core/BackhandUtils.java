@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBed;
@@ -45,6 +46,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 
 import xonin.backhand.Backhand;
+import xonin.backhand.ServerTickHandler;
 
 /**
  * Store commonly used method, mostly for the {@link EntityPlayer} {@link ItemStack}s management
@@ -75,6 +77,11 @@ public class BackhandUtils {
     }
 
     public static void swapOffhandItem(EntityPlayer player) {
+        swapOffhandItem(player, 0);
+    }
+
+    public static void swapOffhandItem(EntityPlayer player, int delayHotswap) {
+        if (delayHotswap > 0) resetAndDelayHotswap(player, delayHotswap);
         final ItemStack mainhandItem = getLegalStack(player.getCurrentEquippedItem());
         final ItemStack offhandItem = getLegalStack(BackhandUtils.getOffhandItem(player));
         BackhandUtils.setPlayerCurrentItem(player, offhandItem);
@@ -507,5 +514,11 @@ public class BackhandUtils {
         }
 
         return stack;
+    }
+
+    public static void resetAndDelayHotswap(EntityPlayer player, int delayTicks) {
+        if (!(player instanceof EntityPlayerMP playerMP)) return;
+        ServerTickHandler.resetTickingHotswap(playerMP);
+        getOffhandEP(player).tickingHotswapDelay = delayTicks;
     }
 }

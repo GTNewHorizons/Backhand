@@ -68,7 +68,7 @@ public class ServerEventsHandler {
             Item totem = ModItems.TOTEM_OF_UNDYING.get();
 
             if (offhandItem.getItem() == totem && (mainhandItem == null || mainhandItem.getItem() != totem)) {
-                BackhandUtils.swapOffhandItem(player);
+                BackhandUtils.swapOffhandItem(player, 5);
                 offhandProp.regularHotSwap = true;
             }
         }
@@ -86,7 +86,7 @@ public class ServerEventsHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onArrowNock(ArrowNockEvent event) {
         if (!Backhand.UseOffhandArrows) {
             return;
@@ -135,6 +135,7 @@ public class ServerEventsHandler {
             && !offhandProp.regularHotSwap) {
             BackhandUtils.swapOffhandItem(player);
             offhandProp.regularHotSwap = true;
+            return;
         }
 
         if (!Backhand.UseOffhandArrows || !(event.item.getItem() instanceof ItemBow)) {
@@ -147,9 +148,9 @@ public class ServerEventsHandler {
                 return;
             }
 
-            offhandProp.arrowHotSwapped = true;
             if (offhandItem.getItem() != Items.arrow) {
-                BackhandUtils.swapOffhandItem(player);
+                offhandProp.regularHotSwap = true;
+                BackhandUtils.swapOffhandItem(player, 5);
             }
         }
     }
