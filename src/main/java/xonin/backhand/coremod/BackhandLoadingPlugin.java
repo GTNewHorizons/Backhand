@@ -58,6 +58,7 @@ public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMix
             mixins.add("MixinPlayerControllerMP");
             mixins.add("MixinItemBow");
             mixins.add("MixinItemStackClient");
+            mixins.add("MixinWorld");
         }
         return mixins;
     }

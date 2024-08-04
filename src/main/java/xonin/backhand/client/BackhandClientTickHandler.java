@@ -6,7 +6,6 @@ import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -99,7 +98,7 @@ public final class BackhandClientTickHandler {
         if (mc.objectMouseOver != null
             && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
             Entity target = mc.objectMouseOver.entityHit;
-            ((EntityClientPlayerMP) player).sendQueue
+            mc.getNetHandler()
                 .addToSendQueue(new OffhandAttackPacket(player, target).generatePacket());
         }
     }
@@ -392,7 +391,7 @@ public final class BackhandClientTickHandler {
 
         if (broken) {
             BackhandUtils.setPlayerOffhandItem(event.player, null);
-            ((EntityClientPlayerMP) event.player).sendQueue
+            mcInstance.getNetHandler()
                 .addToSendQueue(new OffhandToServerPacket(null, event.player).generatePacket());
         }
     }

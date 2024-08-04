@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProviderSurface;
@@ -29,9 +28,6 @@ public class DummyWorld extends World {
         WorldType.DEFAULT);
 
     public static final DummyWorld INSTANCE = new DummyWorld();
-
-    private Block boundBlock;
-    private final Vec3 boundBlockPos = Vec3.createVectorHelper(0, 0, 0);
 
     public DummyWorld() {
         super(new DummySaveHandler(), "DummyServer", DEFAULT_SETTINGS, new WorldProviderSurface(), new Profiler());
@@ -77,33 +73,30 @@ public class DummyWorld extends World {
         return true;
     }
 
-    @Override
-    public TileEntity getTileEntity(int x, int y, int z) {
-        if (boundBlock == null) return super.getTileEntity(x, y, z);
-        return super.getTileEntity((int) boundBlockPos.xCoord, (int) boundBlockPos.yCoord, (int) boundBlockPos.zCoord);
-    }
-
-    @Override
-    public Block getBlock(int x, int y, int z) {
-        if (boundBlock == null) return super.getBlock(x, y, z);
-        return boundBlock;
-    }
-
     @Nullable
     public Block copyAndSetBlock(World world, int x, int y, int z, MovingObjectPosition mop) {
-        reset();
-        setBlockToAir(x, y, z);
         Block block = world.getBlock(x, y, z);
 
         if (block == null || block == Blocks.air) return null;
 
         int meta = block.getDamageValue(world, x, y, z);
         ItemStack stack = block.getPickBlock(mop, world, x, y, z, ClientFakePlayer.INSTANCE);
+        boolean placed = false;
 
-        if (stack == null || !stack.getItem()
-            .onItemUse(stack, ClientFakePlayer.INSTANCE, this, x, y, z, mop.sideHit, x, y, z)) {
+        if (stack != null) {
+            for (int i = 0; i < 6; i++) {
+                // Adjust when placing on a block "below"
+                int aY = i == 1 ? y - 1 : y;
+                if (stack.getItem()
+                    .onItemUse(stack, ClientFakePlayer.INSTANCE, this, x, aY, z, i, x, aY, z)) {
+                    placed = true;
+                    break;
+                }
+            }
+        }
+
+        if (!placed) {
             setBlock(x, y, z, block, meta, 3);
-            setBoundBlock(block, x, y, z);
         }
 
         TileEntity tile = world.getTileEntity(x, y, z);
@@ -120,19 +113,4 @@ public class DummyWorld extends World {
 
         return getBlock(x, y, z);
     }
-
-    public void setBoundBlock(Block block, int x, int y, int z) {
-        boundBlock = block;
-        boundBlockPos.xCoord = x;
-        boundBlockPos.yCoord = y;
-        boundBlockPos.zCoord = z;
-    }
-
-    public void reset() {
-        boundBlock = null;
-        boundBlockPos.xCoord = 0;
-        boundBlockPos.yCoord = 0;
-        boundBlockPos.zCoord = 0;
-    }
-
 }

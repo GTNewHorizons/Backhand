@@ -3,6 +3,7 @@ package xonin.backhand.client.utils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 
@@ -51,8 +52,12 @@ public final class BackhandClientUtils {
         float subY = (float) mop.hitVec.yCoord - y;
         float subZ = (float) mop.hitVec.zCoord - z;
 
+        // Needs to be done before and after placing the block to ensure
+        // that the block placement didn't change the item or player position
+        ClientFakePlayer.INSTANCE.prepareForInteraction(mc.thePlayer, stack);
         Block block = DummyWorld.INSTANCE.copyAndSetBlock(mc.theWorld, x, y, z, mop);
-        if (block == null) return false;
+        if (block == null || block == Blocks.air) return false;
+
         ClientFakePlayer.INSTANCE.prepareForInteraction(mc.thePlayer, stack);
 
         return block
