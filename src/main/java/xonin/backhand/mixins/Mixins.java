@@ -36,7 +36,12 @@ public enum Mixins {
             "minecraft.MixinWorld")
         .setPhase(Phase.EARLY)
         .setSide(Side.CLIENT)
-        .addTargetedMod(TargetedMod.VANILLA));
+        .addTargetedMod(TargetedMod.VANILLA)),
+    FIX_SIMULATED_INTERACTION_NPE(new Builder("Fix NPE when simulating interaction with CB blocks")
+        .addMixinClasses("carpentersblocks.MixinPlayerPermissions")
+        .setPhase(Phase.LATE)
+        .setSide(Side.CLIENT)
+        .addTargetedMod(TargetedMod.CARPENTERS_BLOCKS));
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;

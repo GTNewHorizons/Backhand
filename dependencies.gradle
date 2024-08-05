@@ -37,4 +37,5 @@ dependencies {
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.6.14-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.6.2:dev")
     compileOnly(deobf("https://github.com/Roadhog360/Et-Futurum-Requiem/releases/download/2.6.0/Et_Futurum_Requiem-2.6.0-nomixin.jar", "Et Futurum Requiem"))
+    compileOnly("com.github.GTNewHorizons:CarpentersBlocks:3.6.2-GTNH:dev")
 }
