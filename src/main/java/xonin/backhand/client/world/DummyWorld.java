@@ -7,9 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -17,6 +15,11 @@ import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.IChunkProvider;
+
+import com.gtnewhorizon.gtnhlib.util.CoordinatePacker;
+
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
 public class DummyWorld extends World {
 
@@ -28,6 +31,7 @@ public class DummyWorld extends World {
         WorldType.DEFAULT);
 
     public static final DummyWorld INSTANCE = new DummyWorld();
+    private static final LongSet placedBlocks = new LongOpenHashSet();
 
     public DummyWorld() {
         super(new DummySaveHandler(), "DummyServer", DEFAULT_SETTINGS, new WorldProviderSurface(), new Profiler());
@@ -69,12 +73,25 @@ public class DummyWorld extends World {
     }
 
     @Override
+    public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags) {
+        if (super.setBlock(x, y, z, blockIn, metadataIn, flags)) {
+            long key = CoordinatePacker.pack(x, y, z);
+            if (blockIn != Blocks.air) {
+                placedBlocks.add(key);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_) {
         return true;
     }
 
     @Nullable
     public Block copyAndSetBlock(World world, int x, int y, int z, MovingObjectPosition mop) {
+        resetWorld();
         Block block = world.getBlock(x, y, z);
 
         if (block == null || block == Blocks.air) return null;
@@ -99,18 +116,17 @@ public class DummyWorld extends World {
             setBlock(x, y, z, block, meta, 3);
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile != null) {
-            NBTTagCompound tag = new NBTTagCompound();
-            tile.writeToNBT(tag);
-            TileEntity dummyTile = getTileEntity(x, y, z);
-            if (dummyTile == null) {
-                dummyTile = TileEntity.createAndLoadEntity(tag);
-                setTileEntity(x, y, z, dummyTile);
-            }
-            dummyTile.readFromNBT(tag);
-        }
-
         return getBlock(x, y, z);
+    }
+
+    private void resetWorld() {
+        if (placedBlocks.isEmpty()) return;
+        for (long key : placedBlocks) {
+            int x = CoordinatePacker.unpackX(key);
+            int y = CoordinatePacker.unpackY(key);
+            int z = CoordinatePacker.unpackZ(key);
+            setBlockToAir(x, y, z);
+        }
+        placedBlocks.clear();
     }
 }

@@ -1,15 +1,10 @@
 package xonin.backhand.client.utils;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MovingObjectPosition;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.world.ClientFakePlayer;
-import xonin.backhand.client.world.DummyWorld;
 
 public final class BackhandClientUtils {
 
@@ -42,25 +37,6 @@ public final class BackhandClientUtils {
     }
 
     public static boolean canBlockBeInteractedWith(ItemStack offhand, int x, int y, int z) {
-        Minecraft mc = Minecraft.getMinecraft();
-        MovingObjectPosition mop = mc.objectMouseOver;
-        ItemStack stack = ItemStack.copyItemStack(offhand);
-
-        if (mop == null) return false;
-
-        float subX = (float) mop.hitVec.xCoord - x;
-        float subY = (float) mop.hitVec.yCoord - y;
-        float subZ = (float) mop.hitVec.zCoord - z;
-
-        // Needs to be done before and after placing the block to ensure
-        // that the block placement didn't change the item or player position
-        ClientFakePlayer.INSTANCE.prepareForInteraction(mc.thePlayer, stack);
-        Block block = DummyWorld.INSTANCE.copyAndSetBlock(mc.theWorld, x, y, z, mop);
-        if (block == null || block == Blocks.air) return false;
-
-        ClientFakePlayer.INSTANCE.prepareForInteraction(mc.thePlayer, stack);
-
-        return block
-            .onBlockActivated(DummyWorld.INSTANCE, x, y, z, ClientFakePlayer.INSTANCE, mop.sideHit, subX, subY, subZ);
+        return ClientFakePlayer.INSTANCE.simulateBlockInteraction(offhand, x, y, z);
     }
 }

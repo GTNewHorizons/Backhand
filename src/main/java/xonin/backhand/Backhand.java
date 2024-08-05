@@ -22,6 +22,7 @@ import xonin.backhand.utils.BackhandConfig;
     modid = Backhand.MODID,
     name = "Backhand",
     version = Tags.VERSION,
+    dependencies = "required-after:gtnhlib@[0.3.2,)",
     guiFactory = "xonin.backhand.client.gui.BackhandGuiFactory")
 public class Backhand {
 
