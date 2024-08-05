@@ -1,14 +1,13 @@
 package xonin.backhand.coremod;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
 
-import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import xonin.backhand.mixins.Mixins;
 
 public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
@@ -42,24 +41,6 @@ public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMix
 
     @Override
     public List<String> getMixins(Set<String> loadedCoreMods) {
-        final List<String> mixins = new ArrayList<>();
-        mixins.add("MixinEntityPlayer");
-        mixins.add("MixinEntityPlayerMP");
-        mixins.add("MixinItemStack");
-        mixins.add("MixinNetHandlerPlayServer");
-        mixins.add("MixinEntityItem");
-        if (FMLLaunchHandler.side()
-            .isClient()) {
-            mixins.add("MixinEntityOtherPlayerMP");
-            mixins.add("MixinEntityPlayerClient");
-            mixins.add("MixinItemRenderer");
-            mixins.add("MixinModelBiped");
-            mixins.add("MixinNetHandlerPlayClient");
-            mixins.add("MixinPlayerControllerMP");
-            mixins.add("MixinItemBow");
-            mixins.add("MixinItemStackClient");
-            mixins.add("MixinWorld");
-        }
-        return mixins;
+        return Mixins.getEarlyMixins(loadedCoreMods);
     }
 }

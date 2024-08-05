@@ -1,4 +1,4 @@
-package xonin.backhand.mixins.early;
+package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;

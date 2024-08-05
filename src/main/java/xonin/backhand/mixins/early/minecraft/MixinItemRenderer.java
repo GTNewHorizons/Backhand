@@ -1,4 +1,4 @@
-package xonin.backhand.mixins.early;
+package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;

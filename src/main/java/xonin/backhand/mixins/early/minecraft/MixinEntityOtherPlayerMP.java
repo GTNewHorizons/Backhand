@@ -1,4 +1,4 @@
-package xonin.backhand.mixins.early;
+package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
