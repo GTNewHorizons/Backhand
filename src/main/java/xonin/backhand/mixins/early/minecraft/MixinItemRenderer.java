@@ -1,4 +1,4 @@
-package xonin.backhand.mixins.early;
+package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -43,7 +43,6 @@ public abstract class MixinItemRenderer {
         }
 
         BackhandClientUtils.firstPersonFrame = frame;
-        BackhandClientUtils.onGround2 = 0;
         RenderOffhandPlayer.itemRenderer.updateEquippedItem();
         BackhandClientUtils.offhandFPRender = true;
         GL11.glEnable(GL11.GL_CULL_FACE);

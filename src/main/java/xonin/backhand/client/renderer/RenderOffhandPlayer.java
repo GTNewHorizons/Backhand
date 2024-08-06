@@ -54,8 +54,7 @@ public class RenderOffhandPlayer extends RenderPlayer {
 
     public void updateFovModifierHand() {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.renderViewEntity instanceof EntityPlayerSP) {
-            EntityPlayerSP entityplayersp = (EntityPlayerSP) mc.renderViewEntity;
+        if (mc.renderViewEntity instanceof EntityPlayerSP entityplayersp) {
             this.fovMultiplierTemp = entityplayersp.getFOVMultiplier();
         } else {
             this.fovMultiplierTemp = mc.thePlayer.getFOVMultiplier();
@@ -87,13 +86,10 @@ public class RenderOffhandPlayer extends RenderPlayer {
         otherItemRenderer.equippedProgress = itemRenderer.equippedProgress;
         otherItemRenderer.prevEquippedProgress = itemRenderer.prevEquippedProgress;
 
-        EntityClientPlayerMP entityclientplayermp = mc.thePlayer;
-        float f3 = entityclientplayermp.prevRenderArmPitch
-            + (entityclientplayermp.renderArmPitch - entityclientplayermp.prevRenderArmPitch) * frame;
-        float f4 = entityclientplayermp.prevRenderArmYaw
-            + (entityclientplayermp.renderArmYaw - entityclientplayermp.prevRenderArmYaw) * frame;
-        GL11.glRotatef((entityclientplayermp.rotationPitch - f3) * -0.1F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef((entityclientplayermp.rotationYaw - f4) * -0.1F, 0.0F, 1.0F, 0.0F);
+        float f3 = player.prevRenderArmPitch + (player.renderArmPitch - player.prevRenderArmPitch) * frame;
+        float f4 = player.prevRenderArmYaw + (player.renderArmYaw - player.prevRenderArmYaw) * frame;
+        GL11.glRotatef((player.rotationPitch - f3) * -0.1F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef((player.rotationYaw - f4) * -0.1F, 0.0F, 1.0F, 0.0F);
 
         otherItemRenderer.renderItemInFirstPerson(frame);
 

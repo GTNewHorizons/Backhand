@@ -18,6 +18,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
+import xonin.backhand.Backhand;
 import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.PlayerEventChild;
 import xonin.backhand.api.core.BackhandUtils;
@@ -46,7 +47,7 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
         this.yPosition = par2;
         this.zPosition = par3;
         this.direction = par4;
-        this.itemStack = par5ItemStack != null ? par5ItemStack.copy() : null;
+        this.itemStack = ItemStack.copyItemStack(par5ItemStack);
         this.xOffset = par6;
         this.yOffset = par7;
         this.zOffset = par8;
@@ -83,28 +84,28 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
         } catch (Exception io) {
             return;
         }
-        if (!(player instanceof EntityPlayerMP)) return;
-        ItemStack offhandWeapon = BackhandUtils.getOffhandItem(player);
+        if (!(player instanceof EntityPlayerMP playerMP)) return;
+        ItemStack offhandWeapon = BackhandUtils.getOffhandItem(playerMP);
         if (offhandWeapon != null && !BackhandUtils.usagePriorAttack(offhandWeapon)) return;
         boolean flag = true;
         int i = xPosition;
         int j = yPosition;
         int k = zPosition;
         int l = direction;
-        ((EntityPlayerMP) player).func_143004_u();
+        playerMP.func_143004_u();
         if (direction == 255) {
             if (offhandWeapon == null) return;
             PlayerInteractEvent event = new PlayerInteractEvent(
-                player,
+                playerMP,
                 PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
                 0,
                 0,
                 0,
                 -1,
-                player.getEntityWorld());
+                playerMP.getEntityWorld());
             MinecraftForge.EVENT_BUS.post(new PlayerEventChild.UseOffhandItemEvent(event, offhandWeapon));
             if (event.useItem != Event.Result.DENY) {
-                HookContainerClass.tryUseItem(player, offhandWeapon, Side.SERVER);
+                HookContainerClass.tryUseItem(playerMP, offhandWeapon, Side.SERVER);
             }
             flag = false;
         } else {
@@ -115,19 +116,18 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
                 ChatComponentTranslation chat = new ChatComponentTranslation("build.tooHigh", mcServer.getBuildLimit());
                 chat.getChatStyle()
                     .setColor(EnumChatFormatting.RED);
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S02PacketChat(chat));
+                playerMP.playerNetServerHandler.sendPacket(new S02PacketChat(chat));
             } else {
-                double dist = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance() + 1;
+                double dist = playerMP.theItemInWorldManager.getBlockReachDistance() + 1;
                 dist *= dist;
-                if (player.getDistanceSq(i + 0.5D, j + 0.5D, k + 0.5D) < dist
-                    && !mcServer.isBlockProtected(player.getEntityWorld(), i, j, k, player)) {
-                    this.useItem((EntityPlayerMP) player, offhandWeapon, i, j, k, l, xOffset, yOffset, zOffset);
+                if (playerMP.getDistanceSq(i + 0.5D, j + 0.5D, k + 0.5D) < dist
+                    && !mcServer.isBlockProtected(playerMP.getEntityWorld(), i, j, k, playerMP)) {
+                    this.useItem(playerMP, offhandWeapon, i, j, k, l, xOffset, yOffset, zOffset);
                 }
             }
         }
         if (flag) {
-            ((EntityPlayerMP) player).playerNetServerHandler
-                .sendPacket(new S23PacketBlockChange(i, j, k, player.getEntityWorld()));
+            playerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(i, j, k, playerMP.getEntityWorld()));
             if (l == 0) {
                 --j;
             }
@@ -146,22 +146,25 @@ public final class OffhandPlaceBlockPacket extends AbstractPacket {
             if (l == 5) {
                 ++i;
             }
-            ((EntityPlayerMP) player).playerNetServerHandler
-                .sendPacket(new S23PacketBlockChange(i, j, k, player.getEntityWorld()));
+            playerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(i, j, k, playerMP.getEntityWorld()));
         }
-        offhandWeapon = BackhandUtils.getOffhandItem(player);
+        offhandWeapon = BackhandUtils.getOffhandItem(playerMP);
         if (offhandWeapon != null && HookContainerClass.isItemBlock(offhandWeapon.getItem())) {
             if (offhandWeapon.stackSize <= 0) {
-                BackhandUtils.setPlayerOffhandItem(player, null);
+                BackhandUtils.setPlayerOffhandItem(playerMP, null);
                 offhandWeapon = null;
             }
             if (offhandWeapon == null || offhandWeapon.getMaxItemUseDuration() == 0) {
-                ((EntityPlayerMP) player).isChangingQuantityOnly = true;
+                playerMP.isChangingQuantityOnly = true;
                 BackhandUtils
-                    .setPlayerOffhandItem(player, ItemStack.copyItemStack(BackhandUtils.getOffhandItem(player)));
-                player.openContainer.detectAndSendChanges();
-                ((EntityPlayerMP) player).isChangingQuantityOnly = false;
+                    .setPlayerOffhandItem(playerMP, ItemStack.copyItemStack(BackhandUtils.getOffhandItem(playerMP)));
+                playerMP.openContainer.detectAndSendChanges();
+                playerMP.isChangingQuantityOnly = false;
             }
+        }
+
+        if (!ItemStack.areItemStacksEqual(itemStack, offhandWeapon)) {
+            Backhand.packetHandler.sendPacketToPlayer(new OffhandSyncItemPacket(playerMP).generatePacket(), playerMP);
         }
     }
 

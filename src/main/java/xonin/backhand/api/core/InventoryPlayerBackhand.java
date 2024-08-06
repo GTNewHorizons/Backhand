@@ -1,5 +1,6 @@
 package xonin.backhand.api.core;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
@@ -135,6 +136,18 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
         super.dropAllItems();
         this.player.func_146097_a(this.getOffhandItem(), true, false);
         this.setOffhandItem(null);
+    }
+
+    @Override
+    public boolean func_146025_b(Block block) {
+        if (!super.func_146025_b(block)) {
+            ItemStack offhand = getOffhandItem();
+            if (offhand != null && getCurrentItem() != null && offhand.getItem() == getCurrentItem().getItem()) {
+                return offhand.func_150998_b(block);
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override

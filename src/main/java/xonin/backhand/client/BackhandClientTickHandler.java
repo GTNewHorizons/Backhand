@@ -6,7 +6,6 @@ import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -99,7 +98,7 @@ public final class BackhandClientTickHandler {
         if (mc.objectMouseOver != null
             && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
             Entity target = mc.objectMouseOver.entityHit;
-            ((EntityClientPlayerMP) player).sendQueue
+            mc.getNetHandler()
                 .addToSendQueue(new OffhandAttackPacket(player, target).generatePacket());
         }
     }
@@ -121,8 +120,8 @@ public final class BackhandClientTickHandler {
         }
 
         if (mouseOver != null && mouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            if (BackhandUtils
-                .blockHasUse(player.worldObj.getBlock(mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ))
+            if (BackhandClientUtils
+                .canBlockBeInteractedWith(offhandItem, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ)
                 && !BackhandUtils.getOffhandItem(player)
                     .getItem()
                     .doesSneakBypassUse(player.worldObj, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ, player)
@@ -167,7 +166,6 @@ public final class BackhandClientTickHandler {
                     int l = mouseOver.blockZ;
                     if (!player.worldObj.getBlock(j, k, l)
                         .isAir(player.worldObj, j, k, l)) {
-                        final int size = offhandItem.stackSize;
                         int i1 = mouseOver.sideHit;
                         PlayerEventChild.UseOffhandItemEvent useItemEvent = new PlayerEventChild.UseOffhandItemEvent(
                             new PlayerInteractEvent(
@@ -242,16 +240,7 @@ public final class BackhandClientTickHandler {
             .onItemUseFirst(offhand, player, worldObj, i, j, k, l, f, f1, f2)) {
             return true;
         }
-        /*
-         * if (!player.isSneaking() || BattlegearUtils.getOffhandItem(player) == null ||
-         * BattlegearUtils.getOffhandItem(player).getItem().doesSneakBypassUse(worldObj, i, j, k, player)){
-         * if (!b.isAir(worldObj, i, j, k)){
-         * flag = true;
-         * }
-         * }
-         */
-        if (!flag && offhand.getItem() instanceof ItemBlock) {
-            ItemBlock itemblock = (ItemBlock) offhand.getItem();
+        if (!flag && offhand.getItem() instanceof ItemBlock itemblock) {
             if (!itemblock.func_150936_a(worldObj, i, j, k, l, player, offhand)) {
                 return false;
             }
@@ -302,13 +291,7 @@ public final class BackhandClientTickHandler {
                     && (offhandItem == null || !(offhandItem.getItem() instanceof ItemSword))) {
                     PlayerControllerMP
                         .clickBlockCreative(mcInstance, mcInstance.playerController, i, j, k, objectMouseOver.sideHit);
-                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem); // force
-                                                                                                          // offhand
-                                                                                                          // swing
-                                                                                                          // anyway
-                                                                                                          // because we
-                                                                                                          // broke a
-                                                                                                          // block
+                    HookContainerClass.sendOffSwingEventNoCheck(event.player, mainHandItem, offhandItem);
                     mcInstance.getNetHandler()
                         .addToSendQueue(new C07PacketPlayerDigging(2, i, j, k, objectMouseOver.sideHit));
                 }
@@ -408,7 +391,7 @@ public final class BackhandClientTickHandler {
 
         if (broken) {
             BackhandUtils.setPlayerOffhandItem(event.player, null);
-            ((EntityClientPlayerMP) event.player).sendQueue
+            mcInstance.getNetHandler()
                 .addToSendQueue(new OffhandToServerPacket(null, event.player).generatePacket());
         }
     }

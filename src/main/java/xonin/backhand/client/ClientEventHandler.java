@@ -28,7 +28,6 @@ public class ClientEventHandler {
 
     public static RenderOffhandPlayer renderOffhandPlayer = new RenderOffhandPlayer();
     public static EntityPlayer renderingPlayer;
-    public static boolean cancelone = false;
 
     @SubscribeEvent
     public void renderHotbarOverlay(RenderGameOverlayEvent event) {
@@ -113,12 +112,10 @@ public class ClientEventHandler {
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public void renderPlayerLeftItemUsage(RenderLivingEvent.Pre event) {
-        if (event.entity instanceof EntityPlayer) {
-            EntityPlayer entityPlayer = (EntityPlayer) event.entity;
+        if (event.entity instanceof EntityPlayer entityPlayer) {
             renderingPlayer = entityPlayer;
             ItemStack offhand = BackhandUtils.getOffhandItem(entityPlayer);
-            if (offhand != null && event.renderer instanceof RenderPlayer) {
-                RenderPlayer renderer = ((RenderPlayer) event.renderer);
+            if (offhand != null && event.renderer instanceof RenderPlayer renderer) {
                 renderer.modelArmorChestplate.heldItemLeft = renderer.modelArmor.heldItemLeft = renderer.modelBipedMain.heldItemLeft = 1;
                 if (entityPlayer.getItemInUseCount() > 0 && entityPlayer.getItemInUse() == offhand) {
                     EnumAction enumaction = offhand.getItemUseAction();
