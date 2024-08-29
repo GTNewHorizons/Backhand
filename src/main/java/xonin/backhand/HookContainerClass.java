@@ -67,6 +67,9 @@ public final class HookContainerClass {
                 Backhand.packetHandler.sendPacketToPlayer(
                     new OffhandConfigSyncPacket(player).generatePacket(),
                     (EntityPlayerMP) event.entity);
+                Backhand.packetHandler.sendPacketToPlayer(
+                    new OffhandSyncItemPacket(player).generatePacket(),
+                    (EntityPlayerMP) event.entity);
             }
             ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
             if (Backhand.isOffhandBlacklisted(offhandItem)) {
@@ -285,7 +288,7 @@ public final class HookContainerClass {
 
     public boolean interactWithNoEvent(EntityPlayer pl, Entity p_70998_1_) {
         ItemStack itemstack = pl.getCurrentEquippedItem();
-        ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
+        ItemStack itemstack1 = ItemStack.copyItemStack(itemstack);
 
         if (!p_70998_1_.interactFirst(pl)) {
             if (itemstack != null && p_70998_1_ instanceof EntityLivingBase) {
