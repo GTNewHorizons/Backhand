@@ -16,8 +16,8 @@ import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.ClientEventHandler;
-import xonin.backhand.client.renderer.RenderOffhandPlayer;
 import xonin.backhand.client.utils.BackhandClientUtils;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
@@ -43,11 +43,11 @@ public abstract class MixinItemRenderer {
         }
 
         BackhandClientUtils.firstPersonFrame = frame;
-        RenderOffhandPlayer.itemRenderer.updateEquippedItem();
+        BackhandRenderHelper.itemRenderer.updateEquippedItem();
         BackhandClientUtils.offhandFPRender = true;
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_FRONT);
-        ClientEventHandler.renderOffhandPlayer.renderOffhandItem((ItemRenderer) (Object) this, frame);
+        BackhandRenderHelper.renderOffhandItem((ItemRenderer) (Object) this, frame);
         GL11.glCullFace(GL11.GL_BACK);
         BackhandClientUtils.offhandFPRender = false;
     }
