@@ -37,6 +37,11 @@ public final class BackhandClientUtils {
     }
 
     public static boolean canBlockBeInteractedWith(ItemStack offhand, int x, int y, int z) {
-        return ClientFakePlayer.INSTANCE.simulateBlockInteraction(offhand, x, y, z);
+        try {
+            return ClientFakePlayer.INSTANCE.simulateBlockInteraction(offhand, x, y, z);
+        } catch (Exception e) {
+            // Something went wrong, block the offhand interaction
+            return true;
+        }
     }
 }

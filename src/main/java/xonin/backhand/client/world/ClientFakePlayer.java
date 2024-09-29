@@ -83,12 +83,7 @@ public class ClientFakePlayer extends EntityPlayer {
 
         prepareForInteraction(mc.thePlayer, stack);
 
-        try {
-            return block.onBlockActivated(DummyWorld.INSTANCE, x, y, z, this, mop.sideHit, subX, subY, subZ);
-        } catch (Exception e) {
-            // Something went wrong, block the offhand interaction
-            return true;
-        }
+        return block.onBlockActivated(DummyWorld.INSTANCE, x, y, z, this, mop.sideHit, subX, subY, subZ);
     }
 
     private void prepareForInteraction(EntityPlayer player, ItemStack stack) {
