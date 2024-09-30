@@ -51,10 +51,10 @@ public class BackhandConfigGui extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         this.drawGradientRect(0, 40, this.width, this.height - 60, -1072689136, -804253680);
-        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        super.drawScreen(mouseX, mouseY, partialTicks);
         String configTitle = I18n.format("backhandconfig.title");
         this.fontRendererObj.drawString(
             configTitle,

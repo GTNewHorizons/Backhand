@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -18,6 +19,8 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 import com.gtnewhorizon.gtnhlib.util.CoordinatePacker;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
@@ -32,6 +35,7 @@ public class DummyWorld extends World {
 
     public static final DummyWorld INSTANCE = new DummyWorld();
     private static final LongSet placedBlocks = new LongOpenHashSet();
+    private static final Long2ObjectMap<TileEntity> tileEntities = new Long2ObjectOpenHashMap<>();
 
     public DummyWorld() {
         super(new DummySaveHandler(), "DummyServer", DEFAULT_SETTINGS, new WorldProviderSurface(), new Profiler());
@@ -68,11 +72,6 @@ public class DummyWorld extends World {
     }
 
     @Override
-    protected boolean chunkExists(int x, int z) {
-        return chunkProvider.chunkExists(x, z);
-    }
-
-    @Override
     public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags) {
         if (super.setBlock(x, y, z, blockIn, metadataIn, flags)) {
             long key = CoordinatePacker.pack(x, y, z);
@@ -87,6 +86,23 @@ public class DummyWorld extends World {
     @Override
     public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_) {
         return true;
+    }
+
+    @Override
+    public void setTileEntity(int x, int y, int z, TileEntity tile) {
+        if (tile == null || tile.isInvalid()) return;
+        long key = CoordinatePacker.pack(x, y, z);
+        tileEntities.put(key, tile);
+    }
+
+    @Override
+    public TileEntity getTileEntity(int x, int y, int z) {
+        return tileEntities.get(CoordinatePacker.pack(x, y, z));
+    }
+
+    @Override
+    public void removeTileEntity(int x, int y, int z) {
+        tileEntities.remove(CoordinatePacker.pack(x, y, z));
     }
 
     @Nullable
@@ -126,6 +142,7 @@ public class DummyWorld extends World {
             int y = CoordinatePacker.unpackY(key);
             int z = CoordinatePacker.unpackZ(key);
             setBlockToAir(x, y, z);
+            tileEntities.clear();
         }
         placedBlocks.clear();
     }

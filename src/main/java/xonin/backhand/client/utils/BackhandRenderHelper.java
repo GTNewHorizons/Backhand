@@ -1,6 +1,7 @@
 package xonin.backhand.client.utils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -14,10 +15,12 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.client.renderer.ItemRendererOffhand;
 
 public final class BackhandRenderHelper {
 
     public static final float RENDER_UNIT = 1F / 16F;// 0.0625
+    public static final ItemRendererOffhand itemRenderer = new ItemRendererOffhand(Minecraft.getMinecraft());
 
     private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
@@ -117,5 +120,34 @@ public final class BackhandRenderHelper {
         tessellator.addVertexWithUV((double) (x + width), (double) (y + 0), (double) z, 1D, 0D);
         tessellator.addVertexWithUV((double) (x + 0), (double) (y + 0), (double) z, 0D, 0D);
         tessellator.draw();
+    }
+
+    public static void renderOffhandItem(ItemRenderer otherItemRenderer, float frame) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityClientPlayerMP player = mc.thePlayer;
+
+        GL11.glPushMatrix();
+        GL11.glScalef(-1, 1, 1);
+
+        ItemStack itemToRender = otherItemRenderer.itemToRender;
+        float equippedProgress = otherItemRenderer.equippedProgress;
+        float prevEquippedProgress = otherItemRenderer.prevEquippedProgress;
+
+        otherItemRenderer.itemToRender = itemRenderer.itemToRender;
+        otherItemRenderer.equippedProgress = itemRenderer.equippedProgress;
+        otherItemRenderer.prevEquippedProgress = itemRenderer.prevEquippedProgress;
+
+        float f3 = player.prevRenderArmPitch + (player.renderArmPitch - player.prevRenderArmPitch) * frame;
+        float f4 = player.prevRenderArmYaw + (player.renderArmYaw - player.prevRenderArmYaw) * frame;
+        GL11.glRotatef((player.rotationPitch - f3) * -0.1F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef((player.rotationYaw - f4) * -0.1F, 0.0F, 1.0F, 0.0F);
+
+        otherItemRenderer.renderItemInFirstPerson(frame);
+
+        otherItemRenderer.itemToRender = itemToRender;
+        otherItemRenderer.equippedProgress = equippedProgress;
+        otherItemRenderer.prevEquippedProgress = prevEquippedProgress;
+
+        GL11.glPopMatrix();
     }
 }

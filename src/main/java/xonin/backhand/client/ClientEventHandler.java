@@ -22,11 +22,10 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.client.renderer.RenderOffhandPlayer;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 
 public class ClientEventHandler {
 
-    public static RenderOffhandPlayer renderOffhandPlayer = new RenderOffhandPlayer();
     public static EntityPlayer renderingPlayer;
 
     @SubscribeEvent
@@ -148,9 +147,8 @@ public class ClientEventHandler {
 
         GL11.glPushMatrix();
         ModelBiped biped = event.renderer.modelBipedMain;
-        RenderOffhandPlayer.itemRenderer.updateEquippedItem();
-        renderOffhandPlayer.updateFovModifierHand();
-        RenderOffhandPlayer.itemRenderer
+        BackhandRenderHelper.itemRenderer.updateEquippedItem();
+        BackhandRenderHelper.itemRenderer
             .renderOffhandItemIn3rdPerson(event.entityPlayer, biped, event.partialRenderTick);
         GL11.glPopMatrix();
     }
