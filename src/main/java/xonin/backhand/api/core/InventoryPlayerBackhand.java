@@ -59,12 +59,12 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
         if (itemStack == null || itemStack.stackSize == 0 || itemStack.getItem() == null) return false;
 
         if (!Backhand.isOffhandBlacklisted(itemStack)) {
-             if (BackhandConfig.OffhandPickup && this.getOffhandItem() == null && getFirstEmptyStack() == -1) {
-                 this.setOffhandItem(ItemStack.copyItemStack(itemStack));
-                 itemStack.stackSize = 0;
-                 BackhandUtils.getOffhandEP(player).syncOffhand = true;
-                 return true;
-             }
+            if (BackhandConfig.OffhandPickup && this.getOffhandItem() == null && getFirstEmptyStack() == -1) {
+                this.setOffhandItem(ItemStack.copyItemStack(itemStack));
+                itemStack.stackSize = 0;
+                BackhandUtils.getOffhandEP(player).syncOffhand = true;
+                return true;
+            }
 
             if (this.getOffhandItem() != null && this.getOffhandItem()
                 .getItem() == itemStack.getItem()

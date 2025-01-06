@@ -1,11 +1,13 @@
 package xonin.backhand.utils;
 
 import com.gtnewhorizon.gtnhlib.config.Config;
+
 import xonin.backhand.Backhand;
 
 @Config(modid = Backhand.MODID)
 @Config.Comment("Configs that will be synced with the server's config if playing in multiplayer")
 public class BackhandConfig {
+
     @Config.Comment("If set to false, an empty offhand will only be rendered when the player is punching with the offhand. False in vanilla.")
     @Config.DefaultBoolean(false)
     public static boolean OffhandAttack;

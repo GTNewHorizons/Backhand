@@ -430,8 +430,7 @@ public class BackhandUtils {
     public static void attackTargetEntityWithCurrentOffItem(EntityPlayer player, Entity par1Entity) {
         final ItemStack oldItem = player.getCurrentEquippedItem();
         final ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!BackhandConfig.OffhandAttack || (offhandItem == null && !BackhandConfig.EmptyOffhand))
-            return;
+        if (!BackhandConfig.OffhandAttack || (offhandItem == null && !BackhandConfig.EmptyOffhand)) return;
 
         BackhandUtils.setPlayerCurrentItem(player, offhandItem);
         refreshAttributes(player.getAttributeMap(), oldItem, player.getCurrentEquippedItem());

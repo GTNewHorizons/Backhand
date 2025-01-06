@@ -32,8 +32,7 @@ public abstract class MixinItemRenderer {
 
         ItemStack mainhandItem = player.getCurrentEquippedItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!BackhandConfig.EmptyOffhand && !BackhandConfigClient.RenderEmptyOffhandAtRest
-            && offhandItem == null) {
+        if (!BackhandConfig.EmptyOffhand && !BackhandConfigClient.RenderEmptyOffhandAtRest && offhandItem == null) {
             return;
         }
         if (offhandItem == null && !BackhandConfigClient.RenderEmptyOffhandAtRest
