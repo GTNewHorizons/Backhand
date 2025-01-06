@@ -98,11 +98,11 @@ public class ClientTickHandler {
             ClientTickHandler.delay--;
         }
 
-        if (!BackhandConfig.general.OffhandBreakBlocks) {
+        if (!BackhandConfig.OffhandBreakBlocks) {
             return;
         }
 
-        if (!BackhandConfig.general.EmptyOffhand && BackhandUtils.getOffhandItem(event.player) == null) {
+        if (!BackhandConfig.EmptyOffhand && BackhandUtils.getOffhandItem(event.player) == null) {
             return;
         }
 

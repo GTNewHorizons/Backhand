@@ -89,7 +89,7 @@ public class ServerEventsHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onArrowNock(ArrowNockEvent event) {
-        if (!BackhandConfig.general.UseOffhandArrows) {
+        if (!BackhandConfig.UseOffhandArrows) {
             return;
         }
         EntityPlayer player = event.entityPlayer;
@@ -139,7 +139,7 @@ public class ServerEventsHandler {
             return;
         }
 
-        if (!BackhandConfig.general.UseOffhandArrows || !(event.item.getItem() instanceof ItemBow)) {
+        if (!BackhandConfig.UseOffhandArrows || !(event.item.getItem() instanceof ItemBow)) {
             return;
         }
 

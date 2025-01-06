@@ -111,7 +111,7 @@ public final class HookContainerClass {
     public void playerInteract(PlayerInteractEvent event) {
         if (isFake(event.entityPlayer)) return;
 
-        if (!BackhandConfig.general.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!BackhandConfig.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 
@@ -157,7 +157,7 @@ public final class HookContainerClass {
                 }
             }
             if (event.entityPlayer.worldObj.isRemote && !BackhandUtils.usagePriorAttack(offhandItem)
-                && BackhandConfig.general.OffhandAttack
+                && BackhandConfig.OffhandAttack
                 && swingHand) {
                 HookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
             }

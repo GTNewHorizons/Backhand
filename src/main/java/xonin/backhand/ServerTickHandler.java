@@ -63,7 +63,7 @@ public class ServerTickHandler {
             .getEffectiveSide() != Side.SERVER) {
             return;
         }
-        if (BackhandConfig.general.OffhandTickHotswap) {
+        if (BackhandConfig.OffhandTickHotswap) {
             for (EntityPlayer player : event.world.playerEntities) {
                 if (!(player instanceof EntityPlayerMP playerMP)) continue;
                 OffhandExtendedProperty offhandProp = BackhandUtils.getOffhandEP(player);
@@ -107,7 +107,7 @@ public class ServerTickHandler {
 
                     boolean foundSlot = false;
                     for (int i = 0; i < player.inventory.getSizeInventory() - 4; i++) {
-                        if (i == BackhandConfig.general.AlternateOffhandSlot) continue;
+                        if (i == BackhandConfig.AlternateOffhandSlot) continue;
                         if (player.inventory.getStackInSlot(i) == null) {
                             player.inventory.setInventorySlotContents(i, offhand);
                             foundSlot = true;

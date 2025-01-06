@@ -19,12 +19,14 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
+import xonin.backhand.utils.BackhandConfigClient;
 
 @Mod(
     modid = Backhand.MODID,
     name = "Backhand",
     version = Tags.VERSION,
-    dependencies = "required-after:gtnhlib@[0.3.2,)")
+    dependencies = "required-after:gtnhlib@[0.3.2,)",
+    guiFactory = "backhand.client.BackhandGuiFactory")
 public class Backhand {
 
     public static final String MODID = "backhand";
@@ -43,6 +45,7 @@ public class Backhand {
         isEFRLoaded = Loader.isModLoaded("etfuturum");
         try {
             ConfigurationManager.registerConfig(BackhandConfig.class);
+            ConfigurationManager.registerConfig(BackhandConfigClient.class);
         } catch (ConfigException e) {
             LOGGER.warn("Unable to register config", e);
         }
@@ -79,7 +82,7 @@ public class Backhand {
     public static boolean isOffhandBlacklisted(ItemStack stack) {
         if (stack == null) return false;
 
-        for (String itemName : BackhandConfig.general.offhandBlacklist) {
+        for (String itemName : BackhandConfig.offhandBlacklist) {
             if (stack.getItem().delegate.name()
                 .equals(itemName)) {
                 return true;

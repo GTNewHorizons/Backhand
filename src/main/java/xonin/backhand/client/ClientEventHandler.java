@@ -141,7 +141,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void render3rdPersonOffhand(RenderPlayerEvent.Specials.Post event) {
-        if (!BackhandConfig.general.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!BackhandConfig.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 

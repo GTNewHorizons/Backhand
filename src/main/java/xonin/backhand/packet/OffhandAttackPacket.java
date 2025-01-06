@@ -39,7 +39,7 @@ public class OffhandAttackPacket extends AbstractPacket {
 
     @Override
     public void process(ByteBuf inputStream, EntityPlayer sender) {
-        if (!BackhandConfig.general.OffhandAttack) {
+        if (!BackhandConfig.OffhandAttack) {
             return;
         }
 

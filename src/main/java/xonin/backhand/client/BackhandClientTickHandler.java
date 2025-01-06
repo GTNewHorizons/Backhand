@@ -108,7 +108,7 @@ public final class BackhandClientTickHandler {
     public boolean tryCheckUseItem(ItemStack offhandItem, EntityPlayer player) {
         MovingObjectPosition mouseOver = mc.objectMouseOver;
 
-        if (offhandItem.getItem() instanceof ItemBow && !BackhandConfig.general.UseOffhandBow) {
+        if (offhandItem.getItem() instanceof ItemBow && !BackhandConfig.UseOffhandBow) {
             return false;
         }
 
