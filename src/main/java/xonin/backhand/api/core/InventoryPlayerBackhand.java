@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import xonin.backhand.Backhand;
+import xonin.backhand.utils.BackhandConfig;
 
 /**
  * User: nerd-boy
@@ -58,12 +59,12 @@ public class InventoryPlayerBackhand extends InventoryPlayer {
         if (itemStack == null || itemStack.stackSize == 0 || itemStack.getItem() == null) return false;
 
         if (!Backhand.isOffhandBlacklisted(itemStack)) {
-            if (this.getOffhandItem() == null && getFirstEmptyStack() == -1) {
-                this.setOffhandItem(ItemStack.copyItemStack(itemStack));
-                itemStack.stackSize = 0;
-                BackhandUtils.getOffhandEP(player).syncOffhand = true;
-                return true;
-            }
+             if (BackhandConfig.general.OffhandPickup && this.getOffhandItem() == null && getFirstEmptyStack() == -1) {
+                 this.setOffhandItem(ItemStack.copyItemStack(itemStack));
+                 itemStack.stackSize = 0;
+                 BackhandUtils.getOffhandEP(player).syncOffhand = true;
+                 return true;
+             }
 
             if (this.getOffhandItem() != null && this.getOffhandItem()
                 .getItem() == itemStack.getItem()

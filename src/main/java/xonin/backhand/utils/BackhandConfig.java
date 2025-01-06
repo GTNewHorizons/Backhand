@@ -54,6 +54,10 @@ public class BackhandConfig {
             """)
         @Config.DefaultStringList({})
         public String[] offhandBlacklist;
+
+        @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
+        @Config.DefaultBoolean(false)
+        public boolean OffhandPickup;
     }
 
     public static class Client {
