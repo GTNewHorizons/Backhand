@@ -47,6 +47,7 @@ import com.google.common.io.ByteArrayDataOutput;
 
 import xonin.backhand.Backhand;
 import xonin.backhand.ServerTickHandler;
+import xonin.backhand.utils.BackhandConfig;
 
 /**
  * Store commonly used method, mostly for the {@link EntityPlayer} {@link ItemStack}s management
@@ -86,7 +87,7 @@ public class BackhandUtils {
         final ItemStack offhandItem = getLegalStack(BackhandUtils.getOffhandItem(player));
         BackhandUtils.setPlayerCurrentItem(player, offhandItem);
         BackhandUtils.setPlayerOffhandItem(player, mainhandItem);
-        if (Backhand.UseInventorySlot) {
+        if (BackhandConfig.UseInventorySlot) {
             player.inventoryContainer.detectAndSendChanges();
         }
     }
@@ -97,8 +98,8 @@ public class BackhandUtils {
 
     public static void setPlayerOffhandItem(EntityPlayer player, ItemStack stack) {
         if (!Backhand.isOffhandBlacklisted(stack)) {
-            if (Backhand.UseInventorySlot) {
-                player.inventory.setInventorySlotContents(Backhand.AlternateOffhandSlot, stack);
+            if (BackhandConfig.UseInventorySlot) {
+                player.inventory.setInventorySlotContents(BackhandConfig.AlternateOffhandSlot, stack);
             } else {
                 getOffhandEP(player).setOffhandItem(stack);
             }
@@ -108,8 +109,8 @@ public class BackhandUtils {
     public static @Nullable ItemStack getOffhandItem(EntityPlayer player) {
         if (player instanceof FakePlayer) return null;
 
-        if (Backhand.UseInventorySlot) {
-            return player.inventory.getStackInSlot(Backhand.AlternateOffhandSlot);
+        if (BackhandConfig.UseInventorySlot) {
+            return player.inventory.getStackInSlot(BackhandConfig.AlternateOffhandSlot);
         } else {
             return getOffhandEP(player).getOffhandItem();
         }
@@ -429,7 +430,7 @@ public class BackhandUtils {
     public static void attackTargetEntityWithCurrentOffItem(EntityPlayer player, Entity par1Entity) {
         final ItemStack oldItem = player.getCurrentEquippedItem();
         final ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!Backhand.OffhandAttack || (offhandItem == null && !Backhand.EmptyOffhand)) return;
+        if (!BackhandConfig.OffhandAttack || (offhandItem == null && !BackhandConfig.EmptyOffhand)) return;
 
         BackhandUtils.setPlayerCurrentItem(player, offhandItem);
         refreshAttributes(player.getAttributeMap(), oldItem, player.getCurrentEquippedItem());

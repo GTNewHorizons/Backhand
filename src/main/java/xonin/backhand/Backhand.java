@@ -3,10 +3,12 @@ package xonin.backhand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.gtnewhorizon.gtnhlib.config.ConfigException;
+import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -17,13 +19,13 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
+import xonin.backhand.utils.BackhandConfigClient;
 
 @Mod(
     modid = Backhand.MODID,
     name = "Backhand",
     version = Tags.VERSION,
-    dependencies = "required-after:gtnhlib@[0.3.2,)",
-    guiFactory = "xonin.backhand.client.gui.BackhandGuiFactory")
+    dependencies = "required-after:gtnhlib@[0.5.16,)")
 public class Backhand {
 
     public static final String MODID = "backhand";
@@ -35,25 +37,17 @@ public class Backhand {
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
     public static BackhandPacketHandler packetHandler;
-
-    public static boolean OffhandAttack;
-    public static boolean EmptyOffhand;
-    public static boolean OffhandBreakBlocks;
-    public static boolean UseOffhandArrows;
-    public static boolean UseOffhandBow;
-    public static boolean OffhandTickHotswap;
-    public static int AlternateOffhandSlot;
-    public static boolean UseInventorySlot;
-    public static String[] offhandBlacklist;
-
-    public static boolean RenderEmptyOffhandAtRest;
-
     public static boolean isEFRLoaded;
 
     @Mod.EventHandler
     public void load(FMLPreInitializationEvent event) {
         isEFRLoaded = Loader.isModLoaded("etfuturum");
-        BackhandConfig.getConfig(new Configuration(event.getSuggestedConfigurationFile()));
+        try {
+            ConfigurationManager.registerConfig(BackhandConfig.class);
+            ConfigurationManager.registerConfig(BackhandConfigClient.class);
+        } catch (ConfigException e) {
+            LOGGER.warn("Unable to register config", e);
+        }
 
         proxy.load();
 
@@ -87,7 +81,7 @@ public class Backhand {
     public static boolean isOffhandBlacklisted(ItemStack stack) {
         if (stack == null) return false;
 
-        for (String itemName : offhandBlacklist) {
+        for (String itemName : BackhandConfig.offhandBlacklist) {
             if (stack.getItem().delegate.name()
                 .equals(itemName)) {
                 return true;

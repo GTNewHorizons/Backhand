@@ -44,6 +44,7 @@ import xonin.backhand.api.core.OffhandExtendedProperty;
 import xonin.backhand.packet.OffhandConfigSyncPacket;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import xonin.backhand.packet.OffhandSyncItemPacket;
+import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.EnumAnimations;
 
 public final class HookContainerClass {
@@ -110,7 +111,7 @@ public final class HookContainerClass {
     public void playerInteract(PlayerInteractEvent event) {
         if (isFake(event.entityPlayer)) return;
 
-        if (!Backhand.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!BackhandConfig.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 
@@ -156,7 +157,7 @@ public final class HookContainerClass {
                 }
             }
             if (event.entityPlayer.worldObj.isRemote && !BackhandUtils.usagePriorAttack(offhandItem)
-                && Backhand.OffhandAttack
+                && BackhandConfig.OffhandAttack
                 && swingHand) {
                 HookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
             }
@@ -226,6 +227,9 @@ public final class HookContainerClass {
             Backhand.packetHandler.sendPacketToServer(
                 new OffhandPlaceBlockPacket(-1, -1, -1, 255, itemStack, 0.0F, 0.0F, 0.0F).generatePacket());
         }
+
+        if (itemStack == null || player.getCurrentEquippedItem() == null) return false;
+
         final int i = itemStack.stackSize;
         final int j = itemStack.getItemDamage();
         ItemStack prevHeldItem = player.getCurrentEquippedItem();

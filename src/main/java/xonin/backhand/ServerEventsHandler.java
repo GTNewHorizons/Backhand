@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.Side;
 import ganymedes01.etfuturum.ModItems;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.OffhandExtendedProperty;
+import xonin.backhand.utils.BackhandConfig;
 
 public class ServerEventsHandler {
 
@@ -88,7 +89,7 @@ public class ServerEventsHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onArrowNock(ArrowNockEvent event) {
-        if (!Backhand.UseOffhandArrows) {
+        if (!BackhandConfig.UseOffhandArrows) {
             return;
         }
         EntityPlayer player = event.entityPlayer;
@@ -138,7 +139,7 @@ public class ServerEventsHandler {
             return;
         }
 
-        if (!Backhand.UseOffhandArrows || !(event.item.getItem() instanceof ItemBow)) {
+        if (!BackhandConfig.UseOffhandArrows || !(event.item.getItem() instanceof ItemBow)) {
             return;
         }
 
