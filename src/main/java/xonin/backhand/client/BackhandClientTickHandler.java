@@ -39,6 +39,7 @@ import xonin.backhand.client.utils.BackhandClientUtils;
 import xonin.backhand.packet.OffhandAttackPacket;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import xonin.backhand.packet.OffhandToServerPacket;
+import xonin.backhand.utils.BackhandConfig;
 
 public final class BackhandClientTickHandler {
 
@@ -107,7 +108,7 @@ public final class BackhandClientTickHandler {
     public boolean tryCheckUseItem(ItemStack offhandItem, EntityPlayer player) {
         MovingObjectPosition mouseOver = mc.objectMouseOver;
 
-        if (offhandItem.getItem() instanceof ItemBow && !Backhand.UseOffhandBow) {
+        if (offhandItem.getItem() instanceof ItemBow && !BackhandConfig.general.UseOffhandBow) {
             return false;
         }
 

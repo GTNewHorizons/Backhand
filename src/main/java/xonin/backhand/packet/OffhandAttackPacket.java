@@ -10,6 +10,7 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.Backhand;
 import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.EnumAnimations;
 
 public class OffhandAttackPacket extends AbstractPacket {
@@ -38,7 +39,7 @@ public class OffhandAttackPacket extends AbstractPacket {
 
     @Override
     public void process(ByteBuf inputStream, EntityPlayer sender) {
-        if (!Backhand.OffhandAttack) {
+        if (!BackhandConfig.general.OffhandAttack) {
             return;
         }
 

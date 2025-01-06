@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.ClientEventHandler;
 import xonin.backhand.client.utils.BackhandClientUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.utils.BackhandConfig;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
@@ -31,10 +31,11 @@ public abstract class MixinItemRenderer {
 
         ItemStack mainhandItem = player.getCurrentEquippedItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!Backhand.EmptyOffhand && !Backhand.RenderEmptyOffhandAtRest && offhandItem == null) {
+        if (!BackhandConfig.general.EmptyOffhand && !BackhandConfig.client.RenderEmptyOffhandAtRest
+            && offhandItem == null) {
             return;
         }
-        if (offhandItem == null && !Backhand.RenderEmptyOffhandAtRest
+        if (offhandItem == null && !BackhandConfig.client.RenderEmptyOffhandAtRest
             && ((IBackhandPlayer) player).getOffSwingProgress(frame) == 0) {
             return;
         }

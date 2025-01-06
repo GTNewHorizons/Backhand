@@ -19,6 +19,7 @@ import xonin.backhand.HookContainerClass;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandClientUtils;
 import xonin.backhand.packet.OffhandSwapPacket;
+import xonin.backhand.utils.BackhandConfig;
 
 public class ClientTickHandler {
 
@@ -97,11 +98,11 @@ public class ClientTickHandler {
             ClientTickHandler.delay--;
         }
 
-        if (!Backhand.OffhandBreakBlocks) {
+        if (!BackhandConfig.general.OffhandBreakBlocks) {
             return;
         }
 
-        if (!Backhand.EmptyOffhand && BackhandUtils.getOffhandItem(event.player) == null) {
+        if (!BackhandConfig.general.EmptyOffhand && BackhandUtils.getOffhandItem(event.player) == null) {
             return;
         }
 

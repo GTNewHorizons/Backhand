@@ -44,6 +44,7 @@ import xonin.backhand.api.core.OffhandExtendedProperty;
 import xonin.backhand.packet.OffhandConfigSyncPacket;
 import xonin.backhand.packet.OffhandPlaceBlockPacket;
 import xonin.backhand.packet.OffhandSyncItemPacket;
+import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.EnumAnimations;
 
 public final class HookContainerClass {
@@ -110,7 +111,7 @@ public final class HookContainerClass {
     public void playerInteract(PlayerInteractEvent event) {
         if (isFake(event.entityPlayer)) return;
 
-        if (!Backhand.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!BackhandConfig.general.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 
@@ -156,7 +157,7 @@ public final class HookContainerClass {
                 }
             }
             if (event.entityPlayer.worldObj.isRemote && !BackhandUtils.usagePriorAttack(offhandItem)
-                && Backhand.OffhandAttack
+                && BackhandConfig.general.OffhandAttack
                 && swingHand) {
                 HookContainerClass.sendOffSwingEventNoCheck(event.entityPlayer, mainHandItem, offhandItem);
             }

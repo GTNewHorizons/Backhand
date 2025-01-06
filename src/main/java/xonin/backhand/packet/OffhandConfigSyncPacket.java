@@ -4,8 +4,8 @@ package xonin.backhand.packet;
 import net.minecraft.entity.player.EntityPlayer;
 
 import io.netty.buffer.ByteBuf;
-import xonin.backhand.Backhand;
 import xonin.backhand.client.utils.BackhandClientUtils;
+import xonin.backhand.utils.BackhandConfig;
 
 public final class OffhandConfigSyncPacket extends AbstractPacket {
 
@@ -20,14 +20,14 @@ public final class OffhandConfigSyncPacket extends AbstractPacket {
 
     @Override
     public void process(ByteBuf inputStream, EntityPlayer player) {
-        Backhand.OffhandAttack = inputStream.readBoolean();
-        Backhand.EmptyOffhand = inputStream.readBoolean();
-        Backhand.OffhandBreakBlocks = inputStream.readBoolean();
-        Backhand.UseOffhandArrows = inputStream.readBoolean();
-        Backhand.UseOffhandBow = inputStream.readBoolean();
-        Backhand.OffhandTickHotswap = inputStream.readBoolean();
-        Backhand.AlternateOffhandSlot = inputStream.readInt();
-        Backhand.UseInventorySlot = inputStream.readBoolean();
+        BackhandConfig.general.OffhandAttack = inputStream.readBoolean();
+        BackhandConfig.general.EmptyOffhand = inputStream.readBoolean();
+        BackhandConfig.general.OffhandBreakBlocks = inputStream.readBoolean();
+        BackhandConfig.general.UseOffhandArrows = inputStream.readBoolean();
+        BackhandConfig.general.UseOffhandBow = inputStream.readBoolean();
+        BackhandConfig.general.OffhandTickHotswap = inputStream.readBoolean();
+        BackhandConfig.general.AlternateOffhandSlot = inputStream.readInt();
+        BackhandConfig.general.UseInventorySlot = inputStream.readBoolean();
         BackhandClientUtils.receivedConfigs = true;
     }
 
@@ -38,13 +38,13 @@ public final class OffhandConfigSyncPacket extends AbstractPacket {
 
     @Override
     public void write(ByteBuf out) {
-        out.writeBoolean(Backhand.OffhandAttack);
-        out.writeBoolean(Backhand.EmptyOffhand);
-        out.writeBoolean(Backhand.OffhandBreakBlocks);
-        out.writeBoolean(Backhand.UseOffhandArrows);
-        out.writeBoolean(Backhand.UseOffhandBow);
-        out.writeBoolean(Backhand.OffhandTickHotswap);
-        out.writeInt(Backhand.AlternateOffhandSlot);
-        out.writeBoolean(Backhand.UseInventorySlot);
+        out.writeBoolean(BackhandConfig.general.OffhandAttack);
+        out.writeBoolean(BackhandConfig.general.EmptyOffhand);
+        out.writeBoolean(BackhandConfig.general.OffhandBreakBlocks);
+        out.writeBoolean(BackhandConfig.general.UseOffhandArrows);
+        out.writeBoolean(BackhandConfig.general.UseOffhandBow);
+        out.writeBoolean(BackhandConfig.general.OffhandTickHotswap);
+        out.writeInt(BackhandConfig.general.AlternateOffhandSlot);
+        out.writeBoolean(BackhandConfig.general.UseInventorySlot);
     }
 }
