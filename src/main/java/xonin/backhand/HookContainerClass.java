@@ -226,6 +226,9 @@ public final class HookContainerClass {
             Backhand.packetHandler.sendPacketToServer(
                 new OffhandPlaceBlockPacket(-1, -1, -1, 255, itemStack, 0.0F, 0.0F, 0.0F).generatePacket());
         }
+
+        if (itemStack == null || player.getCurrentEquippedItem() == null) return false;
+
         final int i = itemStack.stackSize;
         final int j = itemStack.getItemDamage();
         ItemStack prevHeldItem = player.getCurrentEquippedItem();
