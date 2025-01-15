@@ -35,6 +35,7 @@
  */
 dependencies {
     api("com.github.GTNewHorizons:GTNHLib:0.6.2:dev")
+    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.4-GTNH:dev")
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.18-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.0:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))

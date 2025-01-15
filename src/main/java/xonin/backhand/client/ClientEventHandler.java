@@ -22,7 +22,6 @@ import org.lwjgl.opengl.GL12;
 
 import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 
-import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
@@ -33,6 +32,7 @@ import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.packet.OffhandSwapPacket;
 import xonin.backhand.utils.BackhandConfig;
+import xonin.backhand.utils.Mods;
 
 @EventBusSubscriber(side = Side.CLIENT)
 public class ClientEventHandler {
@@ -65,11 +65,7 @@ public class ClientEventHandler {
 
         if (ClientProxy.swapOffhand.getIsKeyPressed() && Keyboard.isKeyDown(Keyboard.getEventKey()) && allowSwap) {
             allowSwap = false;
-            // try {
-            // getClass()
-            // .getMethod("invTweaksSwapPatch");
-            // invTweaksSwapPatch();
-            // } catch (Exception ignored) {}
+            invTweaksSwapPatch();
             player.sendQueue.addToSendQueue(new OffhandSwapPacket(player).generatePacket());
         }
     }
@@ -79,11 +75,7 @@ public class ClientEventHandler {
         if (invTweaksDelay > 0) {
             invTweaksDelay--;
             if (invTweaksDelay == 0) {
-                // try {
-                // this.getClass()
-                // .getMethod("restoreInvTweaksConfigs");
-                // restoreInvTweaksConfigs();
-                // } catch (Exception ignored) {}
+                restoreInvTweaksConfigs();
             }
         }
     }
@@ -199,8 +191,8 @@ public class ClientEventHandler {
         GL11.glPopMatrix();
     }
 
-    @Optional.Method(modid = "inventorytweaks")
-    public void restoreInvTweaksConfigs() {
+    public static void restoreInvTweaksConfigs() {
+        if (!Mods.INV_TWEAKS.isLoaded()) return;
         InvTweaks.getConfigManager()
             .getConfig()
             .setProperty("enableAutoRefill", String.valueOf(prevInvTweaksAutoRefill));
@@ -209,8 +201,8 @@ public class ClientEventHandler {
             .setProperty("autoRefillBeforeBreak", String.valueOf(prevInvTweaksBreakRefill));
     }
 
-    @Optional.Method(modid = "inventorytweaks")
-    public void invTweaksSwapPatch() {
+    public static void invTweaksSwapPatch() {
+        if (!Mods.INV_TWEAKS.isLoaded()) return;
         if (invTweaksDelay <= 0) {
             prevInvTweaksAutoRefill = Boolean.parseBoolean(
                 InvTweaks.getConfigManager()

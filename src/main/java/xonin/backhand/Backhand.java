@@ -10,7 +10,6 @@ import com.gtnewhorizon.gtnhlib.config.ConfigException;
 import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -36,11 +35,9 @@ public class Backhand {
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
     public static BackhandPacketHandler packetHandler;
-    public static boolean isEFRLoaded;
 
     @Mod.EventHandler
     public void load(FMLPreInitializationEvent event) {
-        isEFRLoaded = Loader.isModLoaded("etfuturum");
         try {
             ConfigurationManager.registerConfig(BackhandConfig.class);
             ConfigurationManager.registerConfig(BackhandConfigClient.class);
