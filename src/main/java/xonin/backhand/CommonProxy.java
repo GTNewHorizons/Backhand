@@ -1,57 +1,34 @@
 package xonin.backhand;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.packet.OffhandConfigSyncPacket;
+
+@EventBusSubscriber
 public class CommonProxy {
-
-    public static ItemStack offhandItemUsed;
 
     public void load() {
 
     }
 
-    public void onServerStopping(FMLServerStoppingEvent event) {
-        // for (EntityPlayer player : Backhand.getServer()
-        // .getConfigurationManager().playerEntityList) {
-        // if (BackhandUtils.getOffhandItem(player) != null) {
-        // BackhandUtils.resetAndDelayHotswap(player, 0);
-        // }
-        // }
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (!(event.player instanceof EntityPlayerMP playerMP)) {
+            return;
+        }
+        Backhand.packetHandler.sendPacketToPlayer(new OffhandConfigSyncPacket().generatePacket(), playerMP);
+        ItemStack offhandItem = BackhandUtils.getOffhandItem(playerMP);
+        if (Backhand.isOffhandBlacklisted(offhandItem)) {
+            BackhandUtils.setPlayerOffhandItem(playerMP, null);
+            if (!playerMP.inventory.addItemStackToInventory(offhandItem)) {
+                event.player.entityDropItem(offhandItem, 0);
+            }
+        }
     }
-
-    // public EntityPlayer getClientPlayer() {
-    // return null;
-    // }
-
-    // public void sendAnimationPacket(EnumAnimations animation, EntityPlayer entityPlayer) {}
-    //
-    // // Should not be called on the server anyway
-    // public boolean isRightClickHeld() {
-    // return false;
-    // }
-    //
-    // public int getRightClickCounter() {
-    // return 0;
-    // }
-    //
-    // public void setRightClickCounter(int i) {}
-    //
-    // public int getRightClickDelay() {
-    // return 0;
-    // }
-    //
-    // // Should not be called on the server anyway
-    // public boolean isLeftClickHeld() {
-    // return false;
-    // }
-    //
-    // // Should not be called on the server anyway
-    // public int getLeftClickCounter() {
-    // return 0;
-    // }
-    //
-    // // Should not be called on the server anyway
-    // public void setLeftClickCounter(int i) {}
 }

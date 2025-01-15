@@ -107,12 +107,6 @@ public class BackhandUtils {
             || item instanceof ItemEgg
             || item instanceof ItemMonsterPlacer;
     }
-    // item instanceof ItemCrossbow || item instanceof ItemMounter || item instanceof ItemTeleporter || item instanceof
-    // ItemElementalStaff || item instanceof ItemGun || item instanceof ItemNpcMovingPath || item instanceof
-    // ItemMachineGun || item instanceof ItemMusket || item instanceof ItemNpcCloner || item instanceof ItemNpcScripter
-    // || item instanceof SpellBase || item instanceof ItemNpcWand || item instanceof ItemShield || item instanceof
-    // ItemSlingshot || item instanceof ItemSoulstoneFilled || item instanceof ItemSoulstoneEmpty || item instanceof
-    // ItemStaff || item instanceof ItemThrowingWeapon || item instanceof ItemThrowingShuriken
 
     /**
      * Defines a bow

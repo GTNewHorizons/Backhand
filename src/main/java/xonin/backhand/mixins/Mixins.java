@@ -33,8 +33,6 @@ public enum Mixins {
             "minecraft.MixinItemRenderer",
             "minecraft.MixinModelBiped",
             "minecraft.MixinNetHandlerPlayClient",
-            // "minecraft.MixinPlayerControllerMP",
-            // "minecraft.MixinItemBow",
             "minecraft.MixinItemStackClient",
             "minecraft.MixinMinecraft",
             "minecraft.MixinGuiInventory")

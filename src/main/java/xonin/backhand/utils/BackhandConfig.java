@@ -20,32 +20,6 @@ public class BackhandConfig {
     @Config.DefaultBoolean(false)
     public static boolean OffhandBreakBlocks;
 
-    // @Config.Comment("If enabled, arrows in the offhand will be used first when shooting a bow. Compatible with
-    // Et-Futurum's tipped arrows! True in vanilla.")
-    // @Config.DefaultBoolean(true)
-    // public static boolean UseOffhandArrows;
-
-    // @Config.Comment("If enabled, bows can be used in the offhand. True in vanilla.")
-    // @Config.DefaultBoolean(true)
-    // public static boolean UseOffhandBow;
-
-    // @Config.Comment("If the main offhand inventory can't be used, this slot in the main inventory will be used as the
-    // offhand instead. Slot 9 by default.")
-    // @Config.DefaultInt(9)
-    // public static int AlternateOffhandSlot;
-    //
-    // @Config.Comment("If enabled, the alternate offhand slot configured above will always be used for the offhand.
-    // False by default.")
-    // @Config.DefaultBoolean(false)
-    // public static boolean UseInventorySlot;
-    //
-    // @Config.Comment("""
-    // If enabled, a hotswap will be performed every tick if the main hand has no use or is empty.
-    // This hotswap allows for many more items like fishing rods to be used in the offhand, but may be unstable.
-    // """)
-    // @Config.DefaultBoolean(false)
-    // public static boolean OffhandTickHotswap;
-
     @Config.Comment("""
         These items will be unable to be swapped into the offhand.
         Formatting of an item should be: modid:itemname
