@@ -1,30 +1,33 @@
 package xonin.backhand.mixins.early.minecraft;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.IOffhandInventory;
 
 @Mixin(ItemStack.class)
-public abstract class MixinItemStack {
+public class MixinItemStack {
 
-    @Inject(method = "damageItem", at = @At(value = "TAIL"))
-    private void backhand$damageOffhand(int p_77972_1_, EntityLivingBase entity, CallbackInfo ci) {
-        if (!(entity instanceof EntityPlayer player) || entity instanceof FakePlayer) return;
-
-        ItemStack itemStack = (ItemStack) (Object) this;
-        ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (offhandItem != null && itemStack == offhandItem && itemStack.stackSize == 0) {
-            BackhandUtils.setPlayerOffhandItem(player, null);
-            ForgeEventFactory.onPlayerDestroyItem(player, offhandItem);
+    @WrapWithCondition(
+        method = "updateAnimation",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/Item;onUpdate(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;IZ)V"))
+    private boolean backhand$updateOffhand(Item item, ItemStack stack, World worldIn, Entity entityIn, int index,
+        boolean p_77663_5_) {
+        if (index == IOffhandInventory.OFFHAND_HOTBAR_SLOT && entityIn instanceof EntityPlayer player) {
+            BackhandUtils.useOffhandItem(player, () -> item.onUpdate(stack, worldIn, entityIn, index, p_77663_5_));
+            return false;
         }
+        return true;
     }
 }

@@ -6,8 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.InventoryPlayerBackhand;
-import xonin.backhand.client.ClientTickHandler;
+import xonin.backhand.api.core.IOffhandInventory;
+import xonin.backhand.client.ClientEventHandler;
 
 /**
  * User: nerd-boy
@@ -33,10 +33,10 @@ public final class OffhandSwapClientPacket extends AbstractPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
             int slot = inputStream.readInt();
-            if (InventoryPlayerBackhand.isValidSwitch(slot)) this.player.inventory.currentItem = slot;
+            if (IOffhandInventory.isValidSwitch(slot)) this.player.inventory.currentItem = slot;
             BackhandUtils.swapOffhandItem(player);
         }
-        ClientTickHandler.allowSwap = true;
+        ClientEventHandler.allowSwap = true;
     }
 
     @Override

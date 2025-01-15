@@ -1,6 +1,7 @@
 package xonin.backhand.mixins.early.minecraft;
 
-import net.minecraft.entity.Entity;
+import java.util.Objects;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -13,11 +14,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.api.core.InventoryPlayerBackhand;
+import xonin.backhand.api.core.IOffhandInventory;
 
 @Mixin(EntityPlayer.class)
 public abstract class MixinEntityPlayer extends EntityLivingBase implements IBackhandPlayer {
@@ -27,7 +29,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Shadow
     private int itemInUseCount;
     @Shadow
-    public InventoryPlayer inventory = new InventoryPlayerBackhand((EntityPlayer) (Object) this);
+    public InventoryPlayer inventory;
     @Unique
     private float backhand$offHandSwingProgress = 0F;
     @Unique
@@ -36,32 +38,19 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private int backhand$offHandSwingProgressInt = 0;
     @Unique
     private boolean backhand$isOffHandSwingInProgress = false;
-    @Unique
-    private int backhand$specialActionTimer = 0;
 
     private MixinEntityPlayer(World p_i1594_1_) {
         super(p_i1594_1_);
     }
 
-    // TODO: Why are we doing this?
-    @ModifyReturnValue(method = "isPlayer", at = @At(value = "RETURN"))
-    private boolean backhand$isPlayer(boolean original) {
-        return false;
-    }
-
-    @ModifyExpressionValue(
-        method = "onItemUseFinish",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraftforge/event/ForgeEventFactory;onItemUseFinish(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;ILnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;",
-            remap = false))
-    private ItemStack backhand$onItemUseFinish$beforeFinishUse(ItemStack itemStack) {
-        return BackhandUtils.beforeFinishUseEvent(
-            (EntityPlayer) (Object) this,
-            this.itemInUse,
-            this.itemInUseCount,
-            itemStack,
-            this.itemInUse.stackSize);
+    @WrapMethod(method = "onItemUseFinish")
+    private void backhand$onItemUseFinishEnd(Operation<Void> original) {
+        EntityPlayer player = (EntityPlayer) (Object) this;
+        if (Objects.equals(itemInUse, BackhandUtils.getOffhandItem(player))) {
+            BackhandUtils.useOffhandItem(player, () -> original.call());
+        } else {
+            original.call();
+        }
     }
 
     @ModifyExpressionValue(
@@ -79,8 +68,12 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     }
 
     @Override
-    public void attackTargetEntityWithCurrentOffItem(Entity target) {
-        BackhandUtils.attackTargetEntityWithCurrentOffItem((EntityPlayer) (Object) this, target);
+    public void swingItem() {
+        if (inventory.currentItem == IOffhandInventory.OFFHAND_HOTBAR_SLOT) {
+            this.swingOffItem();
+        } else {
+            super.swingItem();
+        }
     }
 
     @Override
@@ -120,14 +113,5 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         }
 
         this.backhand$offHandSwingProgress = (float) this.backhand$offHandSwingProgressInt / (float) var1;
-        if (this.backhand$specialActionTimer > 0) {
-            this.backhand$isOffHandSwingInProgress = false;
-            this.isSwingInProgress = false;
-            this.backhand$offHandSwingProgress = 0.0F;
-            this.backhand$offHandSwingProgressInt = 0;
-            this.swingProgress = 0.0F;
-            this.swingProgressInt = 0;
-        }
-
     }
 }

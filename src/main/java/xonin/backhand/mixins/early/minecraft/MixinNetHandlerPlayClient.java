@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import xonin.backhand.api.core.InventoryPlayerBackhand;
+import xonin.backhand.api.core.IOffhandInventory;
 
 @Mixin(NetHandlerPlayClient.class)
 public abstract class MixinNetHandlerPlayClient {
@@ -20,6 +20,6 @@ public abstract class MixinNetHandlerPlayClient {
             ordinal = 1))
     private int backhand$isValidInventorySlot(int original) {
         // return a valid int e.g. between 0 and < 9
-        return InventoryPlayerBackhand.isValidSwitch(original) ? 0 : -1;
+        return IOffhandInventory.isValidSwitch(original) ? 0 : -1;
     }
 }

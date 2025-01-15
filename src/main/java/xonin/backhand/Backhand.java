@@ -2,7 +2,6 @@ package xonin.backhand;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,16 +49,6 @@ public class Backhand {
         }
 
         proxy.load();
-
-        MinecraftForge.EVENT_BUS.register(new ServerEventsHandler());
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new ServerTickHandler());
-
-        MinecraftForge.EVENT_BUS.register(HookContainerClass.INSTANCE);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(HookContainerClass.INSTANCE);
     }
 
     @Mod.EventHandler

@@ -3,6 +3,7 @@ package xonin.backhand.packet;
 import java.util.Hashtable;
 import java.util.Map;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -14,7 +15,6 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
-import xonin.backhand.Backhand;
 
 public final class BackhandPacketHandler {
 
@@ -24,11 +24,8 @@ public final class BackhandPacketHandler {
     public BackhandPacketHandler() {
         map.put(OffhandSyncItemPacket.packetName, new OffhandSyncItemPacket());
         map.put(OffhandAnimationPacket.packetName, new OffhandAnimationPacket());
-        map.put(OffhandPlaceBlockPacket.packetName, new OffhandPlaceBlockPacket());
-        map.put(OffhandToServerPacket.packetName, new OffhandToServerPacket());
         map.put(OffhandSwapPacket.packetName, new OffhandSwapPacket());
         map.put(OffhandSwapClientPacket.packetName, new OffhandSwapClientPacket());
-        map.put(OffhandAttackPacket.packetName, new OffhandAttackPacket());
         map.put(OffhandConfigSyncPacket.packetName, new OffhandConfigSyncPacket());
     }
 
@@ -50,7 +47,7 @@ public final class BackhandPacketHandler {
     @SubscribeEvent
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
         map.get(event.packet.channel())
-            .process(event.packet.payload(), Backhand.proxy.getClientPlayer());
+            .process(event.packet.payload(), Minecraft.getMinecraft().thePlayer);
     }
 
     public void sendPacketToPlayer(FMLProxyPacket packet, EntityPlayerMP player) {

@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.ClientEventHandler;
-import xonin.backhand.client.utils.BackhandClientUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
@@ -25,7 +24,7 @@ public abstract class MixinItemRenderer {
 
     @Inject(method = "renderItemInFirstPerson", at = @At("RETURN"))
     private void backhand$renderItemInFirstPerson(float frame, CallbackInfo ci) {
-        if (BackhandClientUtils.offhandFPRender) return;
+        if (BackhandRenderHelper.offhandFPRender) return;
 
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         ClientEventHandler.renderingPlayer = player;
@@ -43,13 +42,13 @@ public abstract class MixinItemRenderer {
             return;
         }
 
-        BackhandClientUtils.firstPersonFrame = frame;
+        BackhandRenderHelper.firstPersonFrame = frame;
         BackhandRenderHelper.itemRenderer.updateEquippedItem();
-        BackhandClientUtils.offhandFPRender = true;
+        BackhandRenderHelper.offhandFPRender = true;
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_FRONT);
         BackhandRenderHelper.renderOffhandItem((ItemRenderer) (Object) this, frame);
         GL11.glCullFace(GL11.GL_BACK);
-        BackhandClientUtils.offhandFPRender = false;
+        BackhandRenderHelper.offhandFPRender = false;
     }
 }

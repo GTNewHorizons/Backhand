@@ -16,10 +16,13 @@ public enum Mixins {
     MINECRAFT(new Builder("Shared MC Mixins")
         .addMixinClasses(
             "minecraft.MixinEntityPlayer",
-            "minecraft.MixinEntityPlayerMP",
-            "minecraft.MixinItemStack",
             "minecraft.MixinNetHandlerPlayServer",
-            "minecraft.MixinEntityItem")
+            "minecraft.MixinItemBow",
+            "minecraft.MixinEntityFishHook",
+            "minecraft.MixinInventoryPlayer",
+            "minecraft.MixinEntityTrackerEntry",
+            "minecraft.MixinContainerPlayer",
+            "minecraft.MixinItemStack")
         .setPhase(Phase.EARLY)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.VANILLA)),
@@ -30,18 +33,19 @@ public enum Mixins {
             "minecraft.MixinItemRenderer",
             "minecraft.MixinModelBiped",
             "minecraft.MixinNetHandlerPlayClient",
-            "minecraft.MixinPlayerControllerMP",
-            "minecraft.MixinItemBow",
+            // "minecraft.MixinPlayerControllerMP",
+            // "minecraft.MixinItemBow",
             "minecraft.MixinItemStackClient",
-            "minecraft.MixinWorld")
+            "minecraft.MixinMinecraft",
+            "minecraft.MixinGuiInventory")
         .setPhase(Phase.EARLY)
         .setSide(Side.CLIENT)
         .addTargetedMod(TargetedMod.VANILLA)),
-    FIX_SIMULATED_INTERACTION_NPE(new Builder("Fix NPE when simulating interaction with CB blocks")
-        .addMixinClasses("carpentersblocks.MixinPlayerPermissions")
-        .setPhase(Phase.LATE)
-        .setSide(Side.CLIENT)
-        .addTargetedMod(TargetedMod.CARPENTERS_BLOCKS));
+    ET_FUTURUM_TOTEM_SUPPORT(
+        new Builder("Et Futurum Totem Support").addMixinClasses("etfuturum.MixinServerEventHandler")
+            .setPhase(Phase.LATE)
+            .setSide(Side.BOTH)
+            .addTargetedMod(TargetedMod.ET_FUTURUM)),;
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
