@@ -116,11 +116,7 @@ public abstract class MixinMinecraft {
                             objectMouseOver.hitVec)) {
                             useMainhand = false;
                             thePlayer.swingItem();
-                        }
-
-                        if (!useMainhand) {
-                            ItemStack offhand = BackhandUtils.getOffhandItem(thePlayer);
-                            if (offhand == null) return;
+                        } else if (offhandItem != null) {
                             PlayerInteractEvent event = new PlayerInteractEvent(
                                 thePlayer,
                                 PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
@@ -135,7 +131,7 @@ public abstract class MixinMinecraft {
                                 () -> playerController.onPlayerRightClick(
                                     thePlayer,
                                     theWorld,
-                                    offhand,
+                                    offhandItem,
                                     x,
                                     y,
                                     z,
