@@ -196,10 +196,14 @@ public abstract class MixinMinecraft {
 
                 if (trySecondaryAction && offhandItem.getItemUseAction() == EnumAction.none) {
                     switch (objectMouseOver.typeOfHit) {
-                        case ENTITY -> BackhandUtils.useOffhandItem(thePlayer, () -> {
-                            thePlayer.swingItem();
-                            playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
-                        });
+                        case ENTITY -> {
+                            if (BackhandConfig.OffhandAttack) {
+                                BackhandUtils.useOffhandItem(thePlayer, () -> {
+                                    thePlayer.swingItem();
+                                    playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
+                                });
+                            }
+                        }
                         case BLOCK -> {
                             if (BackhandConfig.OffhandBreakBlocks) {
                                 BackhandUtils.useOffhandItem(thePlayer, () -> {
