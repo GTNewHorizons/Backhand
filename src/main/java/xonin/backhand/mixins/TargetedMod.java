@@ -3,7 +3,8 @@ package xonin.backhand.mixins;
 public enum TargetedMod {
 
     VANILLA("Minecraft", null),
-    ET_FUTURUM("Et Futurum Requiem", "ganymedes01.etfuturum.mixinplugin.EtFuturumEarlyMixins", "etfuturum");
+    ET_FUTURUM("Et Futurum Requiem", "ganymedes01.etfuturum.mixinplugin.EtFuturumEarlyMixins", "etfuturum"),
+    TINKERS_CONSTRUCT("Tinkers' Construct", null, "TConstruct");
 
     /** The "name" in the @Mod annotation */
     public final String modName;

@@ -45,7 +45,12 @@ public enum Mixins {
         new Builder("Et Futurum Totem Support").addMixinClasses("etfuturum.MixinServerEventHandler")
             .setPhase(Phase.LATE)
             .setSide(Side.BOTH)
-            .addTargetedMod(TargetedMod.ET_FUTURUM)),;
+            .addTargetedMod(TargetedMod.ET_FUTURUM)),
+    TINKERS_CROSSHAIR_FIX(new Builder("Fix crosshair not rendering for offhand weapon")
+        .addMixinClasses("tconstruct.MixinCrosshairHandler")
+        .setPhase(Phase.LATE)
+        .setSide(Side.CLIENT)
+        .addTargetedMod(TargetedMod.TINKERS_CONSTRUCT)),;
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
