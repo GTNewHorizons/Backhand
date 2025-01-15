@@ -19,6 +19,6 @@ public abstract class MixinContainerPlayer extends Container {
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void backhand2$addOffhandSlot(InventoryPlayer p_i1819_1_, boolean p_i1819_2_, EntityPlayer p_i1819_3_,
         CallbackInfo ci) {
-        addSlotToContainer(new Slot(p_i1819_1_, IOffhandInventory.OFFHAND_HOTBAR_SLOT, 152, 65));
+        addSlotToContainer(new Slot(p_i1819_1_, IOffhandInventory.OFFHAND_HOTBAR_SLOT, 80, 65));
     }
 }
