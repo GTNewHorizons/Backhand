@@ -15,6 +15,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class BackhandPacketHandler {
 
@@ -45,6 +46,7 @@ public final class BackhandPacketHandler {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
         map.get(event.packet.channel())
             .process(event.packet.payload(), Minecraft.getMinecraft().thePlayer);

@@ -46,7 +46,7 @@ public abstract class MixinMinecraft {
     public PlayerControllerMP playerController;
 
     @Shadow
-    public int rightClickDelayTimer;
+    private int rightClickDelayTimer;
 
     @Shadow
     @Final
@@ -65,7 +65,7 @@ public abstract class MixinMinecraft {
      * @reason Offhand support
      */
     @Overwrite
-    public void func_147121_ag() {
+    private void func_147121_ag() {
         rightClickDelayTimer = 4;
         ItemStack mainHandItem = thePlayer.inventory.getCurrentItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
