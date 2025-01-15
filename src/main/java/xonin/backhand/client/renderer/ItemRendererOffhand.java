@@ -139,7 +139,7 @@ public class ItemRendererOffhand extends ItemRenderer {
 
     public void updateEquippedItem() {
         this.prevEquippedProgress = this.equippedProgress;
-        EntityClientPlayerMP player = this.mc.thePlayer;
+        EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
         ItemStack itemstack = BackhandUtils.getOffhandItem(player);
         boolean flag = itemstack == this.itemToRender;
 
