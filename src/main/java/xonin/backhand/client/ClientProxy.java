@@ -14,6 +14,7 @@ public class ClientProxy extends CommonProxy {
         Keyboard.KEY_F,
         "key.categories.gameplay");
 
+    @Override
     public void load() {
         ClientRegistry.registerKeyBinding(swapOffhand);
     }

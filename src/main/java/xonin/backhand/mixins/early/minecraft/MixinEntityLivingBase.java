@@ -37,7 +37,7 @@ public abstract class MixinEntityLivingBase extends Entity {
     private void backhand$isItemInUseHook(CallbackInfo ci, @Local(name = "j") int index) {
         if (!((EntityLivingBase) (Object) this instanceof EntityPlayer player) || index > 0) return;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
-        if (offhand == null || ItemStack.areItemStacksEqual(backhand$previousOffhandStack, offhand)) return;
+        if (ItemStack.areItemStacksEqual(backhand$previousOffhandStack, offhand)) return;
         backhand$previousOffhandStack = offhand;
         Backhand.packetHandler.sendPacketToAllTracking(player, new OffhandSyncItemPacket(player).generatePacket());
     }
