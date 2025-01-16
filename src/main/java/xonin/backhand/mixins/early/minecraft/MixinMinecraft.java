@@ -28,6 +28,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.IOffhandInventory;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 
 @Mixin(Minecraft.class)
@@ -93,7 +94,8 @@ public abstract class MixinMinecraft {
 
                     if (!theWorld.getBlock(x, y, z)
                         .isAir(theWorld, x, y, z)) {
-                        int l = mainHandItem != null ? mainHandItem.stackSize : 0;
+                        int mainOriginalSize = mainHandItem != null ? mainHandItem.stackSize : 0;
+                        int offhandOriginalSize = offhandItem != null ? offhandItem.stackSize : 0;
 
                         boolean result = !net.minecraftforge.event.ForgeEventFactory
                             .onPlayerInteract(
@@ -145,16 +147,20 @@ public abstract class MixinMinecraft {
                         if (mainHandItem != null) {
                             if (mainHandItem.stackSize == 0) {
                                 thePlayer.setCurrentItemOrArmor(0, null);
-                            } else if (mainHandItem.stackSize != l || playerController.isInCreativeMode()) {
-                                entityRenderer.itemRenderer.resetEquippedProgress();
-                            }
+                            } else
+                                if (mainHandItem.stackSize != mainOriginalSize || playerController.isInCreativeMode()) {
+                                    entityRenderer.itemRenderer.resetEquippedProgress();
+                                }
                         }
 
                         if (offhandItem != null) {
                             if (offhandItem.stackSize == 0) {
                                 thePlayer.inventory
                                     .setInventorySlotContents(IOffhandInventory.OFFHAND_HOTBAR_SLOT, null);
-                            }
+                            } else if (offhandItem.stackSize != offhandOriginalSize
+                                || playerController.isInCreativeMode()) {
+                                    BackhandRenderHelper.itemRenderer.resetEquippedProgress();
+                                }
                         }
                     }
             }
@@ -188,13 +194,16 @@ public abstract class MixinMinecraft {
                         0,
                         theWorld);
                     if (!MinecraftForge.EVENT_BUS.post(useItemEvent)) {
-                        playerController.sendUseItem(thePlayer, theWorld, offhandItem);
+                        if (playerController.sendUseItem(thePlayer, theWorld, offhandItem)) {
+                            BackhandRenderHelper.itemRenderer.resetEquippedProgress();
+                        }
+
                         return thePlayer.getItemInUse() != null;
                     }
                     return false;
                 });
 
-                if (trySecondaryAction && offhandItem.getItemUseAction() == EnumAction.none) {
+                if (trySecondaryAction) {
                     switch (objectMouseOver.typeOfHit) {
                         case ENTITY -> {
                             if (BackhandConfig.OffhandAttack) {
@@ -205,7 +214,8 @@ public abstract class MixinMinecraft {
                             }
                         }
                         case BLOCK -> {
-                            if (BackhandConfig.OffhandBreakBlocks) {
+                            if (BackhandConfig.OffhandBreakBlocks
+                                && offhandItem.getItemUseAction() == EnumAction.none) {
                                 BackhandUtils.useOffhandItem(thePlayer, () -> {
                                     backhand$breakBlockTimer = 5;
                                     playerController.clickBlock(

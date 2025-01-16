@@ -8,14 +8,13 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.client.ClientEventHandler;
+import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
@@ -23,18 +22,10 @@ import xonin.backhand.utils.BackhandConfigClient;
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
 
-    @Unique
-    private static boolean backhand$isUpdatingOffhand;
-
-    @Unique
-    private static boolean backhand$isRenderingOffhand;
-
     @Inject(method = "renderItemInFirstPerson", at = @At("RETURN"))
     private void backhand$renderItemInFirstPerson(float frame, CallbackInfo ci) {
-        if (backhand$isRenderingOffhand) return;
-
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-        ClientEventHandler.renderingPlayer = player;
+        if (player.inventory.currentItem == IOffhandInventory.OFFHAND_HOTBAR_SLOT) return;
 
         ItemStack mainhandItem = player.getCurrentEquippedItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
@@ -50,7 +41,6 @@ public abstract class MixinItemRenderer {
         }
 
         BackhandRenderHelper.firstPersonFrame = frame;
-        backhand$isRenderingOffhand = true;
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_FRONT);
         GL11.glPushMatrix();
@@ -63,18 +53,6 @@ public abstract class MixinItemRenderer {
             .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
         GL11.glPopMatrix();
         GL11.glCullFace(GL11.GL_BACK);
-        backhand$isRenderingOffhand = false;
-    }
-
-    @Inject(method = "updateEquippedItem", at = @At("RETURN"))
-    private void backhand$updateOffhandItem(CallbackInfo ci) {
-        if (backhand$isUpdatingOffhand) return;
-        backhand$isUpdatingOffhand = true;
-        BackhandUtils.useOffhandItem(
-            Minecraft.getMinecraft().thePlayer,
-            false,
-            BackhandRenderHelper.itemRenderer::updateEquippedItem);
-        backhand$isUpdatingOffhand = false;
     }
 
 }

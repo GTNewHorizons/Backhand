@@ -6,7 +6,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S0BPacketAnimation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -75,15 +77,10 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         method = "setItemInUse",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
     private void backhand$setItemInUse(ItemStack p_71008_1_, int p_71008_2_, CallbackInfo ci) {
-        EntityPlayer player = (EntityPlayer) (Object) this;
-        if (Objects.equals(p_71008_1_, BackhandUtils.getOffhandItem(player))) {
-            Backhand.packetHandler
-                .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, true).generatePacket());
-            setUsingOffhand(true);
+        if (Objects.equals(p_71008_1_, BackhandUtils.getOffhandItem((EntityPlayer) (Object) this))) {
+            backhand$updateOffhandUse(true);
         } else if (isUsingOffhand()) {
-            Backhand.packetHandler
-                .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, false).generatePacket());
-            setUsingOffhand(false);
+            backhand$updateOffhandUse(false);
         }
     }
 
@@ -91,11 +88,8 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         method = "clearItemInUse",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
     private void backhand$clearOffhand(CallbackInfo ci) {
-        EntityPlayer player = (EntityPlayer) (Object) this;
         if (isUsingOffhand()) {
-            Backhand.packetHandler
-                .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, false).generatePacket());
-            setUsingOffhand(false);
+            backhand$updateOffhandUse(false);
         }
     }
 
@@ -116,6 +110,14 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         this.backhand$offHandSwingProgress = (float) this.backhand$offHandSwingProgressInt / (float) var1;
     }
 
+    @Unique
+    private void backhand$updateOffhandUse(boolean state) {
+        EntityPlayer player = (EntityPlayer) (Object) this;
+        Backhand.packetHandler
+            .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, state).generatePacket());
+        setUsingOffhand(state);
+    }
+
     @Override
     public void swingItem() {
         if (inventory.currentItem == IOffhandInventory.OFFHAND_HOTBAR_SLOT) {
@@ -127,11 +129,27 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
 
     @Override
     public void swingOffItem() {
+        EntityPlayer player = (EntityPlayer) (Object) this;
+        ItemStack stack = BackhandUtils.getOffhandItem(player);
+        if (stack != null && stack.getItem() != null
+            && BackhandUtils.useOffhandItem(
+                player,
+                false,
+                () -> stack.getItem()
+                    .onEntitySwing(player, stack))) {
+            return;
+        }
+
         if (!this.backhand$isOffHandSwingInProgress
             || this.backhand$offHandSwingProgressInt >= this.getArmSwingAnimationEnd() / 2
             || this.backhand$offHandSwingProgressInt < 0) {
             this.backhand$offHandSwingProgressInt = -1;
             this.backhand$isOffHandSwingInProgress = true;
+
+            if (worldObj instanceof WorldServer world) {
+                world.getEntityTracker()
+                    .func_151247_a(this, new S0BPacketAnimation(this, IOffhandInventory.OFFHAND_HOTBAR_SLOT));
+            }
         }
     }
 

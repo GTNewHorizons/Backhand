@@ -34,7 +34,8 @@ public enum Mixins {
             "minecraft.MixinModelBiped",
             "minecraft.MixinNetHandlerPlayClient",
             "minecraft.MixinMinecraft",
-            "minecraft.MixinGuiInventory")
+            "minecraft.MixinGuiInventory",
+            "minecraft.MixinEntityRenderer")
         .setPhase(Phase.EARLY)
         .setSide(Side.CLIENT)
         .addTargetedMod(TargetedMod.VANILLA)),

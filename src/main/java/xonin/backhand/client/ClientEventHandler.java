@@ -37,7 +37,6 @@ import xonin.backhand.utils.Mods;
 @EventBusSubscriber(side = Side.CLIENT)
 public class ClientEventHandler {
 
-    public static EntityPlayer renderingPlayer;
     public static boolean prevInvTweaksAutoRefill;
     public static boolean prevInvTweaksBreakRefill;
 
@@ -150,7 +149,6 @@ public class ClientEventHandler {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void renderPlayerLeftItemUsage(RenderLivingEvent.Pre event) {
         if (event.entity instanceof EntityPlayer entityPlayer) {
-            renderingPlayer = entityPlayer;
             ItemStack offhand = BackhandUtils.getOffhandItem(entityPlayer);
             if (offhand != null && event.renderer instanceof RenderPlayer renderer) {
                 renderer.modelArmorChestplate.heldItemLeft = renderer.modelArmor.heldItemLeft = renderer.modelBipedMain.heldItemLeft = 1;
