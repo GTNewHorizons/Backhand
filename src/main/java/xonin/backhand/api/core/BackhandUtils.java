@@ -160,46 +160,27 @@ public class BackhandUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean checkForRightClickFunctionNoAction(ItemStack stack) {
-        if (stack == null) {
-            return false;
-        }
-        try {
-            Class c = stack.getItem()
-                .getClass();
-            while (!(c.equals(Item.class) || c.equals(ItemTool.class) || c.equals(ItemSword.class))) {
-                try {
-                    for (int i = 0; i < itemBlackListMethodNames.length; i++) {
-                        try {
-                            c.getDeclaredMethod(itemBlackListMethodNames[i], itemBlackListMethodParams[i]);
-                            return true;
-                        } catch (NoSuchMethodException ignored) {}
-                    }
-                } catch (NoClassDefFoundError ignored) {}
-
-                c = c.getSuperclass();
-            }
-
-            return false;
-        } catch (NullPointerException e) {
-            return true;
-        }
+    public static void useOffhandItem(EntityPlayer player, Runnable action) {
+        useOffhandItem(player, true, action);
     }
 
-    public static void useOffhandItem(EntityPlayer player, Runnable action) {
-        useOffhandItem(player, () -> {
+    public static void useOffhandItem(EntityPlayer player, boolean syncSlot, Runnable action) {
+        useOffhandItem(player, syncSlot, () -> {
             action.run();
             return true;
         });
     }
 
     public static boolean useOffhandItem(EntityPlayer player, BooleanSupplier action) {
+        return useOffhandItem(player, true, action);
+    }
+
+    public static boolean useOffhandItem(EntityPlayer player, boolean syncSlot, BooleanSupplier action) {
         int oldSlot = player.inventory.currentItem;
         player.inventory.currentItem = IOffhandInventory.OFFHAND_HOTBAR_SLOT;
         boolean result = action.getAsBoolean();
         player.inventory.currentItem = oldSlot;
-        if (player.worldObj.isRemote) {
+        if (syncSlot && player.worldObj.isRemote) {
             Minecraft.getMinecraft().playerController.syncCurrentPlayItem();
         }
         return result;

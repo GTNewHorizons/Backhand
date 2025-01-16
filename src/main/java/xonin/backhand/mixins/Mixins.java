@@ -29,11 +29,9 @@ public enum Mixins {
     MINECRAFT_CLIENT(new Builder("Client MC Mixins")
         .addMixinClasses(
             "minecraft.MixinEntityOtherPlayerMP",
-            "minecraft.MixinEntityPlayerClient",
             "minecraft.MixinItemRenderer",
             "minecraft.MixinModelBiped",
             "minecraft.MixinNetHandlerPlayClient",
-            "minecraft.MixinItemStackClient",
             "minecraft.MixinMinecraft",
             "minecraft.MixinGuiInventory")
         .setPhase(Phase.EARLY)
