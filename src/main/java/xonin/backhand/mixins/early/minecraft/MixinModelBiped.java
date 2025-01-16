@@ -48,7 +48,7 @@ public abstract class MixinModelBiped extends ModelBase {
     private boolean backhand$moveOffhandAimedBow(boolean original, @Local(name = "p_78087_3_") float f3,
         @Local(argsOnly = true) Entity entity) {
         if (entity instanceof EntityPlayer player && entity == Minecraft.getMinecraft().thePlayer
-            && ((IBackhandPlayer) player).isUsingOffhand()) {
+            && ((IBackhandPlayer) player).isOffhandItemInUse()) {
             bipedLeftArm.rotateAngleZ = 0.0F;
             bipedRightArm.rotateAngleZ = 0.0F;
             bipedLeftArm.rotateAngleY = 0.1F + bipedHead.rotateAngleY;

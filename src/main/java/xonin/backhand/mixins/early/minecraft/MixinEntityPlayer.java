@@ -79,7 +79,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private void backhand$setItemInUse(ItemStack p_71008_1_, int p_71008_2_, CallbackInfo ci) {
         if (Objects.equals(p_71008_1_, BackhandUtils.getOffhandItem((EntityPlayer) (Object) this))) {
             backhand$updateOffhandUse(true);
-        } else if (isUsingOffhand()) {
+        } else if (isOffhandItemInUse()) {
             backhand$updateOffhandUse(false);
         }
     }
@@ -88,7 +88,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         method = "clearItemInUse",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
     private void backhand$clearOffhand(CallbackInfo ci) {
-        if (isUsingOffhand()) {
+        if (isOffhandItemInUse()) {
             backhand$updateOffhandUse(false);
         }
     }
@@ -115,7 +115,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         EntityPlayer player = (EntityPlayer) (Object) this;
         Backhand.packetHandler
             .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, state).generatePacket());
-        setUsingOffhand(state);
+        setOffhandItemInUse(state);
     }
 
     @Override
@@ -164,12 +164,12 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     }
 
     @Override
-    public void setUsingOffhand(boolean usingOffhand) {
+    public void setOffhandItemInUse(boolean usingOffhand) {
         this.backhand$isUsingOffhand = usingOffhand;
     }
 
     @Override
-    public boolean isUsingOffhand() {
+    public boolean isOffhandItemInUse() {
         return this.backhand$isUsingOffhand;
     }
 }

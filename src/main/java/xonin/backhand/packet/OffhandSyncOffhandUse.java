@@ -23,7 +23,7 @@ public final class OffhandSyncOffhandUse extends AbstractPacket {
     public void process(ByteBuf inputStream, EntityPlayer player) {
         this.player = player.worldObj.getPlayerEntityByName(ByteBufUtils.readUTF8String(inputStream));
         if (this.player == null) return;
-        ((IBackhandPlayer) this.player).setUsingOffhand(inputStream.readBoolean());
+        ((IBackhandPlayer) this.player).setOffhandItemInUse(inputStream.readBoolean());
     }
 
     @Override

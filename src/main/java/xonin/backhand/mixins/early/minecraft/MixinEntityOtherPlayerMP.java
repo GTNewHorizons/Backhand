@@ -30,7 +30,7 @@ public abstract class MixinEntityOtherPlayerMP extends AbstractClientPlayer impl
             args = "array=get",
             target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;"))
     private ItemStack backhand$isItemInUseHook(ItemStack[] array, int index) {
-        if (isUsingOffhand()) return BackhandUtils.getOffhandItem(this);
+        if (isOffhandItemInUse()) return BackhandUtils.getOffhandItem(this);
         return array[index];
     }
 }

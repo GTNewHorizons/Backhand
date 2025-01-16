@@ -17,8 +17,8 @@ public interface IBackhandPlayer {
      */
     float getOffSwingProgress(float frame);
 
-    void setUsingOffhand(boolean usingOffhand);
+    void setOffhandItemInUse(boolean usingOffhand);
 
-    boolean isUsingOffhand();
+    boolean isOffhandItemInUse();
 
 }

@@ -23,7 +23,7 @@ public abstract class MixinItemBow extends Item {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/entity/player/InventoryPlayer;hasItem(Lnet/minecraft/item/Item;)Z"))
-    private boolean backhand$cancelAnimation(boolean original, @Local(argsOnly = true) EntityPlayer player) {
+    private boolean backhand$checkOffhand(boolean original, @Local(argsOnly = true) EntityPlayer player) {
         if (!original) {
             ItemStack offhand = BackhandUtils.getOffhandItem(player);
             return offhand != null
