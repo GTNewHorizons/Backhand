@@ -14,9 +14,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.authlib.GameProfile;
 
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.IBackhandPlayer;
 
 @Mixin(EntityOtherPlayerMP.class)
-public abstract class MixinEntityOtherPlayerMP extends AbstractClientPlayer {
+public abstract class MixinEntityOtherPlayerMP extends AbstractClientPlayer implements IBackhandPlayer {
 
     @Shadow
     private boolean isItemInUse;
@@ -33,11 +34,10 @@ public abstract class MixinEntityOtherPlayerMP extends AbstractClientPlayer {
             target = "Lnet/minecraft/client/entity/EntityOtherPlayerMP;isItemInUse:Z",
             ordinal = 0))
     private void backhand$isItemInUseHook(CallbackInfo ci) {
-        ItemStack itemStack = getCurrentEquippedItem();
+        if (!isUsingOffhand()) return;
         ItemStack offhand = BackhandUtils.getOffhandItem(this);
-        if (BackhandUtils.usagePriorAttack(offhand)) itemStack = offhand;
-        if (!isItemInUse && isEating() && itemStack != null) {
-            setItemInUse(itemStack, itemStack.getMaxItemUseDuration());
+        if (!isItemInUse && isEating() && offhand != null) {
+            setItemInUse(offhand, offhand.getMaxItemUseDuration());
             isItemInUse = true;
         } else if (isItemInUse && !isEating()) {
             clearItemInUse();

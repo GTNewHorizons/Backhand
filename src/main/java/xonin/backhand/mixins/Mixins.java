@@ -22,7 +22,8 @@ public enum Mixins {
             "minecraft.MixinInventoryPlayer",
             "minecraft.MixinEntityTrackerEntry",
             "minecraft.MixinContainerPlayer",
-            "minecraft.MixinItemStack")
+            "minecraft.MixinItemStack",
+            "minecraft.MixinEntityLivingBase")
         .setPhase(Phase.EARLY)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.VANILLA)),

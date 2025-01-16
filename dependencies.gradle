@@ -39,5 +39,4 @@ dependencies {
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.18-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.0:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
-    compileOnly("com.github.GTNewHorizons:CarpentersBlocks:3.7.0-GTNH:dev")
 }

@@ -16,4 +16,9 @@ public interface IBackhandPlayer {
      * The partial render progress for the offhand swing animation
      */
     float getOffSwingProgress(float frame);
+
+    void setUsingOffhand(boolean usingOffhand);
+
+    boolean isUsingOffhand();
+
 }

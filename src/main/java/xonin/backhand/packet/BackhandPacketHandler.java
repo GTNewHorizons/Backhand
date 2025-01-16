@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -28,6 +29,7 @@ public final class BackhandPacketHandler {
         map.put(OffhandSwapPacket.packetName, new OffhandSwapPacket());
         map.put(OffhandSwapClientPacket.packetName, new OffhandSwapClientPacket());
         map.put(OffhandConfigSyncPacket.packetName, new OffhandConfigSyncPacket());
+        map.put(OffhandSyncOffhandUse.packetName, new OffhandSyncOffhandUse());
     }
 
     public void register() {
@@ -82,5 +84,11 @@ public final class BackhandPacketHandler {
             channels.get(packet.channel())
                 .sendToAll(packet);
         }
+    }
+
+    public void sendPacketToAllTracking(Entity entity, FMLProxyPacket packet) {
+        if (!(entity.worldObj instanceof WorldServer world)) return;
+        world.getEntityTracker()
+            .func_151247_a(entity, packet);
     }
 }
