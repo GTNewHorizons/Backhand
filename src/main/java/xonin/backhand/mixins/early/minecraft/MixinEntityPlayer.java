@@ -74,7 +74,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Inject(
         method = "setItemInUse",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
-    private void backhand$onUpdate$getCurrentItem(ItemStack p_71008_1_, int p_71008_2_, CallbackInfo ci) {
+    private void backhand$setItemInUse(ItemStack p_71008_1_, int p_71008_2_, CallbackInfo ci) {
         EntityPlayer player = (EntityPlayer) (Object) this;
         if (Objects.equals(p_71008_1_, BackhandUtils.getOffhandItem(player))) {
             Backhand.packetHandler
@@ -90,13 +90,30 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Inject(
         method = "clearItemInUse",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
-    private void backhand$onUpdate$getCurrentItem(CallbackInfo ci) {
+    private void backhand$clearOffhand(CallbackInfo ci) {
         EntityPlayer player = (EntityPlayer) (Object) this;
         if (isUsingOffhand()) {
             Backhand.packetHandler
                 .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, false).generatePacket());
             setUsingOffhand(false);
         }
+    }
+
+    @Inject(method = "updateEntityActionState", at = @At(value = "TAIL"))
+    private void backhand$updateOffhandSwingProgress(CallbackInfo ci) {
+        this.backhand$prevOffHandSwingProgress = this.backhand$offHandSwingProgress;
+        int var1 = this.getArmSwingAnimationEnd();
+        if (this.backhand$isOffHandSwingInProgress) {
+            ++this.backhand$offHandSwingProgressInt;
+            if (this.backhand$offHandSwingProgressInt >= var1) {
+                this.backhand$offHandSwingProgressInt = 0;
+                this.backhand$isOffHandSwingInProgress = false;
+            }
+        } else {
+            this.backhand$offHandSwingProgressInt = 0;
+        }
+
+        this.backhand$offHandSwingProgress = (float) this.backhand$offHandSwingProgressInt / (float) var1;
     }
 
     @Override
@@ -116,7 +133,6 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
             this.backhand$offHandSwingProgressInt = -1;
             this.backhand$isOffHandSwingInProgress = true;
         }
-
     }
 
     @Override
@@ -127,24 +143,6 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         }
 
         return this.backhand$prevOffHandSwingProgress + diff * frame;
-    }
-
-    @Override
-    protected void updateArmSwingProgress() {
-        super.updateArmSwingProgress();
-        this.backhand$prevOffHandSwingProgress = this.backhand$offHandSwingProgress;
-        int var1 = this.getArmSwingAnimationEnd();
-        if (this.backhand$isOffHandSwingInProgress) {
-            ++this.backhand$offHandSwingProgressInt;
-            if (this.backhand$offHandSwingProgressInt >= var1) {
-                this.backhand$offHandSwingProgressInt = 0;
-                this.backhand$isOffHandSwingInProgress = false;
-            }
-        } else {
-            this.backhand$offHandSwingProgressInt = 0;
-        }
-
-        this.backhand$offHandSwingProgress = (float) this.backhand$offHandSwingProgressInt / (float) var1;
     }
 
     @Override

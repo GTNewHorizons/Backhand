@@ -20,7 +20,6 @@ public enum Mixins {
             "minecraft.MixinItemBow",
             "minecraft.MixinEntityFishHook",
             "minecraft.MixinInventoryPlayer",
-            "minecraft.MixinEntityTrackerEntry",
             "minecraft.MixinContainerPlayer",
             "minecraft.MixinItemStack",
             "minecraft.MixinEntityLivingBase")

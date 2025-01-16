@@ -34,7 +34,7 @@ public abstract class MixinEntityLivingBase extends Entity {
             value = "INVOKE",
             target = "Lnet/minecraft/item/ItemStack;areItemStacksEqual(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z",
             ordinal = 0))
-    private void backhand$isItemInUseHook(CallbackInfo ci, @Local(name = "j") int index) {
+    private void backhand$updateOffhandItem(CallbackInfo ci, @Local(name = "j") int index) {
         if (!((EntityLivingBase) (Object) this instanceof EntityPlayer player) || index > 0) return;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (ItemStack.areItemStacksEqual(backhand$previousOffhandStack, offhand)) return;

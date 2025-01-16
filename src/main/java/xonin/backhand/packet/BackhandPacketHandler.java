@@ -25,7 +25,6 @@ public final class BackhandPacketHandler {
 
     public BackhandPacketHandler() {
         map.put(OffhandSyncItemPacket.packetName, new OffhandSyncItemPacket());
-        map.put(OffhandAnimationPacket.packetName, new OffhandAnimationPacket());
         map.put(OffhandSwapPacket.packetName, new OffhandSwapPacket());
         map.put(OffhandSwapClientPacket.packetName, new OffhandSwapClientPacket());
         map.put(OffhandConfigSyncPacket.packetName, new OffhandConfigSyncPacket());
