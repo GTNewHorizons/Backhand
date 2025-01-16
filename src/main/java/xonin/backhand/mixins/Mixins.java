@@ -29,6 +29,7 @@ public enum Mixins {
     MINECRAFT_CLIENT(new Builder("Client MC Mixins")
         .addMixinClasses(
             "minecraft.MixinEntityOtherPlayerMP",
+            "minecraft.MixinEntityPlayerClient",
             "minecraft.MixinItemRenderer",
             "minecraft.MixinModelBiped",
             "minecraft.MixinNetHandlerPlayClient",
