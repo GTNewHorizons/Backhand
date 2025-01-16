@@ -45,7 +45,7 @@ public abstract class MixinModelBiped extends ModelBase {
             value = "FIELD",
             opcode = Opcodes.GETFIELD,
             target = "Lnet/minecraft/client/model/ModelBiped;aimedBow:Z"))
-    private boolean backhand$moveOffhandAimedBow(boolean original, @Local(name = "p_78087_3_") float f3,
+    private boolean backhand$moveOffhandAimedBow(boolean original, @Local(argsOnly = true, ordinal = 2) float f3,
         @Local(argsOnly = true) Entity entity) {
         if (entity instanceof EntityPlayer player && entity == Minecraft.getMinecraft().thePlayer
             && ((IBackhandPlayer) player).isOffhandItemInUse()) {
