@@ -27,7 +27,6 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -116,7 +115,7 @@ public abstract class MixinMinecraft {
                             z,
                             objectMouseOver.sideHit,
                             objectMouseOver.hitVec)) {
-                            useMainhand = false;
+                            useMainhand = useOffhand = false;
                             thePlayer.swingItem();
                         } else if (offhandItem != null) {
                             PlayerInteractEvent event = new PlayerInteractEvent(
@@ -155,8 +154,7 @@ public abstract class MixinMinecraft {
 
                         if (offhandItem != null) {
                             if (offhandItem.stackSize == 0) {
-                                thePlayer.inventory
-                                    .setInventorySlotContents(IOffhandInventory.OFFHAND_HOTBAR_SLOT, null);
+                                BackhandUtils.setPlayerOffhandItem(thePlayer, null);
                             } else if (offhandItem.stackSize != offhandOriginalSize
                                 || playerController.isInCreativeMode()) {
                                     BackhandRenderHelper.itemRenderer.resetEquippedProgress();
