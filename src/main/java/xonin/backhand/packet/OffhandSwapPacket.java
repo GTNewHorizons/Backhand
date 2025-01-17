@@ -43,7 +43,7 @@ public class OffhandSwapPacket extends AbstractPacket {
                 || Backhand.isOffhandBlacklisted(offhandItem)) return;
 
             BackhandUtils.setPlayerOffhandItem(this.player, this.player.getCurrentEquippedItem());
-            BackhandUtils.setPlayerCurrentItem(this.player, offhandItem);
+            player.setCurrentItemOrArmor(0, offhandItem);
             Backhand.packetHandler
                 .sendPacketToPlayer(new OffhandSwapClientPacket(this.player).generatePacket(), (EntityPlayerMP) player);
         }

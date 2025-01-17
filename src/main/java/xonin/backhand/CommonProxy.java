@@ -1,8 +1,12 @@
 package xonin.backhand;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.FakePlayer;
 
 import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 
@@ -34,9 +38,14 @@ public class CommonProxy {
 
     @SubscribeEvent
     public static void addTracking(net.minecraftforge.event.entity.player.PlayerEvent.StartTracking event) {
-        if (event.entityPlayer instanceof EntityPlayerMP playerMP && BackhandUtils.isValidPlayer(event.target)) {
+        if (event.entityPlayer instanceof EntityPlayerMP playerMP && isValidPlayer(event.target)) {
             Backhand.packetHandler
                 .sendPacketToPlayer(new OffhandSyncItemPacket((EntityPlayer) event.target).generatePacket(), playerMP);
         }
+    }
+
+    private static boolean isValidPlayer(@Nullable Entity entity) {
+        return entity instanceof EntityPlayerMP playerMP
+            && !(entity instanceof FakePlayer || playerMP.playerNetServerHandler == null);
     }
 }

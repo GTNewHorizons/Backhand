@@ -33,7 +33,7 @@ public final class OffhandSwapClientPacket extends AbstractPacket {
         this.player = player.worldObj.getPlayerEntityByName(user);
         if (this.player != null) {
             int slot = inputStream.readInt();
-            if (IOffhandInventory.isValidSwitch(slot)) this.player.inventory.currentItem = slot;
+            if (IOffhandInventory.isValidSwitch(slot, this.player)) this.player.inventory.currentItem = slot;
             BackhandUtils.swapOffhandItem(player);
         }
         ClientEventHandler.allowSwap = true;

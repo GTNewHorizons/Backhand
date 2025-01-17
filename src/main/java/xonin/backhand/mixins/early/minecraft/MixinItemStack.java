@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.IOffhandInventory;
 
 @Mixin(ItemStack.class)
 public class MixinItemStack {
@@ -24,7 +23,7 @@ public class MixinItemStack {
             target = "Lnet/minecraft/item/Item;onUpdate(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;IZ)V"))
     private boolean backhand$updateOffhand(Item item, ItemStack stack, World worldIn, Entity entityIn, int index,
         boolean p_77663_5_) {
-        if (index == IOffhandInventory.OFFHAND_HOTBAR_SLOT && entityIn instanceof EntityPlayer player) {
+        if (entityIn instanceof EntityPlayer player && index == BackhandUtils.getOffhandSlot(player)) {
             BackhandUtils.useOffhandItem(player, () -> item.onUpdate(stack, worldIn, entityIn, index, p_77663_5_));
             return false;
         }

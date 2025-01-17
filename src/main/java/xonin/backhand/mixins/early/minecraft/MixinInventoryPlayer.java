@@ -3,16 +3,18 @@ package xonin.backhand.mixins.early.minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 
+import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
-import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -26,24 +28,46 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
     public EntityPlayer player;
 
     @Shadow
-    public ItemStack[] mainInventory = new ItemStack[37];
+    public ItemStack[] mainInventory;
 
-    @ModifyConstant(method = "readFromNBT", constant = @Constant(intValue = 36))
-    private int backhand$correctInventorySize(int constant) {
-        return 37;
+    @Unique
+    private int backhand$offhandSlot;
+
+    @Inject(
+        method = "readFromNBT",
+        at = @At(
+            value = "FIELD",
+            opcode = Opcodes.PUTFIELD,
+            target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;",
+            shift = At.Shift.AFTER))
+    private void backhand$addOffhandSlot(NBTTagList p_70443_1_, CallbackInfo ci) {
+        backhand$offhandSlot = mainInventory.length;
+        mainInventory = new ItemStack[mainInventory.length + 1];
+    }
+
+    @Inject(
+        method = "<init>",
+        at = @At(
+            value = "FIELD",
+            opcode = Opcodes.PUTFIELD,
+            target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;",
+            shift = At.Shift.AFTER))
+    private void backhand$addOffhandSlot(EntityPlayer p_i1750_1_, CallbackInfo ci) {
+        backhand$offhandSlot = mainInventory.length;
+        mainInventory = new ItemStack[mainInventory.length + 1];
     }
 
     @ModifyReturnValue(method = "getCurrentItem", at = @At("RETURN"))
     private ItemStack backhand$getOffhandItem(ItemStack original) {
-        if (currentItem == OFFHAND_HOTBAR_SLOT) {
-            return BackhandUtils.getOffhandItem(player);
+        if (currentItem == backhand$getOffhandSlot()) {
+            return backhand$getOffhandItem();
         }
         return original;
     }
 
     @ModifyReturnValue(method = "getFirstEmptyStack", at = @At("RETURN"))
     private int backhand$checkOffhandPickup(int original) {
-        if (!BackhandConfig.OffhandPickup && original == OFFHAND_HOTBAR_SLOT) {
+        if (!BackhandConfig.OffhandPickup && original == backhand$getOffhandSlot()) {
             return -1;
         }
         return original;
@@ -51,11 +75,16 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
 
     @Override
     public ItemStack backhand$getOffhandItem() {
-        return mainInventory[OFFHAND_HOTBAR_SLOT];
+        return mainInventory[backhand$getOffhandSlot()];
     }
 
     @Override
     public void backhand$setOffhandItem(ItemStack stack) {
-        mainInventory[OFFHAND_HOTBAR_SLOT] = stack;
+        mainInventory[backhand$getOffhandSlot()] = stack;
+    }
+
+    @Override
+    public int backhand$getOffhandSlot() {
+        return backhand$offhandSlot;
     }
 }

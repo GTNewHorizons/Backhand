@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
@@ -25,7 +24,7 @@ public abstract class MixinItemRenderer {
     @Inject(method = "renderItemInFirstPerson", at = @At("RETURN"))
     private void backhand$renderItemInFirstPerson(float frame, CallbackInfo ci) {
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-        if (player.inventory.currentItem == IOffhandInventory.OFFHAND_HOTBAR_SLOT) return;
+        if (BackhandUtils.isUsingOffhand(player)) return;
 
         ItemStack mainhandItem = player.getCurrentEquippedItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);

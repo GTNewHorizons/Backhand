@@ -1,5 +1,7 @@
 package xonin.backhand.client;
 
+import static xonin.backhand.utils.Mods.DOUBLE_WIDE_SURPRISE;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiIngame;
@@ -93,14 +95,14 @@ public class ClientEventHandler {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("textures/gui/widgets.png"));
 
-        gui.drawTexturedModalRect(width / 2 - 125, height - 22, 0, 0, 11, 22);
-        gui.drawTexturedModalRect(width / 2 - 125 + 11, height - 22, 182 - 11, 0, 11, 22);
-
+        int offset = DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125;
+        gui.drawTexturedModalRect(width / 2 - offset, height - 22, 0, 0, 11, 22);
+        gui.drawTexturedModalRect(width / 2 - offset + 11, height - 22, 182 - 11, 0, 11, 22);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
 
-        int x = width / 2 - 122;
+        int x = width / 2 - offset + 3;
         int z = height - 16 - 3;
         renderOffhandInventorySlot(x, z, partialTicks);
 

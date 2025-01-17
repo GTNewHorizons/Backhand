@@ -3,34 +3,29 @@ package xonin.backhand.api.core;
 import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.FakePlayer;
 
 /**
  * Store commonly used method, mostly for the {@link EntityPlayer} {@link ItemStack}s management
  */
-public class BackhandUtils {
+@ParametersAreNonnullByDefault
+public final class BackhandUtils {
 
     public static void swapOffhandItem(EntityPlayer player) {
+        ItemStack mainHand = player.getCurrentEquippedItem();
         player.setCurrentItemOrArmor(0, BackhandUtils.getOffhandItem(player));
-        BackhandUtils.setPlayerOffhandItem(player, BackhandUtils.getOffhandItem(player));
+        BackhandUtils.setPlayerOffhandItem(player, mainHand);
     }
 
-    public static void setPlayerCurrentItem(EntityPlayer player, ItemStack stack) {
-        player.inventory.setInventorySlotContents(player.inventory.currentItem, stack);
-    }
-
-    public static void setPlayerOffhandItem(EntityPlayer player, ItemStack stack) {
+    public static void setPlayerOffhandItem(EntityPlayer player, @Nullable ItemStack stack) {
         ((IOffhandInventory) player.inventory).backhand$setOffhandItem(stack);
     }
 
     public static @Nullable ItemStack getOffhandItem(EntityPlayer player) {
-        if (player instanceof FakePlayer) return null;
         return ((IOffhandInventory) player.inventory).backhand$getOffhandItem();
     }
 
@@ -51,7 +46,7 @@ public class BackhandUtils {
 
     public static boolean useOffhandItem(EntityPlayer player, boolean syncSlot, BooleanSupplier action) {
         int oldSlot = player.inventory.currentItem;
-        player.inventory.currentItem = IOffhandInventory.OFFHAND_HOTBAR_SLOT;
+        player.inventory.currentItem = ((IOffhandInventory) player.inventory).backhand$getOffhandSlot();
         boolean result = action.getAsBoolean();
         player.inventory.currentItem = oldSlot;
         if (syncSlot && player.worldObj.isRemote) {
@@ -60,8 +55,11 @@ public class BackhandUtils {
         return result;
     }
 
-    public static boolean isValidPlayer(Entity entity) {
-        return entity instanceof EntityPlayerMP playerMP
-            && !(entity instanceof FakePlayer || playerMP.playerNetServerHandler == null);
+    public static boolean isUsingOffhand(EntityPlayer player) {
+        return ((IBackhandPlayer) player).isUsingOffhand();
+    }
+
+    public static int getOffhandSlot(EntityPlayer player) {
+        return ((IOffhandInventory) player.inventory).backhand$getOffhandSlot();
     }
 }

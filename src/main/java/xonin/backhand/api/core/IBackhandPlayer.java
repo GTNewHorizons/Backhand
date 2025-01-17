@@ -5,6 +5,7 @@ package xonin.backhand.api.core;
  *
  * @author GotoLink
  */
+
 public interface IBackhandPlayer {
 
     /**
@@ -20,5 +21,7 @@ public interface IBackhandPlayer {
     void setOffhandItemInUse(boolean usingOffhand);
 
     boolean isOffhandItemInUse();
+
+    boolean isUsingOffhand();
 
 }

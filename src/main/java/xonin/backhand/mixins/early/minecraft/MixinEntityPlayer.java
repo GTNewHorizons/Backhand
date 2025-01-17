@@ -43,7 +43,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Unique
     private boolean backhand$isOffHandSwingInProgress = false;
     @Unique
-    private boolean backhand$isUsingOffhand = false;
+    private boolean backhand$isOffhandItemInUs = false;
 
     private MixinEntityPlayer(World p_i1594_1_) {
         super(p_i1594_1_);
@@ -120,7 +120,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
 
     @Override
     public void swingItem() {
-        if (inventory.currentItem == IOffhandInventory.OFFHAND_HOTBAR_SLOT) {
+        if (isUsingOffhand()) {
             this.swingOffItem();
         } else {
             super.swingItem();
@@ -148,7 +148,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
 
             if (worldObj instanceof WorldServer world) {
                 world.getEntityTracker()
-                    .func_151247_a(this, new S0BPacketAnimation(this, IOffhandInventory.OFFHAND_HOTBAR_SLOT));
+                    .func_151247_a(this, new S0BPacketAnimation(this, 99));
             }
         }
     }
@@ -165,11 +165,16 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
 
     @Override
     public void setOffhandItemInUse(boolean usingOffhand) {
-        this.backhand$isUsingOffhand = usingOffhand;
+        this.backhand$isOffhandItemInUs = usingOffhand;
     }
 
     @Override
     public boolean isOffhandItemInUse() {
-        return this.backhand$isUsingOffhand;
+        return this.backhand$isOffhandItemInUs;
+    }
+
+    @Override
+    public boolean isUsingOffhand() {
+        return inventory.currentItem == ((IOffhandInventory) inventory).backhand$getOffhandSlot();
     }
 }
