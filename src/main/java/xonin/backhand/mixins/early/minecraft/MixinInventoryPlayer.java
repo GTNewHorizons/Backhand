@@ -1,5 +1,8 @@
 package xonin.backhand.mixins.early.minecraft;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.utils.BackhandConfig;
@@ -30,8 +34,14 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
     @Shadow
     public ItemStack[] mainInventory;
 
+    @Shadow
+    public abstract boolean addItemStackToInventory(ItemStack p_70441_1_);
+
     @Unique
     private int backhand$offhandSlot;
+
+    @Unique
+    private List<ItemStack> backhand$bg2Stacks = new ArrayList<>();
 
     @Inject(
         method = "readFromNBT",
@@ -43,6 +53,31 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
     private void backhand$addOffhandSlot(NBTTagList p_70443_1_, CallbackInfo ci) {
         backhand$offhandSlot = mainInventory.length;
         mainInventory = new ItemStack[mainInventory.length + 1];
+    }
+
+    @Inject(
+        method = "readFromNBT",
+        at = @At(
+            value = "FIELD",
+            opcode = Opcodes.GETFIELD,
+            target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;",
+            ordinal = 0))
+    private void backhand$importBG2Items(NBTTagList p_70443_1_, CallbackInfo ci, @Local ItemStack stack,
+        @Local(name = "j") int index) {
+        if (index >= 150 && index < 168) {
+            backhand$bg2Stacks.add(stack);
+        }
+    }
+
+    @Inject(method = "readFromNBT", at = @At(value = "TAIL"))
+    private void backhand$giveBG2Items(NBTTagList p_70443_1_, CallbackInfo ci) {
+        for (ItemStack stack : backhand$bg2Stacks) {
+            if (!addItemStackToInventory(stack)) {
+                player.entityDropItem(stack, 0.0F);
+            }
+        }
+
+        backhand$bg2Stacks = null;
     }
 
     @Inject(
