@@ -38,10 +38,8 @@ public abstract class MixinServerEventHandler {
         if (backhand$skipCheck || !(entity instanceof EntityPlayer player)) return;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (offhand == null) return;
-        ItemStack mainhand = player.getHeldItem();
         Item totem = ModItems.TOTEM_OF_UNDYING.get();
-
-        if (totem.equals(offhand.getItem()) && (mainhand == null || totem.equals(mainhand.getItem()))) {
+        if (totem.equals(offhand.getItem())) {
             ci.cancel();
             backhand$skipCheck = true;
             BackhandUtils.useOffhandItem(player, () -> handleTotemCheck(entity, event));
