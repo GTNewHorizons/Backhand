@@ -114,7 +114,7 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
     @ModifyReturnValue(method = "storeItemStack", at = @At("RETURN"))
     private int backhand$getOffhandItem(int original, @Local(argsOnly = true) ItemStack stack) {
         ItemStack offhand = backhand$getOffhandItem();
-        if (original == backhand$getOffhandSlot() || original == -1 || offhand == null) {
+        if (original == backhand$getOffhandSlot() || original == currentItem || original == -1 || offhand == null) {
             return original;
         }
 
