@@ -2,11 +2,14 @@ package xonin.backhand.mixins.early.minecraft;
 
 import java.util.Objects;
 
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S0BPacketAnimation;
+import net.minecraft.util.RegistrySimple;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -18,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
@@ -110,6 +114,29 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         this.backhand$offHandSwingProgress = (float) this.backhand$offHandSwingProgressInt / (float) var1;
     }
 
+    @WrapWithCondition(
+        method = "stopUsingItem",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/ItemStack;onPlayerStoppedUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;I)V"))
+    private boolean backhand$stopUsingItem(ItemStack stack, World world, EntityPlayer player, int p_77974_3_) {
+        ItemStack offhand = BackhandUtils.getOffhandItem(player);
+        if (offhand != null && !isUsingOffhand()
+            && stack.getItemUseAction() == EnumAction.bow
+            && ((RegistrySimple) BlockDispenser.dispenseBehaviorRegistry).containsKey(offhand.getItem())) {
+            // Swap the offhand item into the first available slot to give it usage priority
+            int slot = (inventory.currentItem == 0) ? 1 : 0;
+            ItemStack swappedStack = player.inventory.mainInventory[slot];
+            inventory.mainInventory[slot] = offhand;
+            BackhandUtils.setPlayerOffhandItem(player, swappedStack);
+            stack.onPlayerStoppedUsing(world, player, p_77974_3_);
+            player.inventory.mainInventory[slot] = backhand$getLegalStack(swappedStack);
+            BackhandUtils.setPlayerOffhandItem(player, backhand$getLegalStack(offhand));
+            return false;
+        }
+        return true;
+    }
+
     @Unique
     private void backhand$updateOffhandUse(boolean state) {
         EntityPlayer player = (EntityPlayer) (Object) this;
@@ -176,5 +203,11 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Override
     public boolean isUsingOffhand() {
         return inventory.currentItem == ((IOffhandInventory) inventory).backhand$getOffhandSlot();
+    }
+
+    @Unique
+    private ItemStack backhand$getLegalStack(ItemStack stack) {
+        if (stack == null || stack.stackSize == 0) return null;
+        return stack;
     }
 }
