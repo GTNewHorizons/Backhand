@@ -5,7 +5,8 @@ import cpw.mods.fml.common.Loader;
 public enum Mods {
 
     INV_TWEAKS("inventorytweaks"),
-    DOUBLE_WIDE_SURPRISE("dws"),;
+    DOUBLE_WIDE_SURPRISE("dws"),
+    TINKERS_CONSTRUCT("TConstruct"),;
 
     private final String modId;
     private Boolean loaded;

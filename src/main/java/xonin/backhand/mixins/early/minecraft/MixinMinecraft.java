@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.client.ClientProxy;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -69,8 +69,7 @@ public abstract class MixinMinecraft {
         rightClickDelayTimer = 4;
         ItemStack mainHandItem = thePlayer.inventory.getCurrentItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
-        boolean useMainhand = true;
-        boolean useOffhand = true;
+        boolean useAction = true;
 
         if (objectMouseOver == null) {
             logger.warn("Null returned as \'hitResult\', this shouldn\'t happen!");
@@ -78,11 +77,11 @@ public abstract class MixinMinecraft {
             switch (objectMouseOver.typeOfHit) {
                 case ENTITY:
                     if (playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit)) {
-                        useMainhand = false;
+                        useAction = false;
                     } else if (BackhandUtils.useOffhandItem(
                         thePlayer,
                         () -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit))) {
-                            useOffhand = false;
+                            useAction = false;
                         }
 
                     break;
@@ -96,52 +95,7 @@ public abstract class MixinMinecraft {
                         int mainOriginalSize = mainHandItem != null ? mainHandItem.stackSize : 0;
                         int offhandOriginalSize = offhandItem != null ? offhandItem.stackSize : 0;
 
-                        boolean result = !net.minecraftforge.event.ForgeEventFactory
-                            .onPlayerInteract(
-                                thePlayer,
-                                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
-                                x,
-                                y,
-                                z,
-                                objectMouseOver.sideHit,
-                                theWorld)
-                            .isCanceled();
-                        if (result && playerController.onPlayerRightClick(
-                            thePlayer,
-                            theWorld,
-                            mainHandItem,
-                            x,
-                            y,
-                            z,
-                            objectMouseOver.sideHit,
-                            objectMouseOver.hitVec)) {
-                            useMainhand = useOffhand = false;
-                            thePlayer.swingItem();
-                        } else if (offhandItem != null) {
-                            PlayerInteractEvent event = new PlayerInteractEvent(
-                                thePlayer,
-                                PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
-                                x,
-                                y,
-                                z,
-                                objectMouseOver.sideHit,
-                                theWorld);
-
-                            if (!MinecraftForge.EVENT_BUS.post(event) && BackhandUtils.useOffhandItem(
-                                thePlayer,
-                                () -> playerController.onPlayerRightClick(
-                                    thePlayer,
-                                    theWorld,
-                                    offhandItem,
-                                    x,
-                                    y,
-                                    z,
-                                    objectMouseOver.sideHit,
-                                    objectMouseOver.hitVec))) {
-                                useOffhand = false;
-                                ((IBackhandPlayer) thePlayer).swingOffItem();
-                            }
-                        }
+                        useAction = !backhand$rightClickBlock(mainHandItem, offhandItem);
 
                         if (mainHandItem != null) {
                             if (mainHandItem.stackSize == 0) {
@@ -163,9 +117,7 @@ public abstract class MixinMinecraft {
                     }
             }
 
-            if (useMainhand) {
-                ItemStack itemstack1 = thePlayer.inventory.getCurrentItem();
-
+            if (useAction) {
                 boolean result = !net.minecraftforge.event.ForgeEventFactory
                     .onPlayerInteract(
                         thePlayer,
@@ -176,13 +128,12 @@ public abstract class MixinMinecraft {
                         -1,
                         theWorld)
                     .isCanceled();
-                if (result && itemstack1 != null && playerController.sendUseItem(thePlayer, theWorld, itemstack1)) {
+                if (result && mainHandItem != null && playerController.sendUseItem(thePlayer, theWorld, mainHandItem)) {
                     entityRenderer.itemRenderer.resetEquippedProgress2();
                 }
-            }
 
-            if (useOffhand && offhandItem != null && thePlayer.getItemInUse() == null) {
-                boolean trySecondaryAction = !BackhandUtils.useOffhandItem(thePlayer, () -> {
+                if (offhandItem == null || thePlayer.getItemInUse() != null) return;
+                useAction = !BackhandUtils.useOffhandItem(thePlayer, () -> {
                     PlayerInteractEvent useItemEvent = new PlayerInteractEvent(
                         thePlayer,
                         PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
@@ -201,7 +152,7 @@ public abstract class MixinMinecraft {
                     return false;
                 });
 
-                if (trySecondaryAction) {
+                if (useAction) {
                     switch (objectMouseOver.typeOfHit) {
                         case ENTITY -> {
                             if (BackhandConfig.OffhandAttack) {
@@ -235,7 +186,7 @@ public abstract class MixinMinecraft {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;resetBlockRemoving()V"))
-    protected boolean backhand$pauseReset(PlayerControllerMP instance) {
+    private boolean backhand$pauseReset(PlayerControllerMP instance) {
         if (backhand$breakBlockTimer > 0) {
             backhand$breakBlockTimer--;
             return false;
@@ -244,7 +195,7 @@ public abstract class MixinMinecraft {
     }
 
     @Inject(method = "func_147115_a", at = @At(value = "HEAD"))
-    protected void backhand$breakBlockOffhand(boolean leftClick, CallbackInfo ci) {
+    private void backhand$breakBlockOffhand(boolean leftClick, CallbackInfo ci) {
         if (backhand$breakBlockTimer > 0) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 int i = objectMouseOver.blockX;
@@ -262,5 +213,63 @@ public abstract class MixinMinecraft {
                 }
             });
         }
+    }
+
+    @Unique
+    private boolean backhand$rightClickBlock(ItemStack mainHandItem, ItemStack offhandItem) {
+        int x = objectMouseOver.blockX;
+        int y = objectMouseOver.blockY;
+        int z = objectMouseOver.blockZ;
+
+        boolean result;
+
+        if (offhandItem != null && backhand$doesOffhandNeedPriority(mainHandItem)) {
+            result = BackhandUtils.useOffhandItem(thePlayer, () -> backhand$rightClickBlock(offhandItem, x, y, z));
+            if (!result) {
+                result = backhand$rightClickBlock(mainHandItem, x, y, z);
+            }
+        } else {
+            result = backhand$rightClickBlock(mainHandItem, x, y, z);
+            if (!result && offhandItem != null) {
+                result = BackhandUtils.useOffhandItem(thePlayer, () -> backhand$rightClickBlock(offhandItem, x, y, z));
+            }
+        }
+
+        return result;
+    }
+
+    @Unique
+    private boolean backhand$rightClickBlock(ItemStack stack, int x, int y, int z) {
+        boolean result = !net.minecraftforge.event.ForgeEventFactory
+            .onPlayerInteract(
+                thePlayer,
+                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
+                x,
+                y,
+                z,
+                objectMouseOver.sideHit,
+                theWorld)
+            .isCanceled();
+        if (result && playerController
+            .onPlayerRightClick(thePlayer, theWorld, stack, x, y, z, objectMouseOver.sideHit, objectMouseOver.hitVec)) {
+            thePlayer.swingItem();
+            return true;
+        }
+        return false;
+    }
+
+    @Unique
+    private boolean backhand$doesOffhandNeedPriority(ItemStack mainHandItem) {
+        if (mainHandItem == null) return false;
+
+        for (Class<?> clazz : ClientProxy.offhandPriorityItems) {
+            if (clazz.isAssignableFrom(
+                mainHandItem.getItem()
+                    .getClass())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
