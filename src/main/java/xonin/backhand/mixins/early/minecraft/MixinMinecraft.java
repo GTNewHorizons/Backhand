@@ -100,19 +100,17 @@ public abstract class MixinMinecraft {
                         if (mainHandItem != null) {
                             if (mainHandItem.stackSize == 0) {
                                 thePlayer.setCurrentItemOrArmor(0, null);
-                            } else
-                                if (mainHandItem.stackSize != mainOriginalSize || playerController.isInCreativeMode()) {
-                                    entityRenderer.itemRenderer.resetEquippedProgress();
-                                }
+                            } else if (mainHandItem.stackSize != mainOriginalSize) {
+                                entityRenderer.itemRenderer.resetEquippedProgress();
+                            }
                         }
 
                         if (offhandItem != null) {
                             if (offhandItem.stackSize == 0) {
                                 BackhandUtils.setPlayerOffhandItem(thePlayer, null);
-                            } else if (offhandItem.stackSize != offhandOriginalSize
-                                || playerController.isInCreativeMode()) {
-                                    BackhandRenderHelper.itemRenderer.resetEquippedProgress();
-                                }
+                            } else if (offhandItem.stackSize != offhandOriginalSize) {
+                                BackhandRenderHelper.itemRenderer.resetEquippedProgress();
+                            }
                         }
                     }
             }
