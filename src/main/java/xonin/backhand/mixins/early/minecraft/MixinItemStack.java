@@ -14,7 +14,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import xonin.backhand.api.core.BackhandUtils;
 
 @Mixin(ItemStack.class)
-public class MixinItemStack {
+public abstract class MixinItemStack {
 
     @WrapWithCondition(
         method = "updateAnimation",
