@@ -17,10 +17,10 @@ import ganymedes01.etfuturum.ModItems;
 import ganymedes01.etfuturum.core.handlers.ServerEventHandler;
 import xonin.backhand.api.core.BackhandUtils;
 
-@Mixin(ServerEventHandler.class)
+@Mixin(value = ServerEventHandler.class, remap = false)
 public abstract class MixinServerEventHandler {
 
-    @Shadow(remap = false)
+    @Shadow
     public abstract void handleTotemCheck(EntityLivingBase entity, LivingHurtEvent event);
 
     @Unique
@@ -31,8 +31,8 @@ public abstract class MixinServerEventHandler {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/entity/EntityLivingBase;getHeldItem()Lnet/minecraft/item/ItemStack;",
+            remap = true,
             ordinal = 0),
-        remap = false,
         cancellable = true)
     private void backhand$useOffhandTotem(EntityLivingBase entity, LivingHurtEvent event, CallbackInfo ci) {
         if (backhand$skipCheck || !(entity instanceof EntityPlayer player)) return;
