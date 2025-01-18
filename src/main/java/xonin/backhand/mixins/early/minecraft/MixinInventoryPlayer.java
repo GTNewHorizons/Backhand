@@ -111,6 +111,7 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
         }
         return original;
     }
+
     @Inject(method = "storeItemStack", at = @At("HEAD"), cancellable = true)
     private void backhand$storeItemStack(ItemStack checkStack, CallbackInfoReturnable<Integer> cir) {
         ItemStack stack = player.getHeldItem();
