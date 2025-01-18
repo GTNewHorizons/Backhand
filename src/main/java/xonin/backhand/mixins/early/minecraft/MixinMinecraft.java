@@ -72,108 +72,106 @@ public abstract class MixinMinecraft {
         boolean useAction = true;
 
         if (objectMouseOver == null) {
-            logger.warn("Null returned as \'hitResult\', this shouldn\'t happen!");
-        } else {
-            switch (objectMouseOver.typeOfHit) {
-                case ENTITY:
-                    if (playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit)) {
+            logger.warn("Null returned as 'hitResult', this shouldn't happen!");
+            return;
+        }
+
+        switch (objectMouseOver.typeOfHit) {
+            case ENTITY -> {
+                if (playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit)) {
+                    useAction = false;
+                } else if (BackhandUtils.useOffhandItem(
+                    thePlayer,
+                    () -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit))) {
                         useAction = false;
-                    } else if (BackhandUtils.useOffhandItem(
-                        thePlayer,
-                        () -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit))) {
-                            useAction = false;
-                        }
-
-                    break;
-                case BLOCK:
-                    int x = objectMouseOver.blockX;
-                    int y = objectMouseOver.blockY;
-                    int z = objectMouseOver.blockZ;
-
-                    if (!theWorld.getBlock(x, y, z)
-                        .isAir(theWorld, x, y, z)) {
-                        int mainOriginalSize = mainHandItem != null ? mainHandItem.stackSize : 0;
-                        int offhandOriginalSize = offhandItem != null ? offhandItem.stackSize : 0;
-
-                        useAction = !backhand$rightClickBlock(mainHandItem, offhandItem);
-
-                        if (mainHandItem != null) {
-                            if (mainHandItem.stackSize == 0) {
-                                thePlayer.setCurrentItemOrArmor(0, null);
-                            } else if (mainHandItem.stackSize != mainOriginalSize) {
-                                entityRenderer.itemRenderer.resetEquippedProgress();
-                            }
-                        }
-
-                        if (offhandItem != null) {
-                            if (offhandItem.stackSize == 0) {
-                                BackhandUtils.setPlayerOffhandItem(thePlayer, null);
-                            } else if (offhandItem.stackSize != offhandOriginalSize) {
-                                BackhandRenderHelper.itemRenderer.resetEquippedProgress();
-                            }
-                        }
                     }
             }
+            case BLOCK -> {
+                int x = objectMouseOver.blockX;
+                int y = objectMouseOver.blockY;
+                int z = objectMouseOver.blockZ;
 
-            if (useAction) {
-                boolean result = !net.minecraftforge.event.ForgeEventFactory
-                    .onPlayerInteract(
-                        thePlayer,
-                        net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
-                        0,
-                        0,
-                        0,
-                        -1,
-                        theWorld)
-                    .isCanceled();
-                if (result && mainHandItem != null && playerController.sendUseItem(thePlayer, theWorld, mainHandItem)) {
-                    entityRenderer.itemRenderer.resetEquippedProgress2();
-                }
+                if (!theWorld.getBlock(x, y, z)
+                    .isAir(theWorld, x, y, z)) {
+                    int mainOriginalSize = mainHandItem != null ? mainHandItem.stackSize : 0;
+                    int offhandOriginalSize = offhandItem != null ? offhandItem.stackSize : 0;
 
-                if (offhandItem == null || thePlayer.getItemInUse() != null) return;
-                useAction = !BackhandUtils.useOffhandItem(thePlayer, () -> {
-                    PlayerInteractEvent useItemEvent = new PlayerInteractEvent(
-                        thePlayer,
-                        PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
-                        0,
-                        0,
-                        -1,
-                        0,
-                        theWorld);
-                    if (!MinecraftForge.EVENT_BUS.post(useItemEvent)) {
-                        if (playerController.sendUseItem(thePlayer, theWorld, offhandItem)) {
+                    useAction = !backhand$rightClickBlock(mainHandItem, offhandItem);
+
+                    if (mainHandItem != null) {
+                        if (mainHandItem.stackSize == 0) {
+                            thePlayer.setCurrentItemOrArmor(0, null);
+                        } else if (mainHandItem.stackSize != mainOriginalSize) {
+                            entityRenderer.itemRenderer.resetEquippedProgress();
+                        }
+                    }
+
+                    if (offhandItem != null) {
+                        if (offhandItem.stackSize == 0) {
+                            BackhandUtils.setPlayerOffhandItem(thePlayer, null);
+                        } else if (offhandItem.stackSize != offhandOriginalSize) {
                             BackhandRenderHelper.itemRenderer.resetEquippedProgress();
                         }
-
-                        return thePlayer.getItemInUse() != null;
                     }
-                    return false;
-                });
+                }
+            }
+        }
 
-                if (useAction) {
-                    switch (objectMouseOver.typeOfHit) {
-                        case ENTITY -> {
-                            if (BackhandConfig.OffhandAttack) {
-                                BackhandUtils.useOffhandItem(thePlayer, () -> {
-                                    thePlayer.swingItem();
-                                    playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
-                                });
-                            }
-                        }
-                        case BLOCK -> {
-                            if (BackhandConfig.OffhandBreakBlocks
-                                && offhandItem.getItemUseAction() == EnumAction.none) {
-                                BackhandUtils.useOffhandItem(thePlayer, () -> {
-                                    backhand$breakBlockTimer = 5;
-                                    playerController.clickBlock(
-                                        objectMouseOver.blockX,
-                                        objectMouseOver.blockY,
-                                        objectMouseOver.blockZ,
-                                        objectMouseOver.sideHit);
-                                });
-                            }
-                        }
-                    }
+        if (!useAction) return;
+        boolean result = !net.minecraftforge.event.ForgeEventFactory
+            .onPlayerInteract(
+                thePlayer,
+                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+                0,
+                0,
+                0,
+                -1,
+                theWorld)
+            .isCanceled();
+        if (result && mainHandItem != null && playerController.sendUseItem(thePlayer, theWorld, mainHandItem)) {
+            entityRenderer.itemRenderer.resetEquippedProgress2();
+        }
+
+        if (offhandItem == null || thePlayer.getItemInUse() != null) return;
+        useAction = !BackhandUtils.useOffhandItem(thePlayer, () -> {
+            PlayerInteractEvent useItemEvent = new PlayerInteractEvent(
+                thePlayer,
+                PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+                0,
+                0,
+                -1,
+                0,
+                theWorld);
+            if (!MinecraftForge.EVENT_BUS.post(useItemEvent)) {
+                if (playerController.sendUseItem(thePlayer, theWorld, offhandItem)) {
+                    BackhandRenderHelper.itemRenderer.resetEquippedProgress();
+                }
+
+                return thePlayer.getItemInUse() != null;
+            }
+            return false;
+        });
+
+        if (!useAction) return;
+        switch (objectMouseOver.typeOfHit) {
+            case ENTITY -> {
+                if (BackhandConfig.OffhandAttack) {
+                    BackhandUtils.useOffhandItem(thePlayer, () -> {
+                        thePlayer.swingItem();
+                        playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
+                    });
+                }
+            }
+            case BLOCK -> {
+                if (BackhandConfig.OffhandBreakBlocks && offhandItem.getItemUseAction() == EnumAction.none) {
+                    BackhandUtils.useOffhandItem(thePlayer, () -> {
+                        backhand$breakBlockTimer = 5;
+                        playerController.clickBlock(
+                            objectMouseOver.blockX,
+                            objectMouseOver.blockY,
+                            objectMouseOver.blockZ,
+                            objectMouseOver.sideHit);
+                    });
                 }
             }
         }
