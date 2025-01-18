@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -110,23 +111,26 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
         }
         return original;
     }
-
-    @ModifyReturnValue(method = "storeItemStack", at = @At("RETURN"))
-    private int backhand$getOffhandItem(int original, @Local(argsOnly = true) ItemStack stack) {
-        ItemStack offhand = backhand$getOffhandItem();
-        if (original == backhand$getOffhandSlot() || original == currentItem || original == -1 || offhand == null) {
-            return original;
+    @Inject(method = "storeItemStack", at = @At("HEAD"), cancellable = true)
+    private void backhand$storeItemStack(ItemStack checkStack, CallbackInfoReturnable<Integer> cir) {
+        ItemStack stack = player.getHeldItem();
+        if (stack != null && checkStack(stack, checkStack)) {
+            cir.setReturnValue(currentItem);
         }
 
-        if (offhand.getItem() == stack.getItem() && offhand.isStackable()
-            && offhand.stackSize < offhand.getMaxStackSize()
-            && offhand.stackSize < getInventoryStackLimit()
-            && (!offhand.getHasSubtypes() || offhand.getItemDamage() == stack.getItemDamage())
-            && ItemStack.areItemStackTagsEqual(offhand, stack)) {
-            return backhand$getOffhandSlot();
+        stack = backhand$getOffhandItem();
+        if (stack != null && checkStack(stack, checkStack)) {
+            cir.setReturnValue(backhand$getOffhandSlot());
         }
+    }
 
-        return original;
+    @Unique
+    private boolean checkStack(ItemStack a, ItemStack b) {
+        return a.getItem() == b.getItem() && a.isStackable()
+            && a.stackSize < a.getMaxStackSize()
+            && a.stackSize < getInventoryStackLimit()
+            && (!a.getHasSubtypes() || a.getItemDamage() == b.getItemDamage())
+            && ItemStack.areItemStackTagsEqual(a, b);
     }
 
     @Override
