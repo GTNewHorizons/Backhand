@@ -37,6 +37,9 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
     @Shadow
     public abstract boolean addItemStackToInventory(ItemStack p_70441_1_);
 
+    @Shadow
+    public abstract int getInventoryStackLimit();
+
     @Unique
     private int backhand$offhandSlot;
 
@@ -105,6 +108,24 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
         if (!BackhandConfig.OffhandPickup && original == backhand$getOffhandSlot()) {
             return -1;
         }
+        return original;
+    }
+
+    @ModifyReturnValue(method = "storeItemStack", at = @At("RETURN"))
+    private int backhand$getOffhandItem(int original, @Local(argsOnly = true) ItemStack stack) {
+        ItemStack offhand = backhand$getOffhandItem();
+        if (original == backhand$getOffhandSlot() || original == -1 || offhand == null) {
+            return original;
+        }
+
+        if (offhand.getItem() == stack.getItem() && offhand.isStackable()
+            && offhand.stackSize < offhand.getMaxStackSize()
+            && offhand.stackSize < getInventoryStackLimit()
+            && (!offhand.getHasSubtypes() || offhand.getItemDamage() == stack.getItemDamage())
+            && ItemStack.areItemStackTagsEqual(offhand, stack)) {
+            return backhand$getOffhandSlot();
+        }
+
         return original;
     }
 
