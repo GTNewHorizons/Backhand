@@ -1,6 +1,5 @@
 package xonin.backhand.mixins.early.minecraft;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.creativetab.CreativeTabs;
 
@@ -11,8 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import xonin.backhand.api.core.BackhandUtils;
-
 @Mixin(GuiContainerCreative.class)
 public abstract class MixinGuiContainerCreative {
 
@@ -22,7 +19,7 @@ public abstract class MixinGuiContainerCreative {
     protected void backhand$removeOffhandSlot(CreativeTabs p_147050_1_, CallbackInfo ci,
         @Local GuiContainerCreative.ContainerCreative container) {
         GuiContainerCreative.CreativeSlot slot = (GuiContainerCreative.CreativeSlot) container.inventorySlots
-            .get(BackhandUtils.getOffhandSlot(Minecraft.getMinecraft().thePlayer));
+            .get(container.inventorySlots.size() - 1);
         slot.xDisplayPosition = -2000;
         slot.yDisplayPosition = -2000;
     }
