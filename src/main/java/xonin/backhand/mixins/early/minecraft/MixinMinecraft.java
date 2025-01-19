@@ -65,9 +65,11 @@ public abstract class MixinMinecraft {
     /**
      * @author Lyft
      * @reason Offhand support
+     *         Don't change this methods visibility despite what mixin debug says.
+     *         Some mods AT this and changing the visibility will break them.
      */
     @Overwrite
-    private void func_147121_ag() {
+    public void func_147121_ag() {
         rightClickDelayTimer = 4;
         ItemStack mainHandItem = thePlayer.inventory.getCurrentItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
