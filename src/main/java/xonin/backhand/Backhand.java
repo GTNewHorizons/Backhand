@@ -2,7 +2,6 @@ package xonin.backhand;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,12 +10,10 @@ import com.gtnewhorizon.gtnhlib.config.ConfigException;
 import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
@@ -37,11 +34,9 @@ public class Backhand {
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
     public static BackhandPacketHandler packetHandler;
-    public static boolean isEFRLoaded;
 
     @Mod.EventHandler
     public void load(FMLPreInitializationEvent event) {
-        isEFRLoaded = Loader.isModLoaded("etfuturum");
         try {
             ConfigurationManager.registerConfig(BackhandConfig.class);
             ConfigurationManager.registerConfig(BackhandConfigClient.class);
@@ -50,27 +45,12 @@ public class Backhand {
         }
 
         proxy.load();
-
-        MinecraftForge.EVENT_BUS.register(new ServerEventsHandler());
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new ServerTickHandler());
-
-        MinecraftForge.EVENT_BUS.register(HookContainerClass.INSTANCE);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(HookContainerClass.INSTANCE);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         packetHandler = new BackhandPacketHandler();
         packetHandler.register();
-    }
-
-    @Mod.EventHandler
-    public void onServerStopping(FMLServerStoppingEvent event) {
-        proxy.onServerStopping(event);
     }
 
     public static MinecraftServer getServer() {

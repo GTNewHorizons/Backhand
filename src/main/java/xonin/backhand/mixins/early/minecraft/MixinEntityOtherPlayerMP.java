@@ -5,45 +5,32 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import com.mojang.authlib.GameProfile;
 
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.IBackhandPlayer;
 
 @Mixin(EntityOtherPlayerMP.class)
-public abstract class MixinEntityOtherPlayerMP extends AbstractClientPlayer {
-
-    @Shadow
-    private boolean isItemInUse;
+public abstract class MixinEntityOtherPlayerMP extends AbstractClientPlayer implements IBackhandPlayer {
 
     private MixinEntityOtherPlayerMP(World p_i45074_1_, GameProfile p_i45074_2_) {
         super(p_i45074_1_, p_i45074_2_);
     }
 
-    @Inject(
+    @Redirect(
         method = "onUpdate",
-        cancellable = true,
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/entity/EntityOtherPlayerMP;isItemInUse:Z",
-            ordinal = 0))
-    private void backhand$isItemInUseHook(CallbackInfo ci) {
-        ItemStack itemStack = getCurrentEquippedItem();
-        ItemStack offhand = BackhandUtils.getOffhandItem(this);
-        if (BackhandUtils.usagePriorAttack(offhand)) itemStack = offhand;
-        if (!isItemInUse && isEating() && itemStack != null) {
-            setItemInUse(itemStack, itemStack.getMaxItemUseDuration());
-            isItemInUse = true;
-        } else if (isItemInUse && !isEating()) {
-            clearItemInUse();
-            isItemInUse = false;
-        }
-        ci.cancel();
+            opcode = Opcodes.GETFIELD,
+            args = "array=get",
+            target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;"))
+    private ItemStack backhand$isItemInUseHook(ItemStack[] array, int index) {
+        if (isOffhandItemInUse()) return BackhandUtils.getOffhandItem(this);
+        return array[index];
     }
-
 }

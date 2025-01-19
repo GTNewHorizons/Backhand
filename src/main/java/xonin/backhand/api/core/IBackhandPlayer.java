@@ -1,12 +1,11 @@
 package xonin.backhand.api.core;
 
-import net.minecraft.entity.Entity;
-
 /**
  * Interface added to EntityPlayer to support offhand management
- * 
+ *
  * @author GotoLink
  */
+
 public interface IBackhandPlayer {
 
     /**
@@ -19,11 +18,10 @@ public interface IBackhandPlayer {
      */
     float getOffSwingProgress(float frame);
 
-    /**
-     * Hotswap the EntityPlayer current item to offhand, behaves like
-     * EntityPlayer#attackTargetEntityWithCurrentItem(Entity)
-     * 
-     * @param target to attack
-     */
-    void attackTargetEntityWithCurrentOffItem(Entity target);
+    void setOffhandItemInUse(boolean usingOffhand);
+
+    boolean isOffhandItemInUse();
+
+    boolean isUsingOffhand();
+
 }

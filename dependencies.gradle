@@ -34,9 +34,9 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api("com.github.GTNewHorizons:GTNHLib:0.6.0:dev")
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.13-GTNH:dev")
+    api("com.github.GTNewHorizons:GTNHLib:0.6.2:dev")
+    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.4-GTNH:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.18-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.0:dev")
-    compileOnly(deobf("https://github.com/Roadhog360/Et-Futurum-Requiem/releases/download/2.6.0/Et_Futurum_Requiem-2.6.0-nomixin.jar", "Et Futurum Requiem"))
-    compileOnly("com.github.GTNewHorizons:CarpentersBlocks:3.7.0-GTNH:dev")
+    compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
 }

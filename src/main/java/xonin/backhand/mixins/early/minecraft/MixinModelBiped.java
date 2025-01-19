@@ -8,13 +8,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 
+import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xonin.backhand.api.core.BackhandUtils;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+
+import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 
 @Mixin(ModelBiped.class)
@@ -35,19 +39,16 @@ public abstract class MixinModelBiped extends ModelBase {
         BackhandRenderHelper.moveOffHandArm(entity, (ModelBiped) (Object) this, f6);
     }
 
-    @Inject(
+    @ModifyExpressionValue(
         method = "setRotationAngles",
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/model/ModelBiped;aimedBow:Z",
-            shift = At.Shift.BY,
-            by = 2),
-        cancellable = true)
-    private void backhand$moveOffhandAimedBow(float f1, float f2, float f3, float f4, float f5, float f6, Entity entity,
-        CallbackInfo ci) {
+            opcode = Opcodes.GETFIELD,
+            target = "Lnet/minecraft/client/model/ModelBiped;aimedBow:Z"))
+    private boolean backhand$moveOffhandAimedBow(boolean original, @Local(argsOnly = true, ordinal = 2) float f3,
+        @Local(argsOnly = true) Entity entity) {
         if (entity instanceof EntityPlayer player && entity == Minecraft.getMinecraft().thePlayer
-            && BackhandUtils.getOffhandItem(player) != null
-            && player.getItemInUse() == BackhandUtils.getOffhandItem(player)) {
+            && ((IBackhandPlayer) player).isOffhandItemInUse()) {
             bipedLeftArm.rotateAngleZ = 0.0F;
             bipedRightArm.rotateAngleZ = 0.0F;
             bipedLeftArm.rotateAngleY = 0.1F + bipedHead.rotateAngleY;
@@ -60,8 +61,9 @@ public abstract class MixinModelBiped extends ModelBase {
             bipedRightArm.rotateAngleZ += MathHelper.cos(f3 * 0.09F) * 0.05F + 0.05F;
             bipedLeftArm.rotateAngleX -= MathHelper.sin(f3 * 0.067F) * 0.05F;
             bipedRightArm.rotateAngleX += MathHelper.sin(f3 * 0.067F) * 0.05F;
-            ci.cancel();
+            return false;
         }
+        return original;
     }
 
 }
