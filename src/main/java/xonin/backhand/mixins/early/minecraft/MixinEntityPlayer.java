@@ -77,9 +77,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         return original;
     }
 
-    @Inject(
-        method = "setItemInUse",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
+    @Inject(method = "setItemInUse", at = @At(value = "TAIL"))
     private void backhand$setItemInUse(ItemStack p_71008_1_, int p_71008_2_, CallbackInfo ci) {
         if (Objects.equals(p_71008_1_, BackhandUtils.getOffhandItem((EntityPlayer) (Object) this))) {
             backhand$updateOffhandUse(true);
@@ -88,9 +86,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         }
     }
 
-    @Inject(
-        method = "clearItemInUse",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;setEating(Z)V"))
+    @Inject(method = "clearItemInUse", at = @At(value = "TAIL"))
     private void backhand$clearOffhand(CallbackInfo ci) {
         if (isOffhandItemInUse()) {
             backhand$updateOffhandUse(false);
@@ -140,9 +136,12 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Unique
     private void backhand$updateOffhandUse(boolean state) {
         EntityPlayer player = (EntityPlayer) (Object) this;
-        Backhand.packetHandler
-            .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, state).generatePacket());
         setOffhandItemInUse(state);
+
+        if (!worldObj.isRemote) {
+            Backhand.packetHandler
+                .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, state).generatePacket());
+        }
     }
 
     @Override

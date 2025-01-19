@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -54,4 +56,15 @@ public abstract class MixinItemRenderer {
         GL11.glCullFace(GL11.GL_BACK);
     }
 
+    @ModifyExpressionValue(
+        method = "renderItemInFirstPerson",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;isInvisible()Z"))
+    private boolean backhand$renderItemInFirstPerson(boolean original) {
+        if (BackhandConfigClient.RenderEmptyOffhandAtRest) return original;
+        EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+        if (BackhandUtils.isUsingOffhand(player)) {
+            return true;
+        }
+        return original;
+    }
 }
