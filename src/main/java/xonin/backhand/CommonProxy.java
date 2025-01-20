@@ -13,7 +13,6 @@ import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.packet.OffhandConfigSyncPacket;
 import xonin.backhand.packet.OffhandSyncItemPacket;
 
 @EventBusSubscriber
@@ -26,7 +25,6 @@ public class CommonProxy {
         if (!(event.player instanceof EntityPlayerMP playerMP)) {
             return;
         }
-        Backhand.packetHandler.sendPacketToPlayer(new OffhandConfigSyncPacket().generatePacket(), playerMP);
         ItemStack offhandItem = BackhandUtils.getOffhandItem(playerMP);
         if (Backhand.isOffhandBlacklisted(offhandItem)) {
             BackhandUtils.setPlayerOffhandItem(playerMP, null);

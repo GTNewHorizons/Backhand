@@ -8,14 +8,17 @@ import xonin.backhand.Backhand;
 @Config.Comment("Configs that will be synced with the server's config if playing in multiplayer")
 public class BackhandConfig {
 
+    @Config.Sync
     @Config.Comment("If set to false, an empty offhand will only be rendered when the player is punching with the offhand. False in vanilla.")
     @Config.DefaultBoolean(false)
     public static boolean OffhandAttack;
 
+    @Config.Sync
     @Config.Comment("If set to false, disables offhand actions and rendering if there is no offhand item. False in vanilla.")
     @Config.DefaultBoolean(false)
     public static boolean EmptyOffhand;
 
+    @Config.Sync
     @Config.Comment("Determines whether you can break blocks with the offhand or not. False in vanilla.")
     @Config.DefaultBoolean(false)
     public static boolean OffhandBreakBlocks;
