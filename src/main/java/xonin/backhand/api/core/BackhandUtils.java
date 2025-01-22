@@ -1,5 +1,7 @@
 package xonin.backhand.api.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nullable;
@@ -14,6 +16,8 @@ import net.minecraft.item.ItemStack;
  */
 @ParametersAreNonnullByDefault
 public final class BackhandUtils {
+
+    public static final List<Class<?>> offhandPriorityItems = new ArrayList<>();
 
     public static void swapOffhandItem(EntityPlayer player) {
         ItemStack mainHand = player.getCurrentEquippedItem();
@@ -61,5 +65,12 @@ public final class BackhandUtils {
 
     public static int getOffhandSlot(EntityPlayer player) {
         return ((IOffhandInventory) player.inventory).backhand$getOffhandSlot();
+    }
+
+    /**
+     * Adds an item that when held in the main hand will execute the offhand item action before the main hand action
+     */
+    public static void addOffhandPriorityItem(Class<?> itemClass) {
+        offhandPriorityItems.add(itemClass);
     }
 }

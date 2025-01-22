@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
-import xonin.backhand.Backhand;
+import xonin.backhand.coremod.BackhandLoadingPlugin;
 
 public enum Mixins {
 
@@ -39,17 +39,7 @@ public enum Mixins {
             "minecraft.MixinGuiContainerCreative")
         .setPhase(Phase.EARLY)
         .setSide(Side.CLIENT)
-        .addTargetedMod(TargetedMod.VANILLA)),
-    ET_FUTURUM_TOTEM_SUPPORT(
-        new Builder("Et Futurum Totem Support").addMixinClasses("etfuturum.MixinServerEventHandler")
-            .setPhase(Phase.LATE)
-            .setSide(Side.BOTH)
-            .addTargetedMod(TargetedMod.ET_FUTURUM)),
-    TINKERS_CROSSHAIR_FIX(new Builder("Fix crosshair not rendering for offhand weapon")
-        .addMixinClasses("tconstruct.MixinCrosshairHandler")
-        .setPhase(Phase.LATE)
-        .setSide(Side.CLIENT)
-        .addTargetedMod(TargetedMod.TINKERS_CONSTRUCT)),;
+        .addTargetedMod(TargetedMod.VANILLA)),;
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
@@ -86,7 +76,7 @@ public enum Mixins {
                 }
             }
         }
-        Backhand.LOGGER.info("Not loading the following EARLY mixins: {}", notLoading);
+        BackhandLoadingPlugin.LOGGER.info("Not loading the following EARLY mixins: {}", notLoading);
         return mixins;
     }
 
@@ -102,7 +92,7 @@ public enum Mixins {
                 }
             }
         }
-        Backhand.LOGGER.info("Not loading the following LATE mixins: {}", notLoading.toString());
+        BackhandLoadingPlugin.LOGGER.info("Not loading the following LATE mixins: {}", notLoading.toString());
         return mixins;
     }
 
