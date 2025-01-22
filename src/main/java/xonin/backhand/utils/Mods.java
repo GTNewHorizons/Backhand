@@ -6,7 +6,8 @@ public enum Mods {
 
     INV_TWEAKS("inventorytweaks"),
     DOUBLE_WIDE_SURPRISE("dws"),
-    TINKERS_CONSTRUCT("TConstruct"),;
+    TINKERS_CONSTRUCT("TConstruct"),
+    ET_FUTURUM("etfuturum"),;
 
     private final String modId;
     private Boolean loaded;

@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
-import xonin.backhand.client.ClientProxy;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -267,7 +266,7 @@ public abstract class MixinMinecraft {
     private boolean backhand$doesOffhandNeedPriority(ItemStack mainHandItem) {
         if (mainHandItem == null) return false;
 
-        for (Class<?> clazz : ClientProxy.offhandPriorityItems) {
+        for (Class<?> clazz : BackhandUtils.offhandPriorityItems) {
             if (clazz.isAssignableFrom(
                 mainHandItem.getItem()
                     .getClass())) {
