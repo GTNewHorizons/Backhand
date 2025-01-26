@@ -33,7 +33,6 @@ public class Backhand {
 
     @SidedProxy(clientSide = "xonin.backhand.client.ClientProxy", serverSide = "xonin.backhand.CommonProxy")
     public static CommonProxy proxy;
-    public static BackhandPacketHandler packetHandler;
 
     @Mod.EventHandler
     public void load(FMLPreInitializationEvent event) {
@@ -49,8 +48,7 @@ public class Backhand {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        packetHandler = new BackhandPacketHandler();
-        packetHandler.register();
+        BackhandPacketHandler.init();
     }
 
     public static MinecraftServer getServer() {

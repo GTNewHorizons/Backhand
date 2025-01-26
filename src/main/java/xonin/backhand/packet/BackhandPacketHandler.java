@@ -1,92 +1,43 @@
 package xonin.backhand.packet;
 
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.Set;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.WorldServer;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.FMLEventChannel;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import xonin.backhand.Backhand;
+import xonin.backhand.api.core.BackhandUtils;
 
 public final class BackhandPacketHandler {
 
-    public Map<String, AbstractPacket> map = new Hashtable<>();
-    public Map<String, FMLEventChannel> channels = new Hashtable<>();
+    public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Backhand.MODID);
 
-    public BackhandPacketHandler() {
-        map.put(OffhandSyncItemPacket.packetName, new OffhandSyncItemPacket());
-        map.put(OffhandSwapPacket.packetName, new OffhandSwapPacket());
-        map.put(OffhandSwapClientPacket.packetName, new OffhandSwapClientPacket());
-        map.put(OffhandSyncOffhandUse.packetName, new OffhandSyncOffhandUse());
+    public static void init() {
+        NETWORK.registerMessage(OffhandSyncItemPacket.Handler.class, OffhandSyncItemPacket.class, 0, Side.CLIENT);
+        NETWORK.registerMessage(OffhandSyncOffhandUse.Handler.class, OffhandSyncOffhandUse.class, 1, Side.CLIENT);
     }
 
-    public void register() {
-        FMLEventChannel eventChannel;
-        for (String channel : map.keySet()) {
-            eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel(channel);
-            eventChannel.register(this);
-            channels.put(channel, eventChannel);
+    public static void sendPacketToPlayer(IMessage packet, EntityPlayer player) {
+        if (player instanceof EntityPlayerMP playerMP) {
+            NETWORK.sendTo(packet, playerMP);
         }
     }
 
-    @SubscribeEvent
-    public void onServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event) {
-        map.get(event.packet.channel())
-            .process(event.packet.payload(), ((NetHandlerPlayServer) event.handler).playerEntity);
-    }
+    public static void sendPacketToAllTracking(Entity entity, IMessage packet) {
+        if (!(entity.worldObj instanceof WorldServer world) || !BackhandUtils.isValidPlayer(entity)) return;
+        Set<EntityPlayer> trackingPlayer = world.getEntityTracker()
+            .getTrackingPlayers(entity);
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
-        map.get(event.packet.channel())
-            .process(event.packet.payload(), Minecraft.getMinecraft().thePlayer);
-    }
-
-    public void sendPacketToPlayer(FMLProxyPacket packet, EntityPlayerMP player) {
-        if (FMLCommonHandler.instance()
-            .getEffectiveSide() == Side.SERVER) {
-            channels.get(packet.channel())
-                .sendTo(packet, player);
+        for (EntityPlayer player : trackingPlayer) {
+            if (BackhandUtils.isValidPlayer(player)) {
+                sendPacketToPlayer(packet, player);
+            }
         }
-    }
-
-    public void sendPacketToServer(FMLProxyPacket packet) {
-        packet.setTarget(Side.SERVER);
-        channels.get(packet.channel())
-            .sendToServer(packet);
-    }
-
-    public void sendPacketAround(Entity entity, double range, FMLProxyPacket packet) {
-        if (FMLCommonHandler.instance()
-            .getEffectiveSide() == Side.SERVER) {
-            channels.get(packet.channel())
-                .sendToAllAround(
-                    packet,
-                    new NetworkRegistry.TargetPoint(entity.dimension, entity.posX, entity.posY, entity.posZ, range));
-        }
-    }
-
-    public void sendPacketToAll(FMLProxyPacket packet) {
-        if (FMLCommonHandler.instance()
-            .getEffectiveSide() == Side.SERVER) {
-            channels.get(packet.channel())
-                .sendToAll(packet);
-        }
-    }
-
-    public void sendPacketToAllTracking(Entity entity, FMLProxyPacket packet) {
-        if (!(entity.worldObj instanceof WorldServer world)) return;
-        world.getEntityTracker()
-            .func_151247_a(entity, packet);
     }
 }

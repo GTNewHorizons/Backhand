@@ -29,6 +29,7 @@ import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.IOffhandInventory;
+import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.packet.OffhandSyncOffhandUse;
 
 @Mixin(EntityPlayer.class)
@@ -139,8 +140,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         setOffhandItemInUse(state);
 
         if (!worldObj.isRemote) {
-            Backhand.packetHandler
-                .sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, state).generatePacket());
+            BackhandPacketHandler.sendPacketToAllTracking(player, new OffhandSyncOffhandUse(player, state));
         }
     }
 
