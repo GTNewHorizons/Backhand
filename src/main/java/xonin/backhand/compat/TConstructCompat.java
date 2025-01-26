@@ -17,6 +17,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import tconstruct.library.tools.HarvestTool;
 import tconstruct.library.weaponry.IWindup;
 import tconstruct.tools.TinkerToolEvents;
@@ -96,6 +97,7 @@ public class TConstructCompat {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS) return;
