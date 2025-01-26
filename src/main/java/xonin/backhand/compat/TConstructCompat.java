@@ -13,8 +13,10 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
 import tconstruct.library.tools.HarvestTool;
 import tconstruct.library.weaponry.IWindup;
 import tconstruct.tools.TinkerToolEvents;
@@ -36,8 +38,11 @@ public class TConstructCompat {
         if (Mods.TINKERS_CONSTRUCT.isLoaded()) {
             try {
                 // Gotta hide those NEW instructions from the JVM
-                crosshairHandler = CrosshairHandler.class.getConstructor()
-                    .newInstance();
+                if (FMLCommonHandler.instance()
+                    .getSide() == Side.CLIENT) {
+                    crosshairHandler = CrosshairHandler.class.getConstructor()
+                        .newInstance();
+                }
                 // These need to be MethodHandles since the compiler complains about Mobs-Info not being present
                 // otherwise
                 onHurt = MethodHandles.publicLookup()
