@@ -2,7 +2,6 @@ package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -19,9 +18,6 @@ import xonin.backhand.api.core.IBackhandPlayer;
 
 @Mixin(EntityPlayer.class)
 public abstract class MixinEntityPlayerClient extends EntityLivingBase implements IBackhandPlayer {
-
-    @Shadow
-    public InventoryPlayer inventory;
 
     @Shadow
     private ItemStack itemInUse;

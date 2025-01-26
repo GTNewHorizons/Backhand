@@ -36,10 +36,13 @@ public abstract class MixinNetHandlerPlayClient {
 
     @Inject(
         method = "handleAnimation",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/network/play/server/S0BPacketAnimation;func_148977_d()I"))
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/network/play/server/S0BPacketAnimation;func_148977_d()I",
+            ordinal = 0))
     private void backhand$handleOffhandSwing(S0BPacketAnimation packetIn, CallbackInfo ci, @Local Entity entity) {
         if (!(entity instanceof IBackhandPlayer player)) return;
-        if (packetIn.func_148978_c() == 99) {
+        if (packetIn.func_148977_d() == 99) {
             player.swingOffItem();
         }
     }
