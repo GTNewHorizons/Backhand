@@ -8,10 +8,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S0BPacketAnimation;
 import net.minecraft.util.RegistrySimple;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,6 +27,7 @@ import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.packet.BackhandPacketHandler;
+import xonin.backhand.packet.OffhandAnimationPacket;
 import xonin.backhand.packet.OffhandSyncOffhandUse;
 
 @Mixin(EntityPlayer.class)
@@ -171,9 +170,8 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
             this.backhand$offHandSwingProgressInt = -1;
             this.backhand$isOffHandSwingInProgress = true;
 
-            if (worldObj instanceof WorldServer world) {
-                world.getEntityTracker()
-                    .func_151247_a(this, new S0BPacketAnimation(this, 99));
+            if (!worldObj.isRemote) {
+                BackhandPacketHandler.sendPacketToAllTracking(player, new OffhandAnimationPacket(player));
             }
         }
     }

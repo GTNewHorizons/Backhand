@@ -21,6 +21,7 @@ public final class BackhandPacketHandler {
     public static void init() {
         NETWORK.registerMessage(OffhandSyncItemPacket.Handler.class, OffhandSyncItemPacket.class, 0, Side.CLIENT);
         NETWORK.registerMessage(OffhandSyncOffhandUse.Handler.class, OffhandSyncOffhandUse.class, 1, Side.CLIENT);
+        NETWORK.registerMessage(OffhandAnimationPacket.Handler.class, OffhandAnimationPacket.class, 2, Side.CLIENT);
     }
 
     public static void sendPacketToPlayer(IMessage packet, EntityPlayer player) {

@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
+import org.lwjgl.input.Keyboard;
+
 import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
 
@@ -17,7 +19,7 @@ import xonin.backhand.packet.OffhandSyncItemPacket;
 public class CommonProxy {
 
     public static final SyncedKeybind SWAP_KEY = SyncedKeybind
-        .createConfigurable("backhand.swap_offhand", "key.categories.gameplay", 33)
+        .createConfigurable("backhand.swap_offhand", "key.categories.gameplay", Keyboard.KEY_F)
         .registerGlobalListener(CommonProxy::swapOffhand);
 
     public void load() {}
