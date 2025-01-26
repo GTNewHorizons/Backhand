@@ -22,12 +22,12 @@ public class OffhandAnimationPacket implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        buf.writeInt(entityId);
+        entityId = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        entityId = buf.readInt();
+        buf.writeInt(entityId);
     }
 
     public static class Handler implements IMessageHandler<OffhandAnimationPacket, IMessage> {
