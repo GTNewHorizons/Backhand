@@ -13,7 +13,6 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 
@@ -39,10 +38,7 @@ public class ClientEventHandler {
 
     public static boolean prevInvTweaksAutoRefill;
     public static boolean prevInvTweaksBreakRefill;
-
     public static int invTweaksDelay;
-
-    public static int renderPass;
 
     @SubscribeEvent
     public static void renderHotbarOverlay(RenderGameOverlayEvent event) {
@@ -130,11 +126,6 @@ public class ClientEventHandler {
             RenderItem.getInstance()
                 .renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemstack, p_73832_2_, p_73832_3_);
         }
-    }
-
-    @SubscribeEvent
-    public static void onRenderHand(RenderHandEvent event) {
-        renderPass = event.renderPass;
     }
 
     /**
