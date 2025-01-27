@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.packet.OffhandSyncItemPacket;
 
 @Mixin(EntityLivingBase.class)
@@ -39,6 +39,6 @@ public abstract class MixinEntityLivingBase extends Entity {
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (ItemStack.areItemStacksEqual(backhand$previousOffhandStack, offhand)) return;
         backhand$previousOffhandStack = offhand;
-        Backhand.packetHandler.sendPacketToAllTracking(player, new OffhandSyncItemPacket(player).generatePacket());
+        BackhandPacketHandler.sendPacketToAllTracking(player, new OffhandSyncItemPacket(player));
     }
 }

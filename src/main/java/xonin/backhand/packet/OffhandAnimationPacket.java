@@ -10,38 +10,33 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.api.core.IBackhandPlayer;
 
-public final class OffhandSyncOffhandUse implements IMessage {
+public class OffhandAnimationPacket implements IMessage {
 
     private int entityId;
-    private boolean isUsingOffhand;
 
-    public OffhandSyncOffhandUse(EntityPlayer player, boolean isUsingOffhand) {
+    public OffhandAnimationPacket() {}
+
+    public OffhandAnimationPacket(EntityPlayer player) {
         this.entityId = player.getEntityId();
-        this.isUsingOffhand = isUsingOffhand;
     }
-
-    @SuppressWarnings("unused")
-    public OffhandSyncOffhandUse() {}
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.entityId = buf.readInt();
-        this.isUsingOffhand = buf.readBoolean();
+        entityId = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(entityId);
-        buf.writeBoolean(isUsingOffhand);
     }
 
-    public static class Handler implements IMessageHandler<OffhandSyncOffhandUse, IMessage> {
+    public static class Handler implements IMessageHandler<OffhandAnimationPacket, IMessage> {
 
         @Override
-        public IMessage onMessage(OffhandSyncOffhandUse message, MessageContext ctx) {
+        public IMessage onMessage(OffhandAnimationPacket message, MessageContext ctx) {
             Entity entity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityId);
-            if (entity instanceof EntityPlayer player) {
-                ((IBackhandPlayer) player).setOffhandItemInUse(message.isUsingOffhand);
+            if (entity instanceof IBackhandPlayer player) {
+                player.swingOffItem();
             }
             return null;
         }

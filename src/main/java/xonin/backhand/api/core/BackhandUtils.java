@@ -8,8 +8,11 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.FakePlayer;
 
 /**
  * Store commonly used method, mostly for the {@link EntityPlayer} {@link ItemStack}s management
@@ -18,12 +21,6 @@ import net.minecraft.item.ItemStack;
 public final class BackhandUtils {
 
     public static final List<Class<?>> offhandPriorityItems = new ArrayList<>();
-
-    public static void swapOffhandItem(EntityPlayer player) {
-        ItemStack mainHand = player.getCurrentEquippedItem();
-        player.setCurrentItemOrArmor(0, BackhandUtils.getOffhandItem(player));
-        BackhandUtils.setPlayerOffhandItem(player, mainHand);
-    }
 
     public static void setPlayerOffhandItem(EntityPlayer player, @Nullable ItemStack stack) {
         ((IOffhandInventory) player.inventory).backhand$setOffhandItem(stack);
@@ -72,5 +69,10 @@ public final class BackhandUtils {
      */
     public static void addOffhandPriorityItem(Class<?> itemClass) {
         offhandPriorityItems.add(itemClass);
+    }
+
+    public static boolean isValidPlayer(@Nullable Entity entity) {
+        return entity instanceof EntityPlayerMP playerMP
+            && !(entity instanceof FakePlayer || playerMP.playerNetServerHandler == null);
     }
 }

@@ -3,7 +3,6 @@ package xonin.backhand.client;
 import static xonin.backhand.utils.Mods.DOUBLE_WIDE_SURPRISE;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderHelper;
@@ -18,7 +17,6 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -30,9 +28,9 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import invtweaks.InvTweaks;
+import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
-import xonin.backhand.packet.OffhandSwapPacket;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.Mods;
 
@@ -43,7 +41,6 @@ public class ClientEventHandler {
     public static boolean prevInvTweaksBreakRefill;
 
     public static int invTweaksDelay;
-    public static boolean allowSwap = true;
 
     public static int renderPass;
 
@@ -62,12 +59,8 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onKeyInputEvent(InputEvent.KeyInputEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityClientPlayerMP player = mc.thePlayer;
-
-        if (ClientProxy.swapOffhand.getIsKeyPressed() && Keyboard.isKeyDown(Keyboard.getEventKey()) && allowSwap) {
-            allowSwap = false;
+        if (mc.currentScreen == null && CommonProxy.SWAP_KEY.isKeyDown(mc.thePlayer)) {
             invTweaksSwapPatch();
-            player.sendQueue.addToSendQueue(new OffhandSwapPacket(player).generatePacket());
         }
     }
 
