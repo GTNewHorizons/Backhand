@@ -15,7 +15,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
-import xonin.backhand.mixins.hooks.ItemRendererHooks;
+import xonin.backhand.client.hooks.ItemRendererHooks;
 import xonin.backhand.utils.BackhandConfigClient;
 
 @Mixin(ItemRenderer.class)

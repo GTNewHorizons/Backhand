@@ -1,4 +1,4 @@
-package xonin.backhand.mixins.hooks;
+package xonin.backhand.client.hooks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -17,7 +17,7 @@ public class ItemRendererHooks {
 
     /**
      * Extracted outside the mixin to be used in Angelica for Backhand compat
-     * 
+     *
      * @param frame
      */
     public static void renderOffhandReturn(float frame) {
