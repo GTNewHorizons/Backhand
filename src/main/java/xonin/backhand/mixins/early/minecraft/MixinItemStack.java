@@ -24,7 +24,7 @@ public abstract class MixinItemStack {
     private boolean backhand$updateOffhand(Item item, ItemStack stack, World worldIn, Entity entityIn, int index,
         boolean p_77663_5_) {
         if (entityIn instanceof EntityPlayer player && index == BackhandUtils.getOffhandSlot(player)) {
-            BackhandUtils.useOffhandItem(player, () -> item.onUpdate(stack, worldIn, entityIn, index, p_77663_5_));
+            BackhandUtils.useOffhandItem(player, () -> item.onUpdate(stack, worldIn, entityIn, index, true));
             return false;
         }
         return true;
