@@ -8,12 +8,15 @@ import net.minecraft.server.management.ItemInWorldManager;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IOffhandInventory;
@@ -26,6 +29,9 @@ public abstract class MixinNetHandlerPlayServer {
 
     @Shadow
     public EntityPlayerMP playerEntity;
+
+    @Unique
+    private boolean backhand$dropEntityInteraction = false;
 
     @ModifyExpressionValue(
         method = "processHeldItemChange",
@@ -72,5 +78,23 @@ public abstract class MixinNetHandlerPlayServer {
             target = "Lnet/minecraft/entity/player/EntityPlayerMP;attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V"))
     private boolean backhand$checkOffhandAttack(EntityPlayerMP instance, Entity entity) {
         return BackhandConfig.OffhandAttack || !BackhandUtils.isUsingOffhand(playerEntity);
+    }
+
+    @WrapOperation(
+        method = "processUseEntity",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/player/EntityPlayerMP;interactWith(Lnet/minecraft/entity/Entity;)Z"))
+    private boolean backhand$checkOffhandInteract(EntityPlayerMP instance, Entity entity, Operation<Boolean> original) {
+        boolean result = false;
+        if (BackhandUtils.isUsingOffhand(playerEntity)) {
+            if (!backhand$dropEntityInteraction) {
+                result = original.call(instance, entity);
+            }
+            backhand$dropEntityInteraction = false;
+        } else {
+            result = backhand$dropEntityInteraction = original.call(instance, entity);
+        }
+        return result;
     }
 }
