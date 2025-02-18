@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -96,32 +97,31 @@ public abstract class MixinMinecraft {
         };
 
         if (continueUsage) {
-            continueUsage = backhand$useRightClick(this::backhand$rightClickItem);
+            if (objectMouseOver.typeOfHit == MovingObjectType.ENTITY && BackhandConfig.OffhandAttack) {
+                BackhandUtils.useOffhandItem(thePlayer, () -> {
+                    rightClickDelayTimer = 10;
+                    thePlayer.swingItem();
+                    playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
+                });
+                continueUsage = false;
+            } else {
+                continueUsage = backhand$useRightClick(this::backhand$rightClickItem);
+            }
         }
 
         ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
-        if (!continueUsage || offhandItem == null) return;
-        switch (objectMouseOver.typeOfHit) {
-            case ENTITY -> {
-                if (BackhandConfig.OffhandAttack) {
-                    BackhandUtils.useOffhandItem(thePlayer, () -> {
-                        thePlayer.swingItem();
-                        playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
-                    });
-                }
-            }
-            case BLOCK -> {
-                if (BackhandConfig.OffhandBreakBlocks && offhandItem.getItemUseAction() == EnumAction.none) {
-                    BackhandUtils.useOffhandItem(thePlayer, () -> {
-                        backhand$breakBlockTimer = 5;
-                        playerController.clickBlock(
-                            objectMouseOver.blockX,
-                            objectMouseOver.blockY,
-                            objectMouseOver.blockZ,
-                            objectMouseOver.sideHit);
-                    });
-                }
-            }
+        if (continueUsage && BackhandConfig.OffhandBreakBlocks
+            && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
+            && offhandItem != null
+            && offhandItem.getItemUseAction() == EnumAction.none) {
+            BackhandUtils.useOffhandItem(thePlayer, () -> {
+                backhand$breakBlockTimer = 5;
+                playerController.clickBlock(
+                    objectMouseOver.blockX,
+                    objectMouseOver.blockY,
+                    objectMouseOver.blockZ,
+                    objectMouseOver.sideHit);
+            });
         }
     }
 
