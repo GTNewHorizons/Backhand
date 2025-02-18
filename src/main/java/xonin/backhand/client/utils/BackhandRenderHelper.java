@@ -73,7 +73,7 @@ public final class BackhandRenderHelper {
 
             GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
 
-            if (player.fishEntity != null) {
+            if (player.fishEntity != null && offhandItem.getItem() == Items.fishing_rod) {
                 offhandItem = new ItemStack(Items.stick);
             }
 
