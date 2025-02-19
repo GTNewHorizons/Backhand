@@ -3,7 +3,6 @@ package xonin.backhand.mixins.early.minecraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,17 +39,15 @@ public abstract class MixinItemRenderer {
 
     @ModifyExpressionValue(
         method = "renderItemInFirstPerson",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/item/ItemStack;getItemUseAction()Lnet/minecraft/item/EnumAction;"))
-    private EnumAction backhand$renderItemInFirstPerson(EnumAction original) {
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;getItemInUseCount()I"))
+    private int backhand$renderItemInFirstPerson(int original) {
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (offhand == null) return original;
         if (BackhandUtils.isUsingOffhand(player)) {
-            return ((IBackhandPlayer) player).isOffhandItemInUse() ? offhand.getItemUseAction() : EnumAction.none;
+            return ((IBackhandPlayer) player).isOffhandItemInUse() ? original : 0;
         }
 
-        return ((IBackhandPlayer) player).isOffhandItemInUse() ? EnumAction.none : original;
+        return ((IBackhandPlayer) player).isOffhandItemInUse() ? 0 : original;
     }
 }

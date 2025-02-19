@@ -46,9 +46,9 @@ public abstract class MixinEntityPlayerClient extends EntityLivingBase implement
         EntityPlayer player = (EntityPlayer) (Object) this;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (offhand == null) return original;
-        if (!isOffhandItemInUse() && stack == offhand) {
+        if ((!isOffhandItemInUse() && stack == offhand) || (isOffhandItemInUse() && stack != offhand)) {
             return stack.getItem()
-                .getIcon(stack, renderPass, player, itemInUse, itemInUseCount);
+                .getIcon(isOffhandItemInUse() ? offhand : stack, renderPass, player, itemInUse, itemInUseCount);
         }
         return original;
     }
