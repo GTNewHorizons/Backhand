@@ -96,22 +96,21 @@ public abstract class MixinMinecraft {
             case MISS -> true;
         };
 
-        if (continueUsage) {
-            if (objectMouseOver.typeOfHit == MovingObjectType.ENTITY && BackhandConfig.OffhandAttack) {
-                BackhandUtils.useOffhandItem(thePlayer, () -> {
-                    rightClickDelayTimer = 10;
-                    thePlayer.swingItem();
-                    playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
-                });
-                continueUsage = false;
-            } else {
-                continueUsage = backhand$useRightClick(this::backhand$rightClickItem);
-            }
+        if (!continueUsage) return;
+
+        if (objectMouseOver.typeOfHit == MovingObjectType.ENTITY && BackhandConfig.OffhandAttack) {
+            BackhandUtils.useOffhandItem(thePlayer, () -> {
+                rightClickDelayTimer = 10;
+                thePlayer.swingItem();
+                playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
+            });
+            return;
+        } else if (!backhand$useRightClick(this::backhand$rightClickItem)) {
+            return;
         }
 
         ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
-        if (continueUsage && BackhandConfig.OffhandBreakBlocks
-            && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
+        if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
             && offhandItem != null
             && offhandItem.getItemUseAction() == EnumAction.none) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
