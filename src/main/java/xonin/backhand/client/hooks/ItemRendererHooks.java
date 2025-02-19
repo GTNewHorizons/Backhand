@@ -17,8 +17,6 @@ public class ItemRendererHooks {
 
     /**
      * Extracted outside the mixin to be used in Angelica for Backhand compat
-     *
-     * @param frame
      */
     public static void renderOffhandReturn(float frame) {
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;

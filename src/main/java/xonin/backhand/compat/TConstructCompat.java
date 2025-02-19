@@ -63,7 +63,7 @@ public class TConstructCompat {
                         TinkerToolEvents.class.getConstructor()
                             .newInstance());
             } catch (Exception ignored) {}
-            BackhandUtils.addOffhandPriorityItem(HarvestTool.class);
+            BackhandUtils.addDeprioritizedMainhandItem(HarvestTool.class);
             return true;
         }
         return false;
