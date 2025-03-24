@@ -31,6 +31,7 @@ import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
+import xonin.backhand.utils.BackhandConfigClient;
 import xonin.backhand.utils.Mods;
 
 @EventBusSubscriber(side = Side.CLIENT)
@@ -73,32 +74,29 @@ public class ClientEventHandler {
     private static void renderHotbar(GuiIngame gui, int width, int height, float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
-        if (itemstack == null) {
+        if (itemstack == null && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
             return;
         }
-
-        mc.mcProfiler.startSection("actionBar");
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("textures/gui/widgets.png"));
 
-        int offset = DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125;
-        gui.drawTexturedModalRect(width / 2 - offset, height - 22, 0, 0, 11, 22);
-        gui.drawTexturedModalRect(width / 2 - offset + 11, height - 22, 182 - 11, 0, 11, 22);
+        int offsetX = (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125) - BackhandConfigClient.offhandHotbarSlotXOffset;
+        int offsetY = BackhandConfigClient.offhandHotbarSlotYOffset;
+        gui.drawTexturedModalRect(width / 2 - offsetX, height - 22 - offsetY, 0, 0, 11, 22);
+        gui.drawTexturedModalRect(width / 2 - offsetX + 11, height - 22 - offsetY, 182 - 11, 0, 11, 22);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
 
-        int x = width / 2 - offset + 3;
-        int z = height - 16 - 3;
+        int x = width / 2 - offsetX + 3;
+        int z = height - 16 - 3 - offsetY;
         renderOffhandInventorySlot(x, z, partialTicks);
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-
-        mc.mcProfiler.endSection();
     }
 
     private static void renderOffhandInventorySlot(int p_73832_2_, int p_73832_3_, float p_73832_4_) {
