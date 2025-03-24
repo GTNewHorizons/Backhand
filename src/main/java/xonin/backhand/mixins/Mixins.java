@@ -45,7 +45,17 @@ public enum Mixins {
         .addMixinClasses("galacticraft.MixinContainerExtendedInventory")
         .setPhase(Phase.LATE)
         .setSide(Side.BOTH)
-        .addTargetedMod(TargetedMod.GALACTICRAFT)),;
+        .addTargetedMod(TargetedMod.GALACTICRAFT)),
+    TFC_FIX_BACK_SLOT(new Builder("Fix TFC back slot clashing with offhand slot")
+        .addMixinClasses("terrafirmacraft.MixinPlayerInventory")
+        .setPhase(Phase.LATE)
+        .setSide(Side.BOTH)
+        .addTargetedMod(TargetedMod.TFC)),
+    TFCPLUS_FIX_BACK_SLOT(new Builder("Fix TFC+ back slot clashing with offhand slot")
+        .addMixinClasses("terrafirmacraft.MixinPlayerInventory")
+        .setPhase(Phase.LATE)
+        .setSide(Side.BOTH)
+        .addTargetedMod(TargetedMod.TFCPLUS));
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;

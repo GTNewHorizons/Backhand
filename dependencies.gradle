@@ -40,4 +40,6 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.1:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
     compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.5-GTNH:dev") {transitive = false}
+    compileOnly(deobfCurse('terrafirmacraft-302973:2627990'))
+    compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225'))
 }
