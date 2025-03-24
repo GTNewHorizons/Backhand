@@ -26,11 +26,10 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
@@ -158,9 +157,9 @@ public abstract class MixinMinecraft {
         }
     }
 
-    @ModifyConstant(method = "func_147112_ai", constant = @Constant(intValue = 9))
-    private int backhand$adjustSlotOffset(int constant) {
-        return 10;
+    @ModifyExpressionValue(method = "func_147112_ai", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
+    private int backhand$adjustSlotOffset(int original) {
+        return original + 1;
     }
 
     @Unique
