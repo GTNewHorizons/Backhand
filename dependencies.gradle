@@ -34,9 +34,10 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api("com.github.GTNewHorizons:GTNHLib:0.6.11:dev")
-    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.9-GTNH:dev")
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.29-GTNH:dev")
+    api("com.github.GTNewHorizons:GTNHLib:0.6.16:dev")
+    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.13-GTNH:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.31-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.1:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
+    compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.5-GTNH:dev") {transitive = false}
 }
