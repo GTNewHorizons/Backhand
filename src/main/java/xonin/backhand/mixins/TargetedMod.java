@@ -2,7 +2,8 @@ package xonin.backhand.mixins;
 
 public enum TargetedMod {
 
-    VANILLA("Minecraft", null);
+    VANILLA("Minecraft", null),
+    GALACTICRAFT("Galacticraft Core", null, "GalacticraftCore"),;
 
     /** The "name" in the @Mod annotation */
     public final String modName;

@@ -40,7 +40,12 @@ public enum Mixins {
             "minecraft.MixinRenderPlayer")
         .setPhase(Phase.EARLY)
         .setSide(Side.CLIENT)
-        .addTargetedMod(TargetedMod.VANILLA)),;
+        .addTargetedMod(TargetedMod.VANILLA)),
+    GC_FIX_ARMOR_SLOT(new Builder("Fix GC boot slot clashing with offhand slot")
+        .addMixinClasses("galacticraft.MixinContainerExtendedInventory")
+        .setPhase(Phase.LATE)
+        .setSide(Side.BOTH)
+        .addTargetedMod(TargetedMod.GALACTICRAFT)),;
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
