@@ -2,9 +2,11 @@ package xonin.backhand.client.utils;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -164,5 +166,19 @@ public final class BackhandRenderHelper {
 
             GL11.glPopMatrix();
         }
+    }
+
+    public static void drawItemStackSlot(int x, int y) {
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(Gui.statIcons);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(x + 1, y + 1 + 18, 0, 0 * 0.0078125f, 18 * 0.0078125f);
+        tessellator.addVertexWithUV(x + 1 + 18, y + 1 + 18, 0, 18 * 0.0078125f, 18 * 0.0078125f);
+        tessellator.addVertexWithUV(x + 1 + 18, y + 1, 0, 18 * 0.0078125f, 0 * 0.0078125f);
+        tessellator.addVertexWithUV(x + 1, y + 1, 0, 0 * 0.0078125f, 0 * 0.0078125f);
+        tessellator.draw();
     }
 }
