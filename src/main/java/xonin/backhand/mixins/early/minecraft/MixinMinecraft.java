@@ -158,7 +158,7 @@ public abstract class MixinMinecraft {
 
     @ModifyExpressionValue(method = "func_147112_ai", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
     private int backhand$adjustSlotOffset(int original) {
-        return original + 1;
+        return original - 1;
     }
 
     @Unique
