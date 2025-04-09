@@ -47,12 +47,18 @@ public enum Mixins {
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.GALACTICRAFT)),
     TFC_FIX_BACK_SLOT(new Builder("Fix TFC back slot clashing with offhand slot")
-        .addMixinClasses("terrafirmacraft.MixinPlayerInventory")
+        .addMixinClasses(
+            "terrafirmacraft.MixinPlayerInventory",
+            "terrafirmacraft.MixinEntityLivingHandler",
+            "terrafirmacraft.MixinContainerPlayerTFC")
         .setPhase(Phase.LATE)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.TFC)),
     TFCPLUS_FIX_BACK_SLOT(new Builder("Fix TFC+ back slot clashing with offhand slot")
-        .addMixinClasses("terrafirmacraft.MixinPlayerInventory")
+        .addMixinClasses(
+            "terrafirmacraft.MixinPlayerInventory",
+            "terrafirmacraft.MixinEntityLivingHandler",
+            "terrafirmacraft.MixinContainerPlayerTFC")
         .setPhase(Phase.LATE)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.TFCPLUS));
