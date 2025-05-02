@@ -75,6 +75,7 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
 
     @Inject(method = "readFromNBT", at = @At(value = "TAIL"))
     private void backhand$giveBG2Items(NBTTagList p_70443_1_, CallbackInfo ci) {
+        if (backhand$bg2Stacks == null) return;
         for (ItemStack stack : backhand$bg2Stacks) {
             if (!addItemStackToInventory(stack)) {
                 player.entityDropItem(stack, 0.0F);
