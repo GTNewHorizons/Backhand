@@ -135,7 +135,9 @@ public class ClientEventHandler {
         if (event.entity instanceof EntityPlayer entityPlayer) {
             ItemStack offhand = BackhandUtils.getOffhandItem(entityPlayer);
             if (offhand != null && event.renderer instanceof RenderPlayer renderer) {
-                renderer.modelArmorChestplate.heldItemLeft = renderer.modelArmor.heldItemLeft = renderer.modelBipedMain.heldItemLeft = 1;
+                if (renderer.modelBipedMain.heldItemLeft < 1) {
+                    renderer.modelArmorChestplate.heldItemLeft = renderer.modelArmor.heldItemLeft = renderer.modelBipedMain.heldItemLeft = 1;
+                }
                 if (entityPlayer.getItemInUseCount() > 0 && entityPlayer.getItemInUse() == offhand) {
                     EnumAction enumaction = offhand.getItemUseAction();
                     if (enumaction == EnumAction.block) {

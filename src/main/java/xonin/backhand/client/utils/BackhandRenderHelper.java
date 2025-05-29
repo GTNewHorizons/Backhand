@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
+import xonin.backhand.compat.IOffhandRenderOptOut;
 
 public final class BackhandRenderHelper {
 
@@ -87,6 +88,10 @@ public final class BackhandRenderHelper {
 
             IItemRenderer customRenderer = MinecraftForgeClient
                 .getItemRenderer(offhandItem, IItemRenderer.ItemRenderType.EQUIPPED);
+            if (customRenderer instanceof IOffhandRenderOptOut) {
+                GL11.glPopMatrix();
+                return;
+            }
             boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(
                 IItemRenderer.ItemRenderType.EQUIPPED,
                 offhandItem,

@@ -42,4 +42,5 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.5-GTNH:dev") {transitive = false}
     compileOnly(deobfCurse('terrafirmacraft-302973:2627990'))
     compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225'))
+    compileOnly("org.jetbrains:annotations:24.0.1")
 }
