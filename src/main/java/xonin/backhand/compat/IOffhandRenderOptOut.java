@@ -1,6 +1,6 @@
 package xonin.backhand.compat;
 
-import jdk.jfr.Experimental;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Marker interface for custom renderers that want to override the default offhand rendering
@@ -8,6 +8,6 @@ import jdk.jfr.Experimental;
  * Note: This is added mostly for expediency. It probably isn't required when rendering code is written especially for
  * Backhand.
  */
-@Experimental
+@ApiStatus.Experimental
 public interface IOffhandRenderOptOut {
 }
