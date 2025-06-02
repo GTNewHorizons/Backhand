@@ -76,6 +76,8 @@ public final class BackhandRenderHelper {
 
             GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
 
+            GL11.glFrontFace(GL11.GL_CW);
+
             if (player.fishEntity != null && offhandItem.getItem() == Items.fishing_rod) {
                 offhandItem = new ItemStack(Items.stick);
             }
@@ -89,6 +91,7 @@ public final class BackhandRenderHelper {
             IItemRenderer customRenderer = MinecraftForgeClient
                 .getItemRenderer(offhandItem, IItemRenderer.ItemRenderType.EQUIPPED);
             if (customRenderer instanceof IOffhandRenderOptOut) {
+                GL11.glFrontFace(GL11.GL_CCW);
                 GL11.glPopMatrix();
                 return;
             }
@@ -169,6 +172,7 @@ public final class BackhandRenderHelper {
                 itemRenderer.renderItem(player, offhandItem, 0);
             }
 
+            GL11.glFrontFace(GL11.GL_CCW);
             GL11.glPopMatrix();
         }
     }

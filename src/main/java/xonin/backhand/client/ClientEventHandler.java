@@ -172,11 +172,9 @@ public class ClientEventHandler {
 
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glDisable(GL11.GL_CULL_FACE);
-
         BackhandRenderHelper.renderOffhandItemIn3rdPerson(event.entityPlayer, biped, event.partialRenderTick);
-
-        GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.GL_CULL_FACE);
 
         GL11.glPopMatrix();
     }
