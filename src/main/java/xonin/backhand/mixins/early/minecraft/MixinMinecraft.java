@@ -2,6 +2,7 @@ package xonin.backhand.mixins.early.minecraft;
 
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR;
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
+import static xonin.backhand.utils.EnumHand.*;
 
 import java.util.function.Predicate;
 
@@ -35,6 +36,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
+import xonin.backhand.utils.EnumHand;
 
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft {
@@ -81,34 +83,43 @@ public abstract class MixinMinecraft {
             return;
         }
 
-        boolean continueUsage = switch (objectMouseOver.typeOfHit) {
-            case ENTITY -> backhand$useRightClick(
-                stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
-            case BLOCK -> {
-                int x = objectMouseOver.blockX;
-                int y = objectMouseOver.blockY;
-                int z = objectMouseOver.blockZ;
-                yield !theWorld.getBlock(x, y, z)
-                    .isAir(theWorld, x, y, z)
-                    && backhand$useRightClick(stack -> backhand$rightClickBlock(stack, x, y, z));
+        ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
+        ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
+        EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
+        for (EnumHand hand : hands) {
+            ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
+            boolean continueUsage = switch (objectMouseOver.typeOfHit) {
+                case ENTITY -> backhand$useRightClick(
+                    hand,
+                    handStack,
+                    stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
+                case BLOCK -> {
+                    int x = objectMouseOver.blockX;
+                    int y = objectMouseOver.blockY;
+                    int z = objectMouseOver.blockZ;
+                    yield !theWorld.getBlock(x, y, z)
+                        .isAir(theWorld, x, y, z)
+                        && backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z));
+                }
+                case MISS -> true;
+            };
+
+            if (!continueUsage) return;
+
+            if (!backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+                return;
             }
-            case MISS -> true;
-        };
+        }
 
-        if (!continueUsage) return;
-
-        if (objectMouseOver.typeOfHit == MovingObjectType.ENTITY && BackhandConfig.OffhandAttack) {
+        if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 rightClickDelayTimer = 10;
                 thePlayer.swingItem();
                 playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
             });
             return;
-        } else if (!backhand$useRightClick(this::backhand$rightClickItem)) {
-            return;
         }
 
-        ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
         if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
             && (offhandItem == null || offhandItem.getItemUseAction() == EnumAction.none)) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
@@ -162,35 +173,25 @@ public abstract class MixinMinecraft {
     }
 
     @Unique
-    private boolean backhand$useRightClick(Predicate<ItemStack> action) {
-        ItemStack mainHandItem = thePlayer.inventory.getCurrentItem();
-        ItemStack offhandItem = BackhandUtils.getOffhandItem(thePlayer);
-        boolean result;
-
-        if (offhandItem != null && backhand$doesOffhandNeedPriority(mainHandItem, offhandItem)) {
-            result = BackhandUtils.useOffhandItem(thePlayer, () -> action.test(offhandItem));
-            if (!result) {
-                result = action.test(mainHandItem);
-            }
+    private boolean backhand$useRightClick(EnumHand hand, ItemStack handStack, Predicate<ItemStack> action) {
+        if (hand == MAIN_HAND) {
+            return !action.test(handStack);
         } else {
-            result = action.test(mainHandItem);
-            if (!result && offhandItem != null) {
-                result = BackhandUtils.useOffhandItem(thePlayer, () -> action.test(offhandItem));
-            }
+            return !BackhandUtils.useOffhandItem(thePlayer, () -> action.test(handStack));
         }
-
-        return !result;
     }
 
     @Unique
     private boolean backhand$rightClickItem(ItemStack stack) {
+        boolean used = false;
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(thePlayer, RIGHT_CLICK_AIR, 0, 0, 0, -1, theWorld);
         if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && stack != null
-            && playerController.sendUseItem(thePlayer, theWorld, stack)) {
+            && (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null)) {
             backhand$resetEquippedProgress();
+            used = true;
         }
 
-        return thePlayer.getItemInUse() != null;
+        return used;
     }
 
     @Unique
@@ -252,4 +253,5 @@ public abstract class MixinMinecraft {
 
         return false;
     }
+
 }
