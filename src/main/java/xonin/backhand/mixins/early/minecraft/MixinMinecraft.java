@@ -35,6 +35,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.hooks.TorchHandler;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.EnumHand;
 
@@ -88,6 +89,13 @@ public abstract class MixinMinecraft {
         EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
+
+            if (hand == OFF_HAND) {
+                if (!TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
+                    continue;
+                }
+            }
+
             boolean continueUsage = switch (objectMouseOver.typeOfHit) {
                 case ENTITY -> backhand$useRightClick(
                     hand,
