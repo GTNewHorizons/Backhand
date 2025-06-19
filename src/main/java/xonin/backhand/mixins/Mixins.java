@@ -46,6 +46,11 @@ public enum Mixins {
         .setPhase(Phase.LATE)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.GALACTICRAFT)),
+    DE_FIX_ARMOR_SLOT(new Builder("Fix DE boot slot clashing with offhand slot")
+        .addMixinClasses("draconicevolution.MixinGuiToolConfig")
+        .setPhase(Phase.LATE)
+        .setSide(Side.CLIENT)
+        .addTargetedMod(TargetedMod.DRACONIOCEVOLUTION)),
     TFC_FIX_BACK_SLOT(new Builder("Fix TFC back slot clashing with offhand slot")
         .addMixinClasses(
             "terrafirmacraft.MixinPlayerInventory",
