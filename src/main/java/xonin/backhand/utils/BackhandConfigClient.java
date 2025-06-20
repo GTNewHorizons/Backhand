@@ -54,20 +54,20 @@ public class BackhandConfigClient {
         public boolean noTorchWithFood;
 
         @Config.Name("No Offhand Torch At All")
-        @Config.Comment({ "Don't place torches from the offhand at all. Useful for dynamic lights while mining",
+        @Config.Comment({ "Don't place torches from the offhand at all",
             "Note: This overrides all other options" })
         @Config.DefaultBoolean(false)
         public boolean noTorchAtAll;
 
         @Config.Name("Offhand Torch With Tool Only")
         @Config.Comment({ "Don't place torches from the offhand unless the main hand contains a tool",
-            "Vanilla tools include swords, hoes, axes, pickaxes, and axes.",
+            "Vanilla tools include swords, hoes, axes, and pickaxes",
             "Modded tools include Tinker's Construct tools (not weapons)" })
         @Config.DefaultBoolean(false)
         public boolean offhandTorchWithToolOnly;
 
         @Config.Name("Don't Use Last Offhand Torch")
-        @Config.Comment("Don't place torches from the offhand if the main hand has a block that can be placed")
+        @Config.Comment("Don't place torches from the offhand if it is the last torch in your offhand")
         @Config.DefaultBoolean(false)
         public boolean noLastTorch;
 
