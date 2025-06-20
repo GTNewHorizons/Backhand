@@ -54,8 +54,7 @@ public class BackhandConfigClient {
         public boolean noTorchWithFood;
 
         @Config.Name("No Offhand Torch At All")
-        @Config.Comment({ "Don't place torches from the offhand at all",
-            "Note: This overrides all other options" })
+        @Config.Comment({ "Don't place torches from the offhand at all", "Note: This overrides all other options" })
         @Config.DefaultBoolean(false)
         public boolean noTorchAtAll;
 
