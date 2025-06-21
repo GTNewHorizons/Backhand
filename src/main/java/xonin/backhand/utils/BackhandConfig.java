@@ -34,4 +34,8 @@ public class BackhandConfig {
     @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
     @Config.DefaultBoolean(false)
     public static boolean OffhandPickup;
+
+    @Config.Comment("Remove the sword's ability to block")
+    @Config.DefaultBoolean(true)
+    public static boolean RemoveSwordBlock;
 }

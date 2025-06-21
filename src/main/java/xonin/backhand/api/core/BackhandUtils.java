@@ -14,8 +14,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.FakePlayer;
 
@@ -27,10 +25,6 @@ public final class BackhandUtils {
 
     public static final List<Class<? extends Item>> offhandPriorityItems = new ArrayList<>();
     public static final List<Class<? extends Item>> deprioritizedMainhand = new ArrayList<>();
-
-    static {
-        addOffhandPriorityItem(ItemFood.class, ItemPotion.class);
-    }
 
     public static void setPlayerOffhandItem(EntityPlayer player, @Nullable ItemStack stack) {
         ((IOffhandInventory) player.inventory).backhand$setOffhandItem(stack);
