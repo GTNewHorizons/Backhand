@@ -92,7 +92,8 @@ public abstract class MixinMinecraft {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
             if (hand == OFF_HAND) {
-                if (!TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
+                if (objectMouseOver.typeOfHit != MovingObjectType.ENTITY
+                    && !TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
                     continue;
                 }
             }
@@ -101,7 +102,7 @@ public abstract class MixinMinecraft {
                 case ENTITY -> backhand$useRightClick(
                     hand,
                     handStack,
-                    stack -> !playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
+                    stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
                 case BLOCK -> {
                     int x = objectMouseOver.blockX;
                     int y = objectMouseOver.blockY;
