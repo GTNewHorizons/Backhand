@@ -48,13 +48,13 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
     private List<ItemStack> backhand$bg2Stacks = new ArrayList<>();
 
     @Inject(
-        method = "readFromNBT",
+        method = { "<init>", "readFromNBT" },
         at = @At(
             value = "FIELD",
             opcode = Opcodes.PUTFIELD,
             target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;",
             shift = At.Shift.AFTER))
-    private void backhand$addOffhandSlot(NBTTagList p_70443_1_, CallbackInfo ci) {
+    private void backhand$addOffhandSlot(CallbackInfo ci) {
         backhand$offhandSlot = mainInventory.length;
         mainInventory = new ItemStack[mainInventory.length + 1];
     }
@@ -83,18 +83,6 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
         }
 
         backhand$bg2Stacks = null;
-    }
-
-    @Inject(
-        method = "<init>",
-        at = @At(
-            value = "FIELD",
-            opcode = Opcodes.PUTFIELD,
-            target = "Lnet/minecraft/entity/player/InventoryPlayer;mainInventory:[Lnet/minecraft/item/ItemStack;",
-            shift = At.Shift.AFTER))
-    private void backhand$addOffhandSlot(EntityPlayer p_i1750_1_, CallbackInfo ci) {
-        backhand$offhandSlot = mainInventory.length;
-        mainInventory = new ItemStack[mainInventory.length + 1];
     }
 
     @ModifyReturnValue(method = "getCurrentItem", at = @At("RETURN"))
