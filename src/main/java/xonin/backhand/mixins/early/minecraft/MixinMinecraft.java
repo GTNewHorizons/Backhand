@@ -121,7 +121,8 @@ public abstract class MixinMinecraft {
             }
         }
 
-        if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY) {
+        if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY
+            && offhandItem != null) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 rightClickDelayTimer = 10;
                 thePlayer.swingItem();
@@ -131,7 +132,7 @@ public abstract class MixinMinecraft {
         }
 
         if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
-            && (offhandItem == null || offhandItem.getItemUseAction() == EnumAction.none)) {
+            && offhandItem != null) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 backhand$breakBlockTimer = 5;
                 playerController.clickBlock(
