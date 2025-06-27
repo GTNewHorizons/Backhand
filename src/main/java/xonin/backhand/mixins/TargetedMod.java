@@ -6,7 +6,8 @@ public enum TargetedMod {
     GALACTICRAFT("Galacticraft Core", null, "GalacticraftCore"),
     TFC("TerraFirmaCraft", null, "terrafirmacraft"),
     TFCPLUS("TerraFirmaCraft+", null, "terrafirmacraftplus"),
-    DRACONIOCEVOLUTION("Draconic Evolution", null, "DraconicEvolution"),;
+    DRACONIOCEVOLUTION("Draconic Evolution", null, "DraconicEvolution"),
+    TINKERS("TConstruct", null, "TConstruct"),;
 
     /** The "name" in the @Mod annotation */
     public final String modName;
