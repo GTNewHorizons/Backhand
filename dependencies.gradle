@@ -34,13 +34,13 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api("com.github.GTNewHorizons:GTNHLib:0.6.31:dev")
-    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.37-GTNH:dev")
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.57-GTNH:dev")
+    api("com.github.GTNewHorizons:GTNHLib:0.6.32:dev")
+    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.40-GTNH:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.59-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.1:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
-    compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.7-GTNH:dev") {transitive = false}
-    compileOnly("com.github.GTNewHorizons:Draconic-Evolution:1.4.21-GTNH:dev") {transitive = false}
+    compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.8-GTNH:dev") {transitive = false}
+    compileOnly("com.github.GTNewHorizons:Draconic-Evolution:1.4.23-GTNH:dev") {transitive = false}
     compileOnly("com.github.GTNewHorizons:BrandonsCore:1.2.0-GTNH:dev") {transitive = false}
     compileOnly(deobfCurse('terrafirmacraft-302973:2627990'))
     compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225'))
