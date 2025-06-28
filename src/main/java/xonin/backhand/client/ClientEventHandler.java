@@ -46,8 +46,8 @@ public class ClientEventHandler {
     public static boolean prevInvTweaksBreakRefill;
     public static int invTweaksDelay;
 
-    @SubscribeEvent
-    public static void renderHotbarOverlay(RenderGameOverlayEvent.Post event) {
+    @SubscribeEvent(receiveCanceled = true)
+    public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
             Minecraft mc = Minecraft.getMinecraft();
             renderHotbar(
