@@ -63,6 +63,9 @@ public abstract class MixinMinecraft {
     @Shadow
     public EntityRenderer entityRenderer;
 
+    @Shadow
+    public EffectRenderer effectRenderer;
+
     @Unique
     private int backhand$breakBlockTimer = 0;
 
