@@ -69,9 +69,6 @@ public abstract class MixinMinecraft {
     @Unique
     private int backhand$breakBlockTimer = 0;
 
-    @Shadow
-    public EffectRenderer effectRenderer;
-
     /**
      * @author Lyft
      * @reason Offhand support
