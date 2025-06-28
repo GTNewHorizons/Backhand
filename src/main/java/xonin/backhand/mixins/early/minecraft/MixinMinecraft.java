@@ -113,7 +113,11 @@ public abstract class MixinMinecraft {
             };
 
             if (stopCheck) return;
+        }
 
+        // process the potential entity/block placements first before trying the item right click actions
+        for (EnumHand hand : hands) {
+            ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
                 return;
             }
