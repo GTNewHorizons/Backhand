@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.utils.BackhandRenderHelper;
-import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
 
 public class ItemRendererHooks {
@@ -24,9 +23,6 @@ public class ItemRendererHooks {
 
         ItemStack mainhandItem = player.getCurrentEquippedItem();
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!BackhandConfig.EmptyOffhand && !BackhandConfigClient.RenderEmptyOffhandAtRest && offhandItem == null) {
-            return;
-        }
         if (offhandItem == null && !BackhandConfigClient.RenderEmptyOffhandAtRest
             && ((IBackhandPlayer) player).getOffSwingProgress(frame) == 0) {
             return;

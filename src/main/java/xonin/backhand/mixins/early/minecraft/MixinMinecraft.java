@@ -6,7 +6,6 @@ import static xonin.backhand.api.core.EnumHand.*;
 
 import java.util.function.Predicate;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -26,17 +25,13 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.hooks.TorchHandler;
-import xonin.backhand.utils.BackhandConfig;
 
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft {
@@ -65,9 +60,6 @@ public abstract class MixinMinecraft {
 
     @Shadow
     public EffectRenderer effectRenderer;
-
-    @Unique
-    private int backhand$breakBlockTimer = 0;
 
     /**
      * @author Lyft
@@ -117,62 +109,6 @@ public abstract class MixinMinecraft {
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
                 return;
             }
-        }
-
-        if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY
-            && offhandItem != null) {
-            BackhandUtils.useOffhandItem(thePlayer, () -> {
-                rightClickDelayTimer = 10;
-                thePlayer.swingItem();
-                playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
-            });
-            return;
-        }
-
-        if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
-            && offhandItem != null) {
-            BackhandUtils.useOffhandItem(thePlayer, () -> {
-                backhand$breakBlockTimer = 5;
-                playerController.clickBlock(
-                    objectMouseOver.blockX,
-                    objectMouseOver.blockY,
-                    objectMouseOver.blockZ,
-                    objectMouseOver.sideHit);
-            });
-        }
-    }
-
-    @WrapWithCondition(
-        method = "func_147115_a",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;resetBlockRemoving()V"))
-    private boolean backhand$pauseReset(PlayerControllerMP instance) {
-        if (backhand$breakBlockTimer > 0) {
-            backhand$breakBlockTimer--;
-            return false;
-        }
-        return true;
-    }
-
-    @Inject(method = "func_147115_a", at = @At(value = "HEAD"))
-    private void backhand$breakBlockOffhand(boolean leftClick, CallbackInfo ci) {
-        if (backhand$breakBlockTimer > 0) {
-            BackhandUtils.useOffhandItem(thePlayer, () -> {
-                int i = objectMouseOver.blockX;
-                int j = objectMouseOver.blockY;
-                int k = objectMouseOver.blockZ;
-
-                if (theWorld.getBlock(i, j, k)
-                    .getMaterial() != Material.air) {
-                    playerController.onPlayerDamageBlock(i, j, k, objectMouseOver.sideHit);
-
-                    if (thePlayer.isCurrentToolAdventureModeExempt(i, j, k)) {
-                        effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
-                        thePlayer.swingItem();
-                    }
-                }
-            });
         }
     }
 
