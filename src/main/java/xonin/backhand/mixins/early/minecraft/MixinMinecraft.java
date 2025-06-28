@@ -91,30 +91,28 @@ public abstract class MixinMinecraft {
 
             if (hand == OFF_HAND) {
                 if (objectMouseOver.typeOfHit != MovingObjectType.ENTITY
-                        && !TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
+                    && !TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
                     continue;
                 }
             }
 
             boolean stopCheck = switch (objectMouseOver.typeOfHit) {
                 case ENTITY -> backhand$useRightClick(
-                        hand,
-                        handStack,
-                        stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
+                    hand,
+                    handStack,
+                    stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
                 case BLOCK -> {
                     int x = objectMouseOver.blockX;
                     int y = objectMouseOver.blockY;
                     int z = objectMouseOver.blockZ;
                     yield !theWorld.getBlock(x, y, z)
-                            .isAir(theWorld, x, y, z)
-                            && backhand$useRightClick(hand, handStack,
-                                    stack -> backhand$rightClickBlock(stack, x, y, z));
+                        .isAir(theWorld, x, y, z)
+                        && backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z));
                 }
                 default -> false;
             };
 
-            if (stopCheck)
-                return;
+            if (stopCheck) return;
 
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
                 return;
@@ -122,7 +120,7 @@ public abstract class MixinMinecraft {
         }
 
         if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY
-                && offhandItem != null) {
+            && offhandItem != null) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 rightClickDelayTimer = 10;
                 thePlayer.swingItem();
@@ -132,19 +130,23 @@ public abstract class MixinMinecraft {
         }
 
         if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
-                && offhandItem != null) {
+            && offhandItem != null) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 backhand$breakBlockTimer = 5;
                 playerController.clickBlock(
-                        objectMouseOver.blockX,
-                        objectMouseOver.blockY,
-                        objectMouseOver.blockZ,
-                        objectMouseOver.sideHit);
+                    objectMouseOver.blockX,
+                    objectMouseOver.blockY,
+                    objectMouseOver.blockZ,
+                    objectMouseOver.sideHit);
             });
         }
     }
 
-    @WrapWithCondition(method = "func_147115_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;resetBlockRemoving()V"))
+    @WrapWithCondition(
+        method = "func_147115_a",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;resetBlockRemoving()V"))
     private boolean backhand$pauseReset(PlayerControllerMP instance) {
         if (backhand$breakBlockTimer > 0) {
             backhand$breakBlockTimer--;
@@ -162,7 +164,7 @@ public abstract class MixinMinecraft {
                 int k = objectMouseOver.blockZ;
 
                 if (theWorld.getBlock(i, j, k)
-                        .getMaterial() != Material.air) {
+                    .getMaterial() != Material.air) {
                     playerController.onPlayerDamageBlock(i, j, k, objectMouseOver.sideHit);
 
                     if (thePlayer.isCurrentToolAdventureModeExempt(i, j, k)) {
@@ -192,7 +194,7 @@ public abstract class MixinMinecraft {
     private boolean backhand$rightClickItem(ItemStack stack) {
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(thePlayer, RIGHT_CLICK_AIR, 0, 0, 0, -1, theWorld);
         if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && stack != null
-                && (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null)) {
+            && (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null)) {
             backhand$resetEquippedProgress();
             return true;
         }
@@ -213,16 +215,15 @@ public abstract class MixinMinecraft {
     private boolean backhand$rightClickBlock(ItemStack stack, int x, int y, int z) {
         int originalSize = stack != null ? stack.stackSize : 0;
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(
-                thePlayer,
-                RIGHT_CLICK_BLOCK,
-                x,
-                y,
-                z,
-                objectMouseOver.sideHit,
-                theWorld);
+            thePlayer,
+            RIGHT_CLICK_BLOCK,
+            x,
+            y,
+            z,
+            objectMouseOver.sideHit,
+            theWorld);
         if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && playerController
-                .onPlayerRightClick(thePlayer, theWorld, stack, x, y, z, objectMouseOver.sideHit,
-                        objectMouseOver.hitVec)) {
+            .onPlayerRightClick(thePlayer, theWorld, stack, x, y, z, objectMouseOver.sideHit, objectMouseOver.hitVec)) {
             thePlayer.swingItem();
             return true;
         }
@@ -241,8 +242,7 @@ public abstract class MixinMinecraft {
     @SuppressWarnings("ConstantConditions")
     @Unique
     private boolean backhand$doesOffhandNeedPriority(ItemStack mainHand, ItemStack offhand) {
-        if (mainHand == null || offhand == null)
-            return false;
+        if (mainHand == null || offhand == null) return false;
 
         // spotless:off
         for (Class<?> clazz : BackhandUtils.offhandPriorityItems) {
