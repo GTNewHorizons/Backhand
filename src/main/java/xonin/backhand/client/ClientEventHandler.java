@@ -3,7 +3,6 @@ package xonin.backhand.client;
 import static xonin.backhand.utils.Mods.DOUBLE_WIDE_SURPRISE;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -49,12 +48,7 @@ public class ClientEventHandler {
     @SubscribeEvent(receiveCanceled = true)
     public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
-            Minecraft mc = Minecraft.getMinecraft();
-            renderHotbar(
-                mc.ingameGUI,
-                event.resolution.getScaledWidth(),
-                event.resolution.getScaledHeight(),
-                event.partialTicks);
+            renderHotbar(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
         }
     }
 
@@ -76,7 +70,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void renderHotbar(GuiIngame gui, int width, int height, float partialTicks) {
+    private static void renderHotbar(int width, int height, float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
         if (itemstack == null && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
