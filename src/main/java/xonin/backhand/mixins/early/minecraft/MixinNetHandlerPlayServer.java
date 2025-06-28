@@ -22,6 +22,7 @@ import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.packet.OffhandCancelUsage;
+import xonin.backhand.utils.BackhandConfig;
 
 @Mixin(NetHandlerPlayServer.class)
 public abstract class MixinNetHandlerPlayServer {
@@ -49,7 +50,7 @@ public abstract class MixinNetHandlerPlayServer {
             value = "INVOKE",
             target = "Lnet/minecraft/server/management/ItemInWorldManager;uncheckedTryHarvestBlock(III)V"))
     private boolean backhand$playerDigging(ItemInWorldManager instance, int l, int block, int i) {
-        return !BackhandUtils.isUsingOffhand(playerEntity);
+        return BackhandConfig.OffhandBreakBlocks || !BackhandUtils.isUsingOffhand(playerEntity);
     }
 
     @Inject(
@@ -68,6 +69,15 @@ public abstract class MixinNetHandlerPlayServer {
             }
             ci.cancel();
         }
+    }
+
+    @WrapWithCondition(
+        method = "processUseEntity",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/player/EntityPlayerMP;attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V"))
+    private boolean backhand$checkOffhandAttack(EntityPlayerMP instance, Entity entity) {
+        return BackhandConfig.OffhandAttack || !BackhandUtils.isUsingOffhand(playerEntity);
     }
 
     @WrapOperation(

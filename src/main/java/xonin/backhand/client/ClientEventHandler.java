@@ -30,6 +30,7 @@ import invtweaks.InvTweaks;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
 import xonin.backhand.utils.Mods;
 
@@ -162,7 +163,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void render3rdPersonOffhand(RenderPlayerEvent.Specials.Post event) {
-        if (BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
+        if (!BackhandConfig.EmptyOffhand && BackhandUtils.getOffhandItem(event.entityPlayer) == null) {
             return;
         }
 
