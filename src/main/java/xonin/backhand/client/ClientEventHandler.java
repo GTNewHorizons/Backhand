@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +28,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import invtweaks.InvTweaks;
+import xonin.backhand.Backhand;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -37,12 +39,15 @@ import xonin.backhand.utils.Mods;
 @EventBusSubscriber(side = Side.CLIENT)
 public class ClientEventHandler {
 
+    private static final ResourceLocation OFFHAND_SLOT_TEXTURE = new ResourceLocation(
+        Backhand.MODID,
+        "textures/gui/offhand_slot.png");
     public static boolean prevInvTweaksAutoRefill;
     public static boolean prevInvTweaksBreakRefill;
     public static int invTweaksDelay;
 
     @SubscribeEvent
-    public static void renderHotbarOverlay(RenderGameOverlayEvent event) {
+    public static void renderHotbarOverlay(RenderGameOverlayEvent.Post event) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
             Minecraft mc = Minecraft.getMinecraft();
             renderHotbar(
@@ -81,12 +86,11 @@ public class ClientEventHandler {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("textures/gui/widgets.png"));
+        mc.renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
 
         int offsetX = (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125) - BackhandConfigClient.offhandHotbarSlotXOffset;
         int offsetY = BackhandConfigClient.offhandHotbarSlotYOffset;
-        gui.drawTexturedModalRect(width / 2 - offsetX, height - 22 - offsetY, 0, 0, 11, 22);
-        gui.drawTexturedModalRect(width / 2 - offsetX + 11, height - 22 - offsetY, 182 - 11, 0, 11, 22);
+        renderTexture(width / 2 - offsetX, height - 22 - offsetY, -90, 0, 0, 22, 22, 22, 22);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
@@ -208,5 +212,33 @@ public class ClientEventHandler {
                 .setProperty("autoRefillBeforeBreak", "false");
         }
         invTweaksDelay = 15;
+    }
+
+    private static void renderTexture(int x, int y, int zLevel, float u, float v, int width, int height,
+        float textureWidth, float textureHeight) {
+        float f4 = 1.0F / textureWidth;
+        float f5 = 1.0F / textureHeight;
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(
+            (double) x,
+            (double) (y + height),
+            (double) zLevel,
+            (double) (u * f4),
+            (double) ((v + (float) height) * f5));
+        tessellator.addVertexWithUV(
+            (double) (x + width),
+            (double) (y + height),
+            (double) zLevel,
+            (double) ((u + (float) width) * f4),
+            (double) ((v + (float) height) * f5));
+        tessellator.addVertexWithUV(
+            (double) (x + width),
+            (double) y,
+            (double) zLevel,
+            (double) ((u + (float) width) * f4),
+            (double) (v * f5));
+        tessellator.addVertexWithUV((double) x, (double) y, (double) zLevel, (double) (u * f4), (double) (v * f5));
+        tessellator.draw();
     }
 }
