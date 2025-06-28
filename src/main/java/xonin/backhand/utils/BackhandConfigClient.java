@@ -35,7 +35,7 @@ public class BackhandConfigClient {
             Formatting of an item should be: modid:itemname
             These should all be placed on separate lines between the provided '<' and '>'.
             """)
-        @Config.DefaultStringList({ "minecraft:torch", "minecraft:redstone_torch", "GalacticraftCore:glowstoneTorch" })
+        @Config.DefaultStringList({ "minecraft:torch", "minecraft:redstone_torch" })
         public String[] torch_items;
 
         @Config.Name("No Offhand Torch With Block")
