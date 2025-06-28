@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -57,9 +56,6 @@ public abstract class MixinMinecraft {
 
     @Shadow
     public EntityRenderer entityRenderer;
-
-    @Shadow
-    public EffectRenderer effectRenderer;
 
     /**
      * @author Lyft
