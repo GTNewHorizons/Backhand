@@ -3,9 +3,10 @@ package xonin.backhand.client;
 import static xonin.backhand.utils.Mods.DOUBLE_WIDE_SURPRISE;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +28,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import invtweaks.InvTweaks;
+import xonin.backhand.Backhand;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -37,19 +39,17 @@ import xonin.backhand.utils.Mods;
 @EventBusSubscriber(side = Side.CLIENT)
 public class ClientEventHandler {
 
+    private static final ResourceLocation OFFHAND_SLOT_TEXTURE = new ResourceLocation(
+        Backhand.MODID,
+        "textures/gui/offhand_slot.png");
     public static boolean prevInvTweaksAutoRefill;
     public static boolean prevInvTweaksBreakRefill;
     public static int invTweaksDelay;
 
-    @SubscribeEvent
-    public static void renderHotbarOverlay(RenderGameOverlayEvent event) {
+    @SubscribeEvent(receiveCanceled = true)
+    public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
-            Minecraft mc = Minecraft.getMinecraft();
-            renderHotbar(
-                mc.ingameGUI,
-                event.resolution.getScaledWidth(),
-                event.resolution.getScaledHeight(),
-                event.partialTicks);
+            renderHotbar(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
         }
     }
 
@@ -71,7 +71,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void renderHotbar(GuiIngame gui, int width, int height, float partialTicks) {
+    private static void renderHotbar(int width, int height, float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
         if (itemstack == null && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
@@ -81,12 +81,11 @@ public class ClientEventHandler {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("textures/gui/widgets.png"));
+        mc.renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
 
         int offsetX = (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125) - BackhandConfigClient.offhandHotbarSlotXOffset;
         int offsetY = BackhandConfigClient.offhandHotbarSlotYOffset;
-        gui.drawTexturedModalRect(width / 2 - offsetX, height - 22 - offsetY, 0, 0, 11, 22);
-        gui.drawTexturedModalRect(width / 2 - offsetX + 11, height - 22 - offsetY, 182 - 11, 0, 11, 22);
+        renderTexture(width / 2 - offsetX, height - 22 - offsetY, -90, 22, 22);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
@@ -97,6 +96,7 @@ public class ClientEventHandler {
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        mc.renderEngine.bindTexture(Gui.icons);
     }
 
     private static void renderOffhandInventorySlot(int p_73832_2_, int p_73832_3_, float p_73832_4_) {
@@ -208,5 +208,19 @@ public class ClientEventHandler {
                 .setProperty("autoRefillBeforeBreak", "false");
         }
         invTweaksDelay = 15;
+    }
+
+    /**
+     * Renders the currently bound texture of dimension width * height at the position x, y
+     */
+    @SuppressWarnings("SameParameterValue")
+    private static void renderTexture(int x, int y, int zLevel, int width, int height) {
+        Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        tess.addVertexWithUV(x, (y + height), zLevel, 0, 1);
+        tess.addVertexWithUV((x + width), (y + height), zLevel, 1, 1);
+        tess.addVertexWithUV((x + width), y, zLevel, 1, 0);
+        tess.addVertexWithUV(x, y, zLevel, 0, 0);
+        tess.draw();
     }
 }
