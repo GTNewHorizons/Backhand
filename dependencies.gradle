@@ -46,4 +46,8 @@ dependencies {
     compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225'))
     compileOnly("org.jetbrains:annotations:24.0.1")
 
+
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.5.5-backhand:dev") {
+        exclude module: "Backhand"
+    }
 }

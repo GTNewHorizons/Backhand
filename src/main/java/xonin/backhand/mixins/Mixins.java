@@ -22,7 +22,8 @@ public enum Mixins {
             "minecraft.MixinInventoryPlayer",
             "minecraft.MixinContainerPlayer",
             "minecraft.MixinItemStack",
-            "minecraft.MixinEntityLivingBase")
+            "minecraft.MixinEntityLivingBase",
+            "minecraft.MixinItemSword")
         .setPhase(Phase.EARLY)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.VANILLA)),
@@ -66,7 +67,13 @@ public enum Mixins {
             "terrafirmacraft.MixinContainerPlayerTFC")
         .setPhase(Phase.LATE)
         .setSide(Side.BOTH)
-        .addTargetedMod(TargetedMod.TFCPLUS));
+        .addTargetedMod(TargetedMod.TFCPLUS)),
+    TINKERS_TOOL_RIGHT_CLICK(
+        new Builder("Disable Tinker's default right click on harvest tools to place item in nearby slot")
+            .addMixinClasses("ticon.MixinHarvestTool")
+            .setPhase(Phase.LATE)
+            .setSide(Side.BOTH)
+            .addTargetedMod(TargetedMod.TINKERS));
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
