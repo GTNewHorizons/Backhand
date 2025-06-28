@@ -85,7 +85,7 @@ public class ClientEventHandler {
 
         int offsetX = (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125) - BackhandConfigClient.offhandHotbarSlotXOffset;
         int offsetY = BackhandConfigClient.offhandHotbarSlotYOffset;
-        renderTexture(width / 2 - offsetX, height - 22 - offsetY, -90, 0, 0, 22, 22, 22, 22);
+        renderTexture(width / 2 - offsetX, height - 22 - offsetY, -90, 22, 22);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
@@ -210,31 +210,17 @@ public class ClientEventHandler {
         invTweaksDelay = 15;
     }
 
-    private static void renderTexture(int x, int y, int zLevel, float u, float v, int width, int height,
-        float textureWidth, float textureHeight) {
-        float f4 = 1.0F / textureWidth;
-        float f5 = 1.0F / textureHeight;
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(
-            (double) x,
-            (double) (y + height),
-            (double) zLevel,
-            (double) (u * f4),
-            (double) ((v + (float) height) * f5));
-        tessellator.addVertexWithUV(
-            (double) (x + width),
-            (double) (y + height),
-            (double) zLevel,
-            (double) ((u + (float) width) * f4),
-            (double) ((v + (float) height) * f5));
-        tessellator.addVertexWithUV(
-            (double) (x + width),
-            (double) y,
-            (double) zLevel,
-            (double) ((u + (float) width) * f4),
-            (double) (v * f5));
-        tessellator.addVertexWithUV((double) x, (double) y, (double) zLevel, (double) (u * f4), (double) (v * f5));
-        tessellator.draw();
+    /**
+     * Renders the currently bound texture of dimension width * height at the position x, y
+     */
+    @SuppressWarnings("SameParameterValue")
+    private static void renderTexture(int x, int y, int zLevel, int width, int height) {
+        Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        tess.addVertexWithUV(x, (y + height), zLevel, 0, 1);
+        tess.addVertexWithUV((x + width), (y + height), zLevel, 1, 1);
+        tess.addVertexWithUV((x + width), y, zLevel, 1, 0);
+        tess.addVertexWithUV(x, y, zLevel, 0, 0);
+        tess.draw();
     }
 }
