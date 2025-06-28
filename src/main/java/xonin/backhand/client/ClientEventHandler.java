@@ -3,6 +3,7 @@ package xonin.backhand.client;
 import static xonin.backhand.utils.Mods.DOUBLE_WIDE_SURPRISE;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -95,6 +96,7 @@ public class ClientEventHandler {
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        mc.renderEngine.bindTexture(Gui.icons);
     }
 
     private static void renderOffhandInventorySlot(int p_73832_2_, int p_73832_3_, float p_73832_4_) {
