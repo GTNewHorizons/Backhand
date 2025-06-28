@@ -8,8 +8,8 @@ import xonin.backhand.Backhand;
 
 public class BackhandSlot extends Slot {
 
-    public BackhandSlot(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_) {
-        super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
+    public BackhandSlot(IInventory inventory, int slotIndex, int xDisplayPosition, int yDisplayPosition) {
+        super(inventory, slotIndex, xDisplayPosition, yDisplayPosition);
     }
 
     @Override
