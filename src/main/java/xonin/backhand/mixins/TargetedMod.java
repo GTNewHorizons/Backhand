@@ -7,7 +7,8 @@ public enum TargetedMod {
     TFC("TerraFirmaCraft", null, "terrafirmacraft"),
     TFCPLUS("TerraFirmaCraft+", null, "terrafirmacraftplus"),
     DRACONIOCEVOLUTION("Draconic Evolution", null, "DraconicEvolution"),
-    TINKERS("TConstruct", null, "TConstruct"),;
+    TINKERS("TConstruct", null, "TConstruct"),
+    WCT("AE2 Wireless Crafting Terminal", null, "ae2wct"),;
 
     /** The "name" in the @Mod annotation */
     public final String modName;
