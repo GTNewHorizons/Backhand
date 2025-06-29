@@ -42,6 +42,8 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.8-GTNH:dev") {transitive = false}
     compileOnly("com.github.GTNewHorizons:Draconic-Evolution:1.4.23-GTNH:dev") {transitive = false}
     compileOnly("com.github.GTNewHorizons:BrandonsCore:1.2.0-GTNH:dev") {transitive = false}
+    // pulls in ae2 for the mixin dep
+    compileOnly("com.github.GTNewHorizons:WirelessCraftingTerminal:1.12.6:dev")
     compileOnly(deobfCurse('terrafirmacraft-302973:2627990'))
     compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225'))
     compileOnly("org.jetbrains:annotations:24.0.1")

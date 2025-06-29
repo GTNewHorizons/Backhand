@@ -73,7 +73,12 @@ public enum Mixins {
             .addMixinClasses("ticon.MixinHarvestTool")
             .setPhase(Phase.LATE)
             .setSide(Side.BOTH)
-            .addTargetedMod(TargetedMod.TINKERS));
+            .addTargetedMod(TargetedMod.TINKERS)),
+    WCT_FIX_ARMOR_SLOT(new Builder("Fix WirelessCraftingTerminal's armor slot")
+        .addMixinClasses("wirelesscraftingterminal.MixinContainerWirelessCraftingTerminal")
+        .setPhase(Phase.LATE)
+        .setSide(Side.BOTH)
+        .addTargetedMod(TargetedMod.WCT));
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
