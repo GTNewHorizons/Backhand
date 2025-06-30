@@ -88,7 +88,6 @@ public abstract class MixinMinecraft {
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
         EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
-
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
@@ -115,7 +114,7 @@ public abstract class MixinMinecraft {
                 default -> false;
             };
 
-            // edge case with bucket and having a placeable item/block in the other hand
+            // edge case with bucket/IFluidContainerItem and having a placeable item/block in the other hand
             if (handStack != null && handStack.getItem() != null
                 && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
                 stopCheck = backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
