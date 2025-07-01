@@ -3,14 +3,10 @@ package xonin.backhand.hooks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 
-import tconstruct.library.tools.HarvestTool;
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.utils.BackhandConfigClient;
-import xonin.backhand.utils.Mods;
 
 public class TorchHandler {
 
@@ -32,9 +28,7 @@ public class TorchHandler {
         if (BackhandConfigClient.torchConfig.offhandTorchWithToolOnly) {
             if (mainhandStack == null || mainhandStack.stackSize <= 0) return false;
             Item mainItem = mainhandStack.getItem();
-            if (!((Mods.TINKERS_CONSTRUCT.isLoaded() && mainItem instanceof HarvestTool) || mainItem instanceof ItemTool
-                || mainItem instanceof ItemSword
-                || mainItem instanceof ItemHoe)) {
+            if (!BackhandUtils.isItemTool(mainItem)) {
                 return false;
             }
         }

@@ -135,7 +135,7 @@ public abstract class MixinMinecraft {
 
         if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
             && offhandItem != null
-            && !BackhandUtils.isItemBlock(offhandItem.getItem())) {
+            && BackhandUtils.isItemTool(offhandItem.getItem())) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 backhand$breakBlockTimer = 5;
                 playerController.clickBlock(

@@ -14,16 +14,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemDoor;
-import net.minecraft.item.ItemRedstone;
-import net.minecraft.item.ItemReed;
-import net.minecraft.item.ItemSeedFood;
-import net.minecraft.item.ItemSign;
-import net.minecraft.item.ItemSkull;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraftforge.common.util.FakePlayer;
+
+import tconstruct.library.tools.HarvestTool;
+import xonin.backhand.utils.Mods;
 
 /**
  * Store commonly used method, mostly for the {@link EntityPlayer} {@link ItemStack}s management
@@ -97,14 +95,10 @@ public final class BackhandUtils {
             && !(entity instanceof FakePlayer || playerMP.playerNetServerHandler == null);
     }
 
-    public static boolean isItemBlock(@Nullable Item item) {
-        return item instanceof ItemBlock || item instanceof ItemDoor
-            || item instanceof ItemSign
-            || item instanceof ItemReed
-            || item instanceof ItemSeedFood
-            || item instanceof ItemRedstone
-            || item instanceof ItemBucket
-            || item instanceof ItemSkull;
+    public static boolean isItemTool(@Nullable Item item) {
+        return (Mods.TINKERS_CONSTRUCT.isLoaded() && item instanceof HarvestTool) || item instanceof ItemTool
+            || item instanceof ItemSword
+            || item instanceof ItemHoe;
     }
 
 }
