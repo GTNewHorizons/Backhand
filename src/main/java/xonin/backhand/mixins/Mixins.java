@@ -78,7 +78,12 @@ public enum Mixins {
         .addMixinClasses("wirelesscraftingterminal.MixinContainerWirelessCraftingTerminal")
         .setPhase(Phase.LATE)
         .setSide(Side.BOTH)
-        .addTargetedMod(TargetedMod.WCT));
+        .addTargetedMod(TargetedMod.WCT)),
+    BIBLIOCRAFT_FIX_ARMOR_SLOT(
+        new Builder("Fix Bibliocraft's armor slots").addMixinClasses("bibliocraft.MixinContainerArmor")
+            .setPhase(Phase.LATE)
+            .setSide(Side.BOTH)
+            .addTargetedMod(TargetedMod.BIBLIOCRAFT)),;
 
     private final List<String> mixinClasses;
     private final Supplier<Boolean> applyIf;
