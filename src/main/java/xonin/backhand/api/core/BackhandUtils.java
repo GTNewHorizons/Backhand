@@ -14,6 +14,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemDoor;
+import net.minecraft.item.ItemRedstone;
+import net.minecraft.item.ItemReed;
+import net.minecraft.item.ItemSeedFood;
+import net.minecraft.item.ItemSign;
+import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.FakePlayer;
 
@@ -88,4 +96,15 @@ public final class BackhandUtils {
         return entity instanceof EntityPlayerMP playerMP
             && !(entity instanceof FakePlayer || playerMP.playerNetServerHandler == null);
     }
+
+    public static boolean isItemBlock(@Nullable Item item) {
+        return item instanceof ItemBlock || item instanceof ItemDoor
+            || item instanceof ItemSign
+            || item instanceof ItemReed
+            || item instanceof ItemSeedFood
+            || item instanceof ItemRedstone
+            || item instanceof ItemBucket
+            || item instanceof ItemSkull;
+    }
+
 }
