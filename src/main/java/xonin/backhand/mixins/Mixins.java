@@ -23,7 +23,8 @@ public enum Mixins {
             "minecraft.MixinContainerPlayer",
             "minecraft.MixinItemStack",
             "minecraft.MixinEntityLivingBase",
-            "minecraft.MixinItemSword")
+            "minecraft.MixinItemSword",
+            "minecraft.MixinEntityAITempt")
         .setPhase(Phase.EARLY)
         .setSide(Side.BOTH)
         .addTargetedMod(TargetedMod.VANILLA)),
