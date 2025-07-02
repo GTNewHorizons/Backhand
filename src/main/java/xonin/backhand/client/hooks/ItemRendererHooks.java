@@ -37,6 +37,8 @@ public class ItemRendererHooks {
 
         BackhandRenderHelper.firstPersonFrame = frame;
         GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glCullFace(GL11.GL_FRONT);
         GL11.glPushMatrix();
         GL11.glScalef(-1, 1, 1);
@@ -48,5 +50,7 @@ public class ItemRendererHooks {
             .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
         GL11.glPopMatrix();
         GL11.glCullFace(GL11.GL_BACK);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 }
