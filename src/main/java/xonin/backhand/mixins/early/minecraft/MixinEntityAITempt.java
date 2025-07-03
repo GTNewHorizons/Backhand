@@ -24,10 +24,8 @@ public class MixinEntityAITempt {
 
     @ModifyReturnValue(method = "shouldExecute", at = @At(value = "RETURN", ordinal = 2))
     private boolean backhand$shouldExecute(boolean original) {
+        if (original) return true;
         ItemStack offhandItemStack = EnumHand.OFF_HAND.getItem(temptingPlayer);
-        if (offhandItemStack != null && offhandItemStack.getItem() == field_151484_k) {
-            return true;
-        }
-        return original;
+        return offhandItemStack != null && offhandItemStack.getItem() == field_151484_k;
     }
 }
