@@ -18,7 +18,6 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import tconstruct.library.tools.HarvestTool;
 import tconstruct.library.weaponry.IWindup;
 import tconstruct.tools.TinkerToolEvents;
 import tconstruct.tools.TinkerTools;
@@ -63,7 +62,6 @@ public class TConstructCompat {
                         TinkerToolEvents.class.getConstructor()
                             .newInstance());
             } catch (Exception ignored) {}
-            BackhandUtils.addDeprioritizedMainhandItem(HarvestTool.class);
             return true;
         }
         return false;
