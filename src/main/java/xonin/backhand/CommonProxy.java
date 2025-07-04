@@ -46,7 +46,8 @@ public class CommonProxy {
         }
     }
 
-    private static void swapOffhand(EntityPlayerMP player, SyncedKeybind keybind) {
+    private static void swapOffhand(EntityPlayerMP player, SyncedKeybind keybind, boolean keyDown) {
+        if (!keyDown) return;
         ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
         if (Backhand.isOffhandBlacklisted(player.getCurrentEquippedItem())
             || Backhand.isOffhandBlacklisted(offhandItem)) {

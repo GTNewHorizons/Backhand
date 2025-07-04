@@ -22,7 +22,7 @@ import xonin.backhand.utils.BackhandConfigClient;
     modid = Backhand.MODID,
     name = "Backhand",
     version = Tags.VERSION,
-    dependencies = "required-after:gtnhlib@[0.6.5,)")
+    dependencies = "required-after:gtnhlib@[0.6.34,)")
 public class Backhand {
 
     public static final String MODID = "backhand";
