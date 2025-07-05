@@ -2,6 +2,7 @@ package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Slot;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -17,6 +18,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IOffhandInventory;
@@ -67,6 +69,18 @@ public abstract class MixinNetHandlerPlayServer {
             if (!playerEntity.isUsingItem()) {
                 BackhandPacketHandler.sendPacketToPlayer(new OffhandCancelUsage(), playerEntity);
             }
+            ci.cancel();
+        }
+    }
+
+    @Inject(
+        method = "processPlayerBlockPlacement",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/ItemStack;areItemStacksEqual(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z"),
+        cancellable = true)
+    private void backhand$processPlayerBlockPlacement(CallbackInfo ci, @Local(name = "slot") Slot slot) {
+        if (slot == null) {
             ci.cancel();
         }
     }

@@ -114,6 +114,8 @@ public abstract class MixinMinecraft {
                 default -> false;
             };
 
+            if (stopCheck) return;
+
             // edge case with bucket/IFluidContainerItem and having a placeable item/block in the other hand
             if (handStack != null && handStack.getItem() != null
                 && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
