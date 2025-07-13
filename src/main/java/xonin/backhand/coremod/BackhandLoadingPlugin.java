@@ -12,6 +12,7 @@ import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import xonin.backhand.mixins.Mixins;
 
+@IFMLLoadingPlugin.MCVersion("1.7.10")
 public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     public static final Logger LOGGER = LogManager.getLogger(BackhandLoadingPlugin.class);
