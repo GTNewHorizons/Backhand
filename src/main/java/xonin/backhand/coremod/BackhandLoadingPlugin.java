@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
+import com.gtnewhorizon.gtnhmixins.builders.IMixins;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import xonin.backhand.mixins.Mixins;
@@ -47,6 +48,6 @@ public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMix
 
     @Override
     public List<String> getMixins(Set<String> loadedCoreMods) {
-        return Mixins.getEarlyMixins(loadedCoreMods);
+        return IMixins.getEarlyMixins(Mixins.class, loadedCoreMods);
     }
 }
