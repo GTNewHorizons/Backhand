@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
 import com.gtnewhorizon.gtnhmixins.builders.IMixins;
 
@@ -15,8 +12,6 @@ import xonin.backhand.mixins.Mixins;
 
 @IFMLLoadingPlugin.MCVersion("1.7.10")
 public final class BackhandLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
-
-    public static final Logger LOGGER = LogManager.getLogger(BackhandLoadingPlugin.class);
 
     @Override
     public String[] getASMTransformerClass() {
