@@ -20,7 +20,6 @@ public final class OffhandSyncOffhandUse implements IMessage {
         this.isUsingOffhand = isUsingOffhand;
     }
 
-    @SuppressWarnings("unused")
     public OffhandSyncOffhandUse() {}
 
     @Override
