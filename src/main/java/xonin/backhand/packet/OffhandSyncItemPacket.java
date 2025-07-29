@@ -27,6 +27,7 @@ public final class OffhandSyncItemPacket implements IMessage {
         this.stack = BackhandUtils.getOffhandItem(player);
     }
 
+    @SuppressWarnings("unused")
     public OffhandSyncItemPacket() {}
 
     @Override

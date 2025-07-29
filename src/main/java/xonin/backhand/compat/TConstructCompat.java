@@ -26,6 +26,7 @@ import tconstruct.world.TinkerWorldEvents;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.utils.Mods;
 
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class TConstructCompat {
 

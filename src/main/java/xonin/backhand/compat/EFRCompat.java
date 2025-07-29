@@ -14,6 +14,7 @@ import ganymedes01.etfuturum.core.handlers.ServerEventHandler;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.utils.Mods;
 
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class EFRCompat {
 
