@@ -28,8 +28,7 @@ public class MixinFMLNetworkHandler {
         at = @At(
             value = "FIELD",
             opcode = Opcodes.GETSTATIC,
-            target = "Lcpw/mods/fml/common/network/internal/FMLNetworkHandler;channelPair:Ljava/util/EnumMap;",
-            shift = At.Shift.BEFORE))
+            target = "Lcpw/mods/fml/common/network/internal/FMLNetworkHandler;channelPair:Ljava/util/EnumMap;"))
     private static void backhand$onOpenGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, int x,
         int y, int z, CallbackInfo ci, @Local FMLMessage.OpenGui guiMessage) {
         if (BackhandUtils.isUsingOffhand(entityPlayer)) {

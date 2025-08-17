@@ -25,9 +25,25 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     }
 
     @Redirect(
-        method = "localOnUpdate",
+        method = "onUpdate",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
-    private void backhand$detectAndSendChanges1(Container instance) {
+    private void backhand$detectAndSendChanges_Vanilla(Container instance) {
+        if (((IContainerHook) instance).backhand$wasOpenedWithBackhand()) {
+            int heldItem = this.inventory.currentItem;
+            this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
+            instance.detectAndSendChanges();
+            this.inventory.currentItem = heldItem;
+        } else {
+            instance.detectAndSendChanges();
+        }
+    }
+
+    //PlayerAPI shenanigans
+    @Redirect(
+        method = "localOnUpdate",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"),
+        remap = false)
+    private void backhand$detectAndSendChanges_PlayerAPI(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithBackhand()) {
             int heldItem = this.inventory.currentItem;
             this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
