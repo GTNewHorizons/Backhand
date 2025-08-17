@@ -3,14 +3,11 @@ package xonin.backhand.mixins.early.minecraft.containerfix;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
 
@@ -28,7 +25,7 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         method = "onUpdate",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private void backhand$detectAndSendChanges_Vanilla(Container instance) {
-        if (((IContainerHook) instance).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int heldItem = this.inventory.currentItem;
             this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
             instance.detectAndSendChanges();
@@ -38,13 +35,13 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         }
     }
 
-    //PlayerAPI shenanigans
+    // PlayerAPI shenanigans
     @Redirect(
         method = "localOnUpdate",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"),
         remap = false)
     private void backhand$detectAndSendChanges_PlayerAPI(Container instance) {
-        if (((IContainerHook) instance).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int heldItem = this.inventory.currentItem;
             this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
             instance.detectAndSendChanges();
@@ -58,7 +55,7 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         method = "onItemPickup",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private void backhand$detectAndSendChanges2(Container instance) {
-        if (((IContainerHook) instance).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int heldItem = this.inventory.currentItem;
             this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
             instance.detectAndSendChanges();

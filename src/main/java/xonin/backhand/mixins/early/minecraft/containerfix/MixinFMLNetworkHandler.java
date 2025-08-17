@@ -18,7 +18,7 @@ import xonin.backhand.hooks.containerfix.IContainerHook;
 
 /**
  * Server-side only.
- * Purpose: Set openedWithBackhand in FMLMessage.OpenGui. This gets sent to the client.
+ * Purpose: Set openedWithOffhand in FMLMessage.OpenGui. This gets sent to the client.
  */
 @Mixin(value = FMLNetworkHandler.class, remap = false)
 public class MixinFMLNetworkHandler {
@@ -32,7 +32,7 @@ public class MixinFMLNetworkHandler {
     private static void backhand$onOpenGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, int x,
         int y, int z, CallbackInfo ci, @Local FMLMessage.OpenGui guiMessage) {
         if (BackhandUtils.isUsingOffhand(entityPlayer)) {
-            ((IContainerHook) guiMessage).backhand$setOpenedWithBackhand();
+            ((IContainerHook) guiMessage).backhand$setOpenedWithOffhand();
         }
     }
 

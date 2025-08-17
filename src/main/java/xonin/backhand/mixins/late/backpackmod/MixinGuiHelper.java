@@ -27,7 +27,7 @@ public class MixinGuiHelper {
     private static void backhand$addBackhandValue_Client(BackpackSave backpackSave, IInventory inventory,
         EntityPlayerMP entityPlayer, CallbackInfo ci, @Local MessageOpenBackpack messageGui) {
         if (BackhandUtils.isUsingOffhand(entityPlayer)) {
-            ((IContainerHook) messageGui).backhand$setOpenedWithBackhand();
+            ((IContainerHook) messageGui).backhand$setOpenedWithOffhand();
         }
     }
 }

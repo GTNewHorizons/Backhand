@@ -28,7 +28,7 @@ public class MixinOpenGuiHandler {
     // Swap to backhand
     @Inject(method = "channelRead0", at = @At("HEAD"))
     private void backhand$modifyHeldItemPre(ChannelHandlerContext ctx, FMLMessage.OpenGui msg, CallbackInfo ci) {
-        if (((IContainerHook) msg).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) msg).backhand$wasOpenedWithOffhand()) {
             EntityPlayer player = FMLClientHandler.instance()
                 .getClient().thePlayer;
             backhand$heldItemTemp = player.inventory.currentItem;
@@ -39,12 +39,12 @@ public class MixinOpenGuiHandler {
     // Swap back
     @Inject(method = "channelRead0", at = @At("RETURN"))
     private void backhand$modifyHeldItemPost(ChannelHandlerContext ctx, FMLMessage.OpenGui msg, CallbackInfo ci) {
-        if (((IContainerHook) msg).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) msg).backhand$wasOpenedWithOffhand()) {
             EntityPlayer player = FMLClientHandler.instance()
                 .getClient().thePlayer;
             player.inventory.currentItem = backhand$heldItemTemp;
 
-            ((IContainerHook) player.openContainer).backhand$setOpenedWithBackhand();
+            ((IContainerHook) player.openContainer).backhand$setOpenedWithOffhand();
         }
     }
 }

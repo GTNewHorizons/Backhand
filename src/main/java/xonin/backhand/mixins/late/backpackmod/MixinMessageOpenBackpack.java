@@ -19,16 +19,16 @@ import xonin.backhand.hooks.containerfix.IContainerHook;
 public class MixinMessageOpenBackpack implements IContainerHook {
 
     @Unique
-    private boolean backhand$openedWithBackhand;
+    private boolean backhand$openedWithOffhand;
 
     @Inject(method = "fromBytes", at = @At("RETURN"))
     public void backhand$readBackhandFromBytes(ByteBuf buffer, CallbackInfo ci) {
-        backhand$openedWithBackhand = buffer.readBoolean();
+        backhand$openedWithOffhand = buffer.readBoolean();
     }
 
     @Inject(method = "toBytes", at = @At("RETURN"))
     public void backhand$addBackhandToBytes(ByteBuf buffer, CallbackInfo ci) {
-        buffer.writeBoolean(backhand$openedWithBackhand);
+        buffer.writeBoolean(backhand$openedWithOffhand);
     }
 
     @Inject(
@@ -36,18 +36,18 @@ public class MixinMessageOpenBackpack implements IContainerHook {
         at = @At("RETURN"))
     public void backhand$onMessage(MessageOpenBackpack message, MessageContext ctx,
         CallbackInfoReturnable<IMessage> cir) {
-        if (backhand$openedWithBackhand) {
-            ((IContainerHook) Minecraft.getMinecraft().thePlayer.openContainer).backhand$setOpenedWithBackhand();
+        if (backhand$openedWithOffhand) {
+            ((IContainerHook) Minecraft.getMinecraft().thePlayer.openContainer).backhand$setOpenedWithOffhand();
         }
     }
 
     @Override
-    public final boolean backhand$wasOpenedWithBackhand() {
-        return backhand$openedWithBackhand;
+    public final boolean backhand$wasOpenedWithOffhand() {
+        return backhand$openedWithOffhand;
     }
 
     @Override
-    public final void backhand$setOpenedWithBackhand() {
-        backhand$openedWithBackhand = true;
+    public final void backhand$setOpenedWithOffhand() {
+        backhand$openedWithOffhand = true;
     }
 }

@@ -31,13 +31,13 @@ public class MixinFMLOpenGui implements IContainerHook {
     }
 
     @Override
-    public final boolean backhand$wasOpenedWithBackhand() {
+    public final boolean backhand$wasOpenedWithOffhand() {
         return backhand$openedWithOffhand;
     }
 
     // Since I don't have the EntityPlayerMP reference, I need to inject into MixinFMLNetworkHandler to set it afterward
     @Override
-    public final void backhand$setOpenedWithBackhand() {
+    public final void backhand$setOpenedWithOffhand() {
         backhand$openedWithOffhand = true;
     }
 }

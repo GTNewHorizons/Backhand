@@ -18,23 +18,23 @@ import xonin.backhand.hooks.containerfix.IContainerHook;
 public class MixinContainer implements IContainerHook {
 
     @Unique
-    private boolean backhand$openedWithBackhand;
+    private boolean backhand$openedWithOffhand;
 
     @Override
-    public final boolean backhand$wasOpenedWithBackhand() {
-        return backhand$openedWithBackhand;
+    public final boolean backhand$wasOpenedWithOffhand() {
+        return backhand$openedWithOffhand;
     }
 
     @Override
-    public final void backhand$setOpenedWithBackhand() {
-        backhand$openedWithBackhand = true;
+    public final void backhand$setOpenedWithOffhand() {
+        backhand$openedWithOffhand = true;
     }
 
     @Inject(method = "addCraftingToCrafters", at = @At("HEAD"))
     private void backhand$test(ICrafting p_75132_1_, CallbackInfo ci) {
         if (p_75132_1_ instanceof EntityPlayerMP player) {
             if (BackhandUtils.isUsingOffhand(player)) {
-                backhand$setOpenedWithBackhand();
+                backhand$setOpenedWithOffhand();
             }
         }
     }

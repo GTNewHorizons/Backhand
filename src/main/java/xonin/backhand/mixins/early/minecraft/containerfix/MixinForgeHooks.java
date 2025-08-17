@@ -22,7 +22,7 @@ public class MixinForgeHooks {
     @Inject(method = "canInteractWith", at = @At("HEAD"))
     private static void backhand$canInteractWithPre(EntityPlayer player, Container openContainer,
         CallbackInfoReturnable<Boolean> ci) {
-        if (((IContainerHook) openContainer).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
             backhand$heldItem = player.inventory.currentItem;
             player.inventory.currentItem = BackhandUtils.getOffhandSlot(player);
         }
@@ -31,7 +31,7 @@ public class MixinForgeHooks {
     @Inject(method = "canInteractWith", at = @At("RETURN"))
     private static void backhand$canInteractWithPost(EntityPlayer player, Container openContainer,
         CallbackInfoReturnable<Boolean> ci) {
-        if (((IContainerHook) openContainer).backhand$wasOpenedWithBackhand()) {
+        if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
             player.inventory.currentItem = backhand$heldItem;
         }
     }

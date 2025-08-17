@@ -2,7 +2,7 @@ package xonin.backhand.hooks.containerfix;
 
 public interface IContainerHook {
 
-    boolean backhand$wasOpenedWithBackhand();
+    boolean backhand$wasOpenedWithOffhand();
 
-    void backhand$setOpenedWithBackhand();
+    void backhand$setOpenedWithOffhand();
 }
