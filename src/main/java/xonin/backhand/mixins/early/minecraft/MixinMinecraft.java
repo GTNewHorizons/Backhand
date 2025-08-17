@@ -88,46 +88,64 @@ public abstract class MixinMinecraft {
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
         EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
+
+        int x = objectMouseOver.blockX;
+        int y = objectMouseOver.blockY;
+        int z = objectMouseOver.blockZ;
+        boolean blockHit = objectMouseOver.typeOfHit == MovingObjectType.BLOCK && !theWorld.getBlock(x, y, z)
+            .isAir(theWorld, x, y, z);
+        boolean entityHit = objectMouseOver.typeOfHit == MovingObjectType.ENTITY;
+
+        // Make sure no item gets used twice
+        boolean mainHandUsedFluid = false;
+        boolean offhandUsedFluid = false;
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
             if (hand == OFF_HAND) {
-                if (objectMouseOver.typeOfHit == MovingObjectType.BLOCK
-                    && !TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
+                if (blockHit && !TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
                     continue;
                 }
             }
 
-            boolean stopCheck = switch (objectMouseOver.typeOfHit) {
-                case ENTITY -> backhand$useRightClick(
+            if (blockHit) {
+                if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z))) {
+                    return;
+                }
+            } else if (entityHit) {
+                if (backhand$useRightClick(
                     hand,
                     handStack,
-                    stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit));
-                case BLOCK -> {
-                    int x = objectMouseOver.blockX;
-                    int y = objectMouseOver.blockY;
-                    int z = objectMouseOver.blockZ;
-                    yield !theWorld.getBlock(x, y, z)
-                        .isAir(theWorld, x, y, z)
-                        && backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z));
+                    stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit))) {
+                    return;
                 }
-                default -> false;
-            };
-
-            if (stopCheck) return;
-
-            // edge case with bucket/IFluidContainerItem and having a placeable item/block in the other hand
-            if (handStack != null && handStack.getItem() != null
-                && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
-                stopCheck = backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
             }
 
-            if (stopCheck) return;
+            // Note: The bucket/IFluidContainerItem fix did not work, since fluid placement
+            // is handled in backhand$rightClickBlock, not in backhand$rightClickItem
+            if (handStack != null && handStack.getItem() != null
+                && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
+                if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+                    return;
+                }
+                if (hand == MAIN_HAND) {
+                    mainHandUsedFluid = true;
+                } else {
+                    offhandUsedFluid = true;
+                }
+            }
         }
 
         // process the potential entity/block placements first before trying the item right click actions
         for (EnumHand hand : hands) {
-            ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
+            ItemStack handStack;
+            if (hand == MAIN_HAND) {
+                if (mainHandUsedFluid) continue;
+                handStack = mainHandItem;
+            } else {
+                if (offhandUsedFluid) continue;
+                handStack = offhandItem;
+            }
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
                 return;
             }
@@ -143,16 +161,12 @@ public abstract class MixinMinecraft {
             return;
         }
 
-        if (BackhandConfig.OffhandBreakBlocks && objectMouseOver.typeOfHit == MovingObjectType.BLOCK
+        if (BackhandConfig.OffhandBreakBlocks && blockHit
             && offhandItem != null
             && BackhandUtils.isItemTool(offhandItem.getItem())) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 backhand$breakBlockTimer = 5;
-                playerController.clickBlock(
-                    objectMouseOver.blockX,
-                    objectMouseOver.blockY,
-                    objectMouseOver.blockZ,
-                    objectMouseOver.sideHit);
+                playerController.clickBlock(x, y, z, objectMouseOver.sideHit);
             });
         }
     }
