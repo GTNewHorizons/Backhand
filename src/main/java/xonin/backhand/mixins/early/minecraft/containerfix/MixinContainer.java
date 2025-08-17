@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.hooks.containerfix.IContainerHook;
 
-@SuppressWarnings("unused")
 @Mixin(Container.class)
 public class MixinContainer implements IContainerHook {
 

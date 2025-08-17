@@ -15,10 +15,6 @@ import io.netty.channel.ChannelHandlerContext;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.hooks.containerfix.IContainerHook;
 
-/**
- * Client-side only.
- * Purpose: Use the backhand, if the Container was opened using the Backhand.
- */
 @Mixin(value = OpenGuiHandler.class, remap = false)
 public class MixinOpenGuiHandler {
 

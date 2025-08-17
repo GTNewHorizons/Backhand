@@ -10,10 +10,6 @@ import cpw.mods.fml.common.network.internal.FMLMessage;
 import io.netty.buffer.ByteBuf;
 import xonin.backhand.hooks.containerfix.IContainerHook;
 
-/**
- * Server and Client-side function.
- * Purpose: Tell the client if the Container was opened using the backhand or not
- */
 @Mixin(value = FMLMessage.OpenGui.class, remap = false)
 public class MixinFMLOpenGui implements IContainerHook {
 

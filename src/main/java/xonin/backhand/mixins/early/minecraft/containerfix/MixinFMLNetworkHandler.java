@@ -16,10 +16,6 @@ import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.hooks.containerfix.IContainerHook;
 
-/**
- * Server-side only.
- * Purpose: Set openedWithOffhand in FMLMessage.OpenGui. This gets sent to the client.
- */
 @Mixin(value = FMLNetworkHandler.class, remap = false)
 public class MixinFMLNetworkHandler {
 
