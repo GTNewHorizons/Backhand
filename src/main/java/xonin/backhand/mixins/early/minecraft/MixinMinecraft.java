@@ -13,11 +13,13 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -94,6 +96,9 @@ public abstract class MixinMinecraft {
             .isAir(theWorld, x, y, z);
         boolean entityHit = objectMouseOver.typeOfHit == MovingObjectType.ENTITY;
 
+        // Make sure no item gets used twice
+        boolean mainHandUsedFluid = false;
+        boolean offhandUsedFluid = false;
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
@@ -118,11 +123,29 @@ public abstract class MixinMinecraft {
 
             // Note: The bucket/IFluidContainerItem fix did not work, since fluid placement
             // is handled in backhand$rightClickBlock, not in backhand$rightClickItem
+            if (handStack != null && handStack.getItem() != null
+                && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
+                if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+                    return;
+                }
+                if (hand == MAIN_HAND) {
+                    mainHandUsedFluid = true;
+                } else {
+                    offhandUsedFluid = true;
+                }
+            }
         }
 
         // process the potential entity/block placements first before trying the item right click actions
         for (EnumHand hand : hands) {
-            ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
+            ItemStack handStack;
+            if (hand == MAIN_HAND) {
+                if (mainHandUsedFluid) continue;
+                handStack = mainHandItem;
+            } else {
+                if (offhandUsedFluid) continue;
+                handStack = offhandItem;
+            }
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
                 return;
             }
