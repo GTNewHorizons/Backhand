@@ -101,4 +101,15 @@ public final class BackhandUtils {
             || item instanceof ItemHoe;
     }
 
+    private static int heldItemTemp;
+
+    public static void swapToOffhand(EntityPlayer player) {
+        heldItemTemp = player.inventory.currentItem;
+        player.inventory.currentItem = getOffhandSlot(player);
+    }
+
+    public static void swapBack(EntityPlayer player) {
+        player.inventory.currentItem = heldItemTemp;
+    }
+
 }

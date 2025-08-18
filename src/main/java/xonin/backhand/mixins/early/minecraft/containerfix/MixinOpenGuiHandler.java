@@ -3,7 +3,6 @@ package xonin.backhand.mixins.early.minecraft.containerfix;
 import net.minecraft.entity.player.EntityPlayer;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,27 +17,21 @@ import xonin.backhand.hooks.containerfix.IContainerHook;
 @Mixin(value = OpenGuiHandler.class, remap = false)
 public class MixinOpenGuiHandler {
 
-    @Unique
-    private static int backhand$heldItemTemp;
-
-    // Swap to backhand
     @Inject(method = "channelRead0", at = @At("HEAD"))
     private void backhand$modifyHeldItemPre(ChannelHandlerContext ctx, FMLMessage.OpenGui msg, CallbackInfo ci) {
         if (((IContainerHook) msg).backhand$wasOpenedWithOffhand()) {
-            EntityPlayer player = FMLClientHandler.instance()
-                .getClient().thePlayer;
-            backhand$heldItemTemp = player.inventory.currentItem;
-            player.inventory.currentItem = BackhandUtils.getOffhandSlot(player);
+            BackhandUtils.swapToOffhand(
+                FMLClientHandler.instance()
+                    .getClient().thePlayer);
         }
     }
 
-    // Swap back
     @Inject(method = "channelRead0", at = @At("RETURN"))
     private void backhand$modifyHeldItemPost(ChannelHandlerContext ctx, FMLMessage.OpenGui msg, CallbackInfo ci) {
         if (((IContainerHook) msg).backhand$wasOpenedWithOffhand()) {
             EntityPlayer player = FMLClientHandler.instance()
                 .getClient().thePlayer;
-            player.inventory.currentItem = backhand$heldItemTemp;
+            BackhandUtils.swapBack(player);
 
             ((IContainerHook) player.openContainer).backhand$setOpenedWithOffhand();
         }

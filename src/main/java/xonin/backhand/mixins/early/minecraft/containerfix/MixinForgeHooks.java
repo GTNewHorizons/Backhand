@@ -5,7 +5,6 @@ import net.minecraft.inventory.Container;
 import net.minecraftforge.common.ForgeHooks;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -16,15 +15,11 @@ import xonin.backhand.hooks.containerfix.IContainerHook;
 @Mixin(value = ForgeHooks.class, remap = false)
 public class MixinForgeHooks {
 
-    @Unique
-    private static int backhand$heldItem;
-
     @Inject(method = "canInteractWith", at = @At("HEAD"))
     private static void backhand$canInteractWithPre(EntityPlayer player, Container openContainer,
         CallbackInfoReturnable<Boolean> ci) {
         if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
-            backhand$heldItem = player.inventory.currentItem;
-            player.inventory.currentItem = BackhandUtils.getOffhandSlot(player);
+            BackhandUtils.swapToOffhand(player);
         }
     }
 
@@ -32,7 +27,7 @@ public class MixinForgeHooks {
     private static void backhand$canInteractWithPost(EntityPlayer player, Container openContainer,
         CallbackInfoReturnable<Boolean> ci) {
         if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
-            player.inventory.currentItem = backhand$heldItem;
+            BackhandUtils.swapBack(player);
         }
     }
 }

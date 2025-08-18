@@ -26,10 +26,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private void backhand$detectAndSendChanges_Vanilla(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            int heldItem = this.inventory.currentItem;
-            this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
+            BackhandUtils.swapToOffhand(this);
             instance.detectAndSendChanges();
-            this.inventory.currentItem = heldItem;
+            BackhandUtils.swapBack(this);
         } else {
             instance.detectAndSendChanges();
         }
@@ -42,10 +41,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         remap = false)
     private void backhand$detectAndSendChanges_PlayerAPI(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            int heldItem = this.inventory.currentItem;
-            this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
+            BackhandUtils.swapToOffhand(this);
             instance.detectAndSendChanges();
-            this.inventory.currentItem = heldItem;
+            BackhandUtils.swapBack(this);
         } else {
             instance.detectAndSendChanges();
         }
@@ -56,10 +54,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private void backhand$detectAndSendChanges2(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            int heldItem = this.inventory.currentItem;
-            this.inventory.currentItem = BackhandUtils.getOffhandSlot(this);
+            BackhandUtils.swapToOffhand(this);
             instance.detectAndSendChanges();
-            this.inventory.currentItem = heldItem;
+            BackhandUtils.swapBack(this);
         } else {
             instance.detectAndSendChanges();
         }
