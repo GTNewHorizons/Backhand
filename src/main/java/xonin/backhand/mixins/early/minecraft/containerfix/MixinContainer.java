@@ -30,7 +30,7 @@ public class MixinContainer implements IContainerHook {
     }
 
     @Inject(method = "addCraftingToCrafters", at = @At("HEAD"))
-    private void backhand$test(ICrafting p_75132_1_, CallbackInfo ci) {
+    private void backhand$setupOffhand(ICrafting p_75132_1_, CallbackInfo ci) {
         if (p_75132_1_ instanceof EntityPlayerMP player) {
             if (BackhandUtils.isUsingOffhand(player)) {
                 backhand$setOpenedWithOffhand();

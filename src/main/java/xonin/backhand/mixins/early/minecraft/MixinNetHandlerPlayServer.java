@@ -123,7 +123,7 @@ public abstract class MixinNetHandlerPlayServer {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/inventory/Container;slotClick(IIILnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/item/ItemStack;"))
-    public ItemStack backhand$windowClickPre(Container instance, int slotId, int clickedButton, int mode,
+    public ItemStack backhand$windowClick(Container instance, int slotId, int clickedButton, int mode,
         EntityPlayer player) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int heldItem = player.inventory.currentItem;
