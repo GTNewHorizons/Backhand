@@ -26,9 +26,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private void backhand$detectAndSendChanges_Vanilla(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            BackhandUtils.swapToOffhand(this);
+            int currentItem = BackhandUtils.swapToOffhand(this);
             instance.detectAndSendChanges();
-            BackhandUtils.swapBack(this);
+            BackhandUtils.swapBack(this, currentItem);
         } else {
             instance.detectAndSendChanges();
         }
@@ -41,9 +41,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         remap = false)
     private void backhand$detectAndSendChanges_PlayerAPI(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            BackhandUtils.swapToOffhand(this);
+            int currentItem = BackhandUtils.swapToOffhand(this);
             instance.detectAndSendChanges();
-            BackhandUtils.swapBack(this);
+            BackhandUtils.swapBack(this, currentItem);
         } else {
             instance.detectAndSendChanges();
         }
@@ -54,9 +54,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private void backhand$detectAndSendChanges2(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            BackhandUtils.swapToOffhand(this);
+            int currentItem = BackhandUtils.swapToOffhand(this);
             instance.detectAndSendChanges();
-            BackhandUtils.swapBack(this);
+            BackhandUtils.swapBack(this, currentItem);
         } else {
             instance.detectAndSendChanges();
         }

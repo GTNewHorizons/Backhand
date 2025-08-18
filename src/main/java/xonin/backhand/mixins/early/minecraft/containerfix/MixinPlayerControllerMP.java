@@ -23,9 +23,9 @@ public class MixinPlayerControllerMP {
     public ItemStack backhand$windowClick(Container instance, int slotId, int clickedButton, int mode,
         EntityPlayer player) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            BackhandUtils.swapToOffhand(player);
+            int currentItem = BackhandUtils.swapToOffhand(player);
             ItemStack result = instance.slotClick(slotId, clickedButton, mode, player);
-            BackhandUtils.swapBack(player);
+            BackhandUtils.swapBack(player, currentItem);
             return result;
         } else {
             return instance.slotClick(slotId, clickedButton, mode, player);
