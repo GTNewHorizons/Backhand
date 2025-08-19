@@ -25,7 +25,8 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     @Dynamic("Target gets removed by PlayerAPI")
     @Redirect(
         method = "onUpdate",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"),
+        require = 0)
     private void backhand$detectAndSendChanges_Vanilla(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int currentItem = BackhandUtils.swapToOffhand(this);
@@ -41,6 +42,7 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     @Redirect(
         method = "localOnUpdate",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"),
+        require = 0,
         remap = false)
     private void backhand$detectAndSendChanges_PlayerAPI(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
