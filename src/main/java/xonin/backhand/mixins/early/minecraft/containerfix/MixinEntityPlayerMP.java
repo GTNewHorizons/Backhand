@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -21,6 +22,7 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         super(p_i45324_1_, p_i45324_2_);
     }
 
+    @Dynamic("Target gets removed by PlayerAPI")
     @Redirect(
         method = "onUpdate",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
@@ -35,6 +37,7 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     }
 
     // PlayerAPI shenanigans
+    @Dynamic("Target gets added by PlayerAPI")
     @Redirect(
         method = "localOnUpdate",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"),
