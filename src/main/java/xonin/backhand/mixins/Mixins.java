@@ -21,11 +21,9 @@ public enum Mixins implements IMixins {
             "minecraft.MixinItemSword",
             "minecraft.MixinEntityAITempt",
             "minecraft.containerfix.MixinEntityPlayerMP",
-            "minecraft.containerfix.MixinEntityPlayerMP_PlayerAPI",
             "minecraft.containerfix.MixinFMLNetworkHandler",
             "minecraft.containerfix.MixinFMLOpenGui",
-            "minecraft.containerfix.MixinContainer",
-            "minecraft.containerfix.MixinForgeHooks")
+            "minecraft.containerfix.MixinContainer")
         .addClientMixins(
             "minecraft.MixinEntityOtherPlayerMP",
             "minecraft.MixinEntityPlayerClient",

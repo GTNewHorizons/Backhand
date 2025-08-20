@@ -5,10 +5,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 
-import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
 
@@ -22,18 +24,20 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         super(p_i45324_1_, p_i45324_2_);
     }
 
-    @Dynamic("Target gets removed by PlayerAPI")
-    @Redirect(
-        method = "onUpdate",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"),
-        require = 0)
-    private void backhand$detectAndSendChanges_Vanilla(Container instance) {
-        if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            int currentItem = BackhandUtils.swapToOffhand(this);
-            instance.detectAndSendChanges();
-            BackhandUtils.swapBack(this, currentItem);
-        } else {
-            instance.detectAndSendChanges();
+    @Unique
+    private int backhand$heldItemTemp;
+
+    @Inject(method = "onUpdate", at = @At("HEAD"))
+    private void backhand$onUpdatePre(CallbackInfo ci) {
+        if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
+            backhand$heldItemTemp = BackhandUtils.swapToOffhand(this);
+        }
+    }
+
+    @Inject(method = "onUpdate", at = @At("RETURN"))
+    private void backhand$onUpdatePost(CallbackInfo ci) {
+        if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
+            BackhandUtils.swapBack(this, backhand$heldItemTemp);
         }
     }
 

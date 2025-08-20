@@ -6,16 +6,19 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistrySimple;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -26,6 +29,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.IOffhandInventory;
+import xonin.backhand.hooks.containerfix.IContainerHook;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.packet.OffhandAnimationPacket;
 import xonin.backhand.packet.OffhandSyncOffhandUse;
@@ -130,6 +134,23 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
             return false;
         }
         return true;
+    }
+
+    // Backhand Containerfix
+    @Redirect(
+        method = "onUpdate",
+        at = @At(
+            value = "INVOKE",
+            target = "net/minecraftforge/common/ForgeHooks.canInteractWith(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/inventory/Container;)Z",
+            remap = false))
+    private static boolean backhand$canInteractWith(EntityPlayer player, Container openContainer) {
+        if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
+            int currentItem = BackhandUtils.swapToOffhand(player);
+            boolean retValue = ForgeHooks.canInteractWith(player, openContainer);
+            BackhandUtils.swapBack(player, currentItem);
+            return retValue;
+        }
+        return ForgeHooks.canInteractWith(player, openContainer);
     }
 
     @Unique
