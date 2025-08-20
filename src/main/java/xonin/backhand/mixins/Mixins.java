@@ -19,7 +19,11 @@ public enum Mixins implements IMixins {
             "minecraft.MixinItemStack",
             "minecraft.MixinEntityLivingBase",
             "minecraft.MixinItemSword",
-            "minecraft.MixinEntityAITempt")
+            "minecraft.MixinEntityAITempt",
+            "minecraft.containerfix.MixinEntityPlayerMP",
+            "minecraft.containerfix.MixinFMLNetworkHandler",
+            "minecraft.containerfix.MixinFMLOpenGui",
+            "minecraft.containerfix.MixinContainer")
         .addClientMixins(
             "minecraft.MixinEntityOtherPlayerMP",
             "minecraft.MixinEntityPlayerClient",
@@ -30,7 +34,9 @@ public enum Mixins implements IMixins {
             "minecraft.MixinGuiInventory",
             "minecraft.MixinEntityRenderer",
             "minecraft.MixinGuiContainerCreative",
-            "minecraft.MixinRenderPlayer")
+            "minecraft.MixinRenderPlayer",
+            "minecraft.containerfix.MixinOpenGuiHandler",
+            "minecraft.containerfix.MixinPlayerControllerMP")
         .setPhase(Phase.EARLY)),
     GC_FIX_ARMOR_SLOT(new MixinBuilder("Fix GC boot slot clashing with offhand slot")
         .addCommonMixins("galacticraft.MixinContainerExtendedInventory")
@@ -67,7 +73,14 @@ public enum Mixins implements IMixins {
         new MixinBuilder("Fix Bibliocraft's armor slots")
             .addCommonMixins("bibliocraft.MixinContainerArmor")
             .setPhase(Phase.LATE)
-            .addRequiredMod(TargetedMod.BIBLIOCRAFT));
+            .addRequiredMod(TargetedMod.BIBLIOCRAFT)),
+    BACKPACKMOD_ADD_BACKHAND_COMPAT(
+        new MixinBuilder("Add Backhand compat to backpacks from Backpack Mod")
+            .addCommonMixins(
+                "backpackmod.MixinGuiHelper",
+                "backpackmod.MixinMessageOpenBackpack")
+            .setPhase(Phase.LATE)
+            .addRequiredMod(TargetedMod.MINECRAFT_BACKPACK_MOD));
     // spotless:on
 
     private final MixinBuilder builder;
