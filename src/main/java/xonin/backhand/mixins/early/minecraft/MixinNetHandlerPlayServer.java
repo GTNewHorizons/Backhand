@@ -1,11 +1,8 @@
 package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -15,7 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -118,20 +114,21 @@ public abstract class MixinNetHandlerPlayServer {
     }
 
     // Backhand Containerfix
-    @Redirect(
-        method = "processClickWindow",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/inventory/Container;slotClick(IIILnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/item/ItemStack;"))
-    public ItemStack backhand$windowClick(Container instance, int slotId, int clickedButton, int mode,
-        EntityPlayer player) {
-        if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
-            int currentItem = BackhandUtils.swapToOffhand(player);
-            ItemStack result = instance.slotClick(slotId, clickedButton, mode, player);
-            BackhandUtils.swapBack(player, currentItem);
-            return result;
-        } else {
-            return instance.slotClick(slotId, clickedButton, mode, player);
+
+    @Unique
+    private int backhand$heldItemTemp;
+
+    @Inject(method = "processClickWindow", at = @At("HEAD"))
+    public void backhand$processClickPre(CallbackInfo ci) {
+        if (((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand()) {
+            backhand$heldItemTemp = BackhandUtils.swapToOffhand(playerEntity);
+        }
+    }
+
+    @Inject(method = "processClickWindow", at = @At("TAIL"))
+    public void backhand$processClickPost(CallbackInfo ci) {
+        if (((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand()) {
+            BackhandUtils.swapBack(playerEntity, backhand$heldItemTemp);
         }
     }
 }
