@@ -35,11 +35,11 @@
  */
 dependencies {
     api("com.github.GTNewHorizons:GTNHLib:0.6.39:dev")
-    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.49-GTNH:dev")
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.72-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.51-GTNH:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.79-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.1:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
-    compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.11-GTNH:dev") {transitive = false}
+    compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.12-GTNH:dev") {transitive = false}
     compileOnly("com.github.GTNewHorizons:Draconic-Evolution:1.4.24-GTNH:dev") {transitive = false}
     compileOnly("com.github.GTNewHorizons:BrandonsCore:1.2.0-GTNH:dev") {transitive = false}
     // pulls in ae2 for the mixin dep
@@ -48,7 +48,7 @@ dependencies {
     compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225'))
     compileOnly("org.jetbrains:annotations:24.0.1")
     compileOnly(deobfCurse("bibliocraft-228027:2423369"))
-    compileOnly("com.github.GTNewHorizons:Minecraft-Backpack-Mod:2.5.4-GTNH:dev") {transitive = false}
+    compileOnly("com.github.GTNewHorizons:Minecraft-Backpack-Mod:2.5.6-GTNH:dev") {transitive = false}
 
 
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.5.6-backhand:dev") {
