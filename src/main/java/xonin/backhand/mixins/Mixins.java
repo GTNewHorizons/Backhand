@@ -82,9 +82,9 @@ public enum Mixins implements IMixins {
             .setPhase(Phase.LATE)
             .addRequiredMod(TargetedMod.MINECRAFT_BACKPACK_MOD)),
     TC_BACKHAND_COMPAT(
-        new MixinBuilder("Backhand compat for TC wands")
+        new MixinBuilder("Backhand compat for TC wands & Thaumometer")
             .addClientMixins(
-                "thaumcraft.MixinClientTickEventsFML")
+                "thaumcraft.MixinClientTickEventsFML", "thaumcraft.MixinTileNodeRenderer")
             .setPhase(Phase.LATE)
             .addRequiredMod(TargetedMod.THAUMCRAFT));
     // spotless:on

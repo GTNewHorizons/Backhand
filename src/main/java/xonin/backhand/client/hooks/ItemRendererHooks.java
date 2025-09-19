@@ -7,11 +7,13 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import thaumcraft.common.items.relics.ItemThaumometer;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
+import xonin.backhand.utils.Mods;
 
 public class ItemRendererHooks {
 
@@ -27,26 +29,38 @@ public class ItemRendererHooks {
         if (!BackhandConfig.EmptyOffhand && !BackhandConfigClient.RenderEmptyOffhandAtRest && offhandItem == null) {
             return;
         }
+
         if (offhandItem == null && !BackhandConfigClient.RenderEmptyOffhandAtRest
             && ((IBackhandPlayer) player).getOffSwingProgress(frame) == 0) {
             return;
         }
-        if (mainhandItem != null && mainhandItem.getItem() instanceof ItemMap) {
+
+        if (usesBothHands(mainhandItem)) {
             return;
         }
 
         BackhandRenderHelper.firstPersonFrame = frame;
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_FRONT);
-        GL11.glPushMatrix();
-        GL11.glScalef(-1, 1, 1);
-        float f3 = player.prevRenderArmPitch + (player.renderArmPitch - player.prevRenderArmPitch) * frame;
-        float f4 = player.prevRenderArmYaw + (player.renderArmYaw - player.prevRenderArmYaw) * frame;
-        GL11.glRotatef((player.rotationPitch - f3) * -0.1F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef((player.rotationYaw - f4) * -0.1F, 0.0F, 1.0F, 0.0F);
-        BackhandUtils
-            .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
-        GL11.glPopMatrix();
-        GL11.glCullFace(GL11.GL_BACK);
+        if (usesBothHands(offhandItem)) {
+            BackhandUtils
+                .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
+        } else {
+            GL11.glEnable(GL11.GL_CULL_FACE);
+            GL11.glCullFace(GL11.GL_FRONT);
+            GL11.glPushMatrix();
+            GL11.glScalef(-1, 1, 1);
+            float f3 = player.prevRenderArmPitch + (player.renderArmPitch - player.prevRenderArmPitch) * frame;
+            float f4 = player.prevRenderArmYaw + (player.renderArmYaw - player.prevRenderArmYaw) * frame;
+            GL11.glRotatef((player.rotationPitch - f3) * -0.1F, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef((player.rotationYaw - f4) * -0.1F, 0.0F, 1.0F, 0.0F);
+            BackhandUtils
+                .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
+            GL11.glPopMatrix();
+            GL11.glCullFace(GL11.GL_BACK);
+        }
+    }
+
+    private static boolean usesBothHands(ItemStack item) {
+        return item != null && (item.getItem() instanceof ItemMap
+            || Mods.THAUMCRAFT.isLoaded() && item.getItem() instanceof ItemThaumometer);
     }
 }
