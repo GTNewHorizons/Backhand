@@ -8,7 +8,8 @@ public enum Mods {
     DOUBLE_WIDE_SURPRISE("dws"),
     TINKERS_CONSTRUCT("TConstruct"),
     ET_FUTURUM("etfuturum"),
-    TFCPLUS("terrafirmacraftplus"),;
+    TFCPLUS("terrafirmacraftplus"),
+    THAUMCRAFT("Thaumcraft");
 
     private final String modId;
     private Boolean loaded;
