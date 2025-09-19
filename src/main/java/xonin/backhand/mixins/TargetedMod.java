@@ -14,7 +14,8 @@ public enum TargetedMod implements ITargetMod {
     TERRAFIRMACRAFT("terrafirmacraft"),
     TERRAFIRMACRAFT_PLUS("terrafirmacraftplus"),
     TINKERS_CONSTRUCT("TConstruct"),
-    MINECRAFT_BACKPACK_MOD("Backpack");
+    MINECRAFT_BACKPACK_MOD("Backpack"),
+    THAUMCRAFT("Thaumcraft");
 
     private final TargetModBuilder builder;
 
