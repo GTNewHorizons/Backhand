@@ -36,11 +36,11 @@
 dependencies {
     api("com.github.GTNewHorizons:GTNHLib:0.6.39:dev")
     compileOnly("com.github.GTNewHorizons:TinkersConstruct:1.13.53-GTNH:dev")
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.86-GTNH:dev")
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.7.87-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:inventory-tweaks:1.7.1:dev")
     compileOnly(rfg.deobf('maven.modrinth:etfuturum:2.6.2'))
     compileOnly("com.github.GTNewHorizons:Galacticraft:3.3.12-GTNH:dev") {transitive = false}
-    compileOnly("com.github.GTNewHorizons:Draconic-Evolution:1.4.26-GTNH:dev") {transitive = false}
+    compileOnly("com.github.GTNewHorizons:Draconic-Evolution:1.4.27-GTNH:dev") {transitive = false}
     compileOnly("com.github.GTNewHorizons:BrandonsCore:1.2.0-GTNH:dev") {transitive = false}
     // pulls in ae2 for the mixin dep
     compileOnly("com.github.GTNewHorizons:WirelessCraftingTerminal:1.12.7:dev")
@@ -49,7 +49,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
     compileOnly(deobfCurse("bibliocraft-228027:2423369"))
     compileOnly("com.github.GTNewHorizons:Minecraft-Backpack-Mod:2.5.8-GTNH:dev") {transitive = false}
-    compileOnly('com.github.GTNewHorizons:Baubles-Expanded:2.1.14-GTNH:dev') {transitive = false}
+    compileOnly('com.github.GTNewHorizons:Baubles-Expanded:2.1.15-GTNH:dev') {transitive = false}
     compileOnly('thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev')
 
 
