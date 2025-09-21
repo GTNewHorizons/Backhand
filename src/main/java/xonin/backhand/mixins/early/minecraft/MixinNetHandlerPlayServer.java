@@ -90,7 +90,7 @@ public abstract class MixinNetHandlerPlayServer {
                 itemstack1 = itemstack == null ? null : itemstack.copy();
                 container.inventoryItemStacks.set(slot.slotNumber, itemstack1);
 
-                for(ICrafting crafter : container.crafters) {
+                for (ICrafting crafter : container.crafters) {
                     crafter.sendSlotContents(container, slot.slotNumber, itemstack1);
                 }
             }
