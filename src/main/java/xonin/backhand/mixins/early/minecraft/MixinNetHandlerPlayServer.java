@@ -2,7 +2,10 @@ package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -72,6 +75,28 @@ public abstract class MixinNetHandlerPlayServer {
             }
             ci.cancel();
         }
+    }
+
+    @WrapWithCondition(
+        method = "processPlayerBlockPlacement",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
+    private boolean backhand$fixInvUpdateBlockage(Container container, @Local Slot slot) {
+        // Only updates offhand slot to prevent blocking main inventory updates
+        if (BackhandUtils.isUsingOffhand(playerEntity)) {
+            ItemStack itemstack = slot.getStack();
+            ItemStack itemstack1 = container.inventoryItemStacks.get(slot.slotNumber);
+
+            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
+                itemstack1 = itemstack == null ? null : itemstack.copy();
+                container.inventoryItemStacks.set(slot.slotNumber, itemstack1);
+
+                for(ICrafting crafter : container.crafters) {
+                    crafter.sendSlotContents(container, slot.slotNumber, itemstack1);
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     @Inject(
