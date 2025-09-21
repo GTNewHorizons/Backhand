@@ -57,12 +57,18 @@ public final class BackhandUtils {
 
     public static boolean useOffhandItem(EntityPlayer player, boolean syncSlot, BooleanSupplier action) {
         int oldSlot = player.inventory.currentItem;
-        player.inventory.currentItem = ((IOffhandInventory) player.inventory).backhand$getOffhandSlot();
-        boolean result = action.getAsBoolean();
-        player.inventory.currentItem = oldSlot;
+        player.inventory.currentItem = getOffhandSlot(player);
+
         if (syncSlot && player.worldObj.isRemote) {
             Minecraft.getMinecraft().playerController.syncCurrentPlayItem();
         }
+        boolean result = action.getAsBoolean();
+        player.inventory.currentItem = oldSlot;
+
+        if (syncSlot && player.worldObj.isRemote) {
+            Minecraft.getMinecraft().playerController.syncCurrentPlayItem();
+        }
+
         return result;
     }
 
