@@ -13,7 +13,7 @@ import thaumcraft.client.renderers.tile.TileNodeRenderer;
 import thaumcraft.common.items.relics.ItemThaumometer;
 import xonin.backhand.api.core.BackhandUtils;
 
-@Mixin(TileNodeRenderer.class)
+@Mixin(value = TileNodeRenderer.class, priority = 1500)
 public class MixinTileNodeRenderer {
 
     @WrapOperation(
