@@ -82,7 +82,7 @@ public abstract class MixinNetHandlerPlayServer {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Container;detectAndSendChanges()V"))
     private boolean backhand$fixInvUpdateBlockage(Container container, @Local Slot slot) {
         // Only updates offhand slot to prevent blocking main inventory updates
-        if (BackhandUtils.isUsingOffhand(playerEntity)) {
+        if (slot != null && BackhandUtils.isUsingOffhand(playerEntity)) {
             ItemStack itemstack = slot.getStack();
             ItemStack itemstack1 = container.inventoryItemStacks.get(slot.slotNumber);
 
