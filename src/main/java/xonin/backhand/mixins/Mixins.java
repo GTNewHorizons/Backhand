@@ -86,7 +86,13 @@ public enum Mixins implements IMixins {
             .addClientMixins(
                 "thaumcraft.MixinClientTickEventsFML", "thaumcraft.MixinTileNodeRenderer")
             .setPhase(Phase.LATE)
-            .addRequiredMod(TargetedMod.THAUMCRAFT));
+            .addRequiredMod(TargetedMod.THAUMCRAFT)),
+    IC2_FIX_ARMOR_SLOT(
+        new MixinBuilder("Fix IC2's armor slot")
+            .addCommonMixins(
+                "ic2.MixinSlotArmor")
+            .setPhase(Phase.LATE)
+            .addRequiredMod(TargetedMod.IC2));
     // spotless:on
 
     private final MixinBuilder builder;
