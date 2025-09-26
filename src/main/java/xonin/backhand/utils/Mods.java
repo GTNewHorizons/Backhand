@@ -9,7 +9,8 @@ public enum Mods {
     TINKERS_CONSTRUCT("TConstruct"),
     ET_FUTURUM("etfuturum"),
     TFCPLUS("terrafirmacraftplus"),
-    THAUMCRAFT("Thaumcraft");
+    THAUMCRAFT("Thaumcraft"),
+    BIBLIOCRAFT("BiblioCraft");
 
     private final String modId;
     private Boolean loaded;
