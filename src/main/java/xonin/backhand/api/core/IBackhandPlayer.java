@@ -1,5 +1,7 @@
 package xonin.backhand.api.core;
 
+import net.minecraft.item.ItemStack;
+
 /**
  * Interface added to EntityPlayer to support offhand management
  *
@@ -23,5 +25,9 @@ public interface IBackhandPlayer {
     boolean isOffhandItemInUse();
 
     boolean isUsingOffhand();
+
+    void setMainhandSlot(int slot);
+
+    ItemStack getMainhandItem();
 
 }

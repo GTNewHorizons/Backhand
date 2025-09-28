@@ -35,6 +35,7 @@ public enum Mixins implements IMixins {
             "minecraft.MixinEntityRenderer",
             "minecraft.MixinGuiContainerCreative",
             "minecraft.MixinRenderPlayer",
+            "minecraft.MixinPlayerControllerMP",
             "minecraft.containerfix.MixinOpenGuiHandler",
             "minecraft.containerfix.MixinPlayerControllerMP")
         .setPhase(Phase.EARLY)),

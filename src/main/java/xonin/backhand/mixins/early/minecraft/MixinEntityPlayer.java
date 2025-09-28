@@ -1,9 +1,12 @@
 package xonin.backhand.mixins.early.minecraft;
 
+import static xonin.backhand.api.core.EnumHand.MAIN_HAND;
+
 import java.util.Objects;
 
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -25,6 +28,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
@@ -51,6 +55,8 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private boolean backhand$isOffHandSwingInProgress = false;
     @Unique
     private boolean backhand$isOffhandItemInUs = false;
+    @Unique
+    private int backhand$mainhandSlot;
 
     private MixinEntityPlayer(World p_i1594_1_) {
         super(p_i1594_1_);
@@ -143,7 +149,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
             value = "INVOKE",
             target = "net/minecraftforge/common/ForgeHooks.canInteractWith(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/inventory/Container;)Z",
             remap = false))
-    private static boolean backhand$canInteractWith(EntityPlayer player, Container openContainer) {
+    private boolean backhand$canInteractWith(EntityPlayer player, Container openContainer) {
         if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
             int currentItem = BackhandUtils.swapToOffhand(player);
             boolean retValue = ForgeHooks.canInteractWith(player, openContainer);
@@ -151,6 +157,35 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
             return retValue;
         }
         return ForgeHooks.canInteractWith(player, openContainer);
+    }
+
+    @WrapOperation(
+        method = "attackTargetEntityWithCurrentItem",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D"))
+    private double backhand$getOffhandDamage(IAttributeInstance instance, Operation<Double> original) {
+        EntityPlayer player = (EntityPlayer) (Object) this;
+        if (BackhandUtils.isUsingOffhand(player)) {
+            ItemStack mainHand = MAIN_HAND.getItem(player);
+            ItemStack offHand = BackhandUtils.getOffhandItem(player);
+            backhand$refreshAttributes(mainHand, offHand);
+            double result = original.call(instance);
+            backhand$refreshAttributes(offHand, mainHand);
+            return result;
+        }
+        return original.call(instance);
+    }
+
+    @Unique
+    private void backhand$refreshAttributes(ItemStack oldItem, ItemStack newItem) {
+        if (oldItem != null) {
+            getAttributeMap().removeAttributeModifiers(oldItem.getAttributeModifiers());
+        }
+
+        if (newItem != null) {
+            getAttributeMap().applyAttributeModifiers(newItem.getAttributeModifiers());
+        }
     }
 
     @Unique
@@ -220,6 +255,16 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     @Override
     public boolean isUsingOffhand() {
         return inventory.currentItem == ((IOffhandInventory) inventory).backhand$getOffhandSlot();
+    }
+
+    @Override
+    public void setMainhandSlot(int slot) {
+        backhand$mainhandSlot = slot;
+    }
+
+    @Override
+    public ItemStack getMainhandItem() {
+        return inventory.getStackInSlot(backhand$mainhandSlot);
     }
 
     @Unique
