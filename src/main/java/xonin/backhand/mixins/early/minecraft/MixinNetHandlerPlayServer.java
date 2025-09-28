@@ -24,6 +24,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.IOffhandInventory;
 import xonin.backhand.hooks.containerfix.IContainerHook;
 import xonin.backhand.packet.BackhandPacketHandler;
@@ -47,7 +48,13 @@ public abstract class MixinNetHandlerPlayServer {
             ordinal = 1))
     private int backhand$isValidInventorySlot(int original) {
         // return a valid int e.g. between 0 and < 9
-        return IOffhandInventory.isValidSwitch(original, playerEntity) ? 0 : -1;
+        if (IOffhandInventory.isValidSwitch(original, playerEntity)) {
+            if (original != BackhandUtils.getOffhandSlot(playerEntity)) {
+                ((IBackhandPlayer) playerEntity).setMainhandSlot(original);
+            }
+            return 0;
+        }
+        return -1;
     }
 
     @WrapWithCondition(

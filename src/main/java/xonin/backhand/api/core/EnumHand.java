@@ -10,7 +10,8 @@ public enum EnumHand {
 
     public ItemStack getItem(EntityPlayer player) {
         return switch (this) {
-            case MAIN_HAND -> player.inventory.getCurrentItem();
+            case MAIN_HAND -> BackhandUtils.isUsingOffhand(player) ? ((IBackhandPlayer) player).getMainhandItem()
+                : player.inventory.getCurrentItem();
             case OFF_HAND -> BackhandUtils.getOffhandItem(player);
         };
     }
