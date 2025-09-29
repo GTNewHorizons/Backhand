@@ -1,5 +1,6 @@
 package xonin.backhand.hooks;
 
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
@@ -48,7 +49,7 @@ public class TorchHandler {
         }
 
         if (BackhandConfigClient.torchConfig.noTorchWithFood && mainhandStack != null
-            && mainhandStack.getItem() instanceof ItemFood) {
+            && (mainhandStack.getItem() instanceof ItemFood || mainhandStack.getItemUseAction() == EnumAction.eat)) {
             return false;
         }
 

@@ -54,7 +54,6 @@ dependencies {
     compileOnly('thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev')
     compileOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
 
-
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.5.8-backhand:dev") {
         exclude module: "Backhand"
     }
