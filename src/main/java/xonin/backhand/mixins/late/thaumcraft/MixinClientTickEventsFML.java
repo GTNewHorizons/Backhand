@@ -61,7 +61,8 @@ public abstract class MixinClientTickEventsFML {
         if (off != null && (main == null
             || !(main.getItem() instanceof ItemWandCasting || main.getItem() instanceof ItemSanityChecker))) {
             if (off.getItem() instanceof ItemWandCasting) {
-                renderCastingWandHud(event.renderTickTime, player, time, off);
+                BackhandUtils
+                    .useOffhandItem(player, () -> renderCastingWandHud(event.renderTickTime, player, time, off));
             } else if (off.getItem() instanceof ItemSanityChecker) {
                 renderSanityHud(event.renderTickTime, player, time);
             }
