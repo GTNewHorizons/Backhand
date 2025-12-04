@@ -24,23 +24,24 @@ public class ItemRendererHooks {
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
         if (BackhandUtils.isUsingOffhand(player)) return;
 
-        ItemStack mainhandItem = player.getCurrentEquippedItem();
-        ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-        if (!BackhandConfig.EmptyOffhand && !BackhandConfigClient.RenderEmptyOffhandAtRest && offhandItem == null) {
-            return;
+        ItemStack renderedMainhandItem = Minecraft.getMinecraft().entityRenderer.itemRenderer.itemToRender;
+        ItemStack renderedOffhandItem = BackhandRenderHelper.itemRenderer.itemToRender;
+        if (!BackhandConfigClient.RenderEmptyOffhandAtRest && renderedOffhandItem == null) {
+            if (!BackhandConfig.EmptyOffhand) {
+                return;
+            }
+
+            if (((IBackhandPlayer) player).getOffSwingProgress(frame) == 0) {
+                return;
+            }
         }
 
-        if (offhandItem == null && !BackhandConfigClient.RenderEmptyOffhandAtRest
-            && ((IBackhandPlayer) player).getOffSwingProgress(frame) == 0) {
-            return;
-        }
-
-        if (usesBothHands(mainhandItem)) {
+        if (usesBothHands(renderedMainhandItem)) {
             return;
         }
 
         BackhandRenderHelper.firstPersonFrame = frame;
-        if (usesBothHands(offhandItem)) {
+        if (usesBothHands(renderedOffhandItem)) {
             BackhandUtils
                 .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
         } else {
