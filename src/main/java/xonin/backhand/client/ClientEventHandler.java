@@ -48,7 +48,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
+        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && !event.isCanceled()) {
             renderHotbar(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
         }
     }
