@@ -10,8 +10,7 @@ public enum Mods {
     ET_FUTURUM("etfuturum"),
     TFCPLUS("terrafirmacraftplus"),
     THAUMCRAFT("Thaumcraft"),
-    BIBLIOCRAFT("BiblioCraft"),
-    EXTRA_UTILITIES("ExtraUtilities");
+    BIBLIOCRAFT("BiblioCraft");
 
     private final String modId;
     private Boolean loaded;
