@@ -1,7 +1,11 @@
 package xonin.backhand.mixins.early.minecraft;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -9,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
+
+import xonin.backhand.api.core.BackhandUtils;
 
 @Mixin(GuiContainerCreative.class)
 public abstract class MixinGuiContainerCreative {
@@ -22,5 +28,18 @@ public abstract class MixinGuiContainerCreative {
             .get(container.inventorySlots.size() - 1);
         slot.xDisplayPosition = -2000;
         slot.yDisplayPosition = -2000;
+    }
+
+    @Inject(method = "handleMouseClick", at = @At("TAIL"))
+    private void backhand$clearOffhandOnDeleteAll(Slot slotIn, int slotId, int mouseButton, int mode, CallbackInfo ci) {
+        if (mode != 1) return;
+        if (slotIn == null) return;
+        // Creative trash slot in the inventory tab.
+        if (slotIn.xDisplayPosition != 173 || slotIn.yDisplayPosition != 112) return;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        int offhandInvSlot = BackhandUtils.getOffhandSlot(mc.thePlayer);
+        int offhandWindowSlot = offhandInvSlot + InventoryPlayer.getHotbarSize();
+        mc.playerController.sendSlotPacket((ItemStack) null, offhandWindowSlot);
     }
 }
