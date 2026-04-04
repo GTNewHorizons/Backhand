@@ -23,4 +23,5 @@ public abstract class MixinGuiContainerCreative {
         slot.xDisplayPosition = -2000;
         slot.yDisplayPosition = -2000;
     }
+
 }

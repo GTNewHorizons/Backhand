@@ -57,6 +57,13 @@ public abstract class MixinNetHandlerPlayServer {
         return -1;
     }
 
+    @ModifyExpressionValue(
+        method = "processCreativeInventoryAction",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/InventoryPlayer;getHotbarSize()I"))
+    private int backhand$allowCreativeOffhandSlot(int original) {
+        return original + 1;
+    }
+
     @WrapWithCondition(
         method = "processPlayerDigging",
         at = @At(
