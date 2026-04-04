@@ -2,7 +2,6 @@ package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.inventory.Slot;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
