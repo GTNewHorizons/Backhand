@@ -32,7 +32,7 @@ public abstract class MixinContainerExtendedInventory extends Container {
                 inventoryPlayer.player,
                 inventoryPlayer,
                 inventoryPlayer.getSizeInventory() - 1 - i,
-                61,
+                62,
                 8 + i * 18,
                 i));
     }
