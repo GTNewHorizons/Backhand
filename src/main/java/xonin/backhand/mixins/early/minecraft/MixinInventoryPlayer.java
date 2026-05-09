@@ -1,5 +1,7 @@
 package xonin.backhand.mixins.early.minecraft;
 
+import static xonin.backhand.api.core.EnumHand.MAIN_HAND;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IOffhandInventory;
+import xonin.backhand.hooks.containerfix.IContainerHook;
 import xonin.backhand.utils.BackhandConfig;
 
 @Mixin(InventoryPlayer.class)
@@ -87,6 +91,15 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
 
     @ModifyReturnValue(method = "getCurrentItem", at = @At("RETURN"))
     private ItemStack backhand$getOffhandItem(ItemStack original) {
+        // Janky fix for some containers closing the gui while updating offhand item.
+        // This should only ever be called during container update.
+        if (!player.worldObj.isRemote && player.openContainer != player.inventoryContainer
+            && BackhandUtils.isUsingOffhand(player)
+            && !player.isUsingItem()
+            && !((IContainerHook) player.openContainer).backhand$wasOpenedWithOffhand()) {
+            return MAIN_HAND.getItem(player);
+        }
+
         if (currentItem == backhand$getOffhandSlot()) {
             return backhand$getOffhandItem();
         }
