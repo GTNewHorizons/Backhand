@@ -39,7 +39,7 @@ public class MixinRenderPlayer {
         }
         return original.call(player);
     }
-    
+
     @WrapOperation(
         method = "shouldRenderPass(Lnet/minecraft/client/entity/AbstractClientPlayer;IF)I",
         at = @At(
