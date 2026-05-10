@@ -24,7 +24,8 @@ public class CropsNHCompat {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.world == null || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || !BackhandUtils.isUsingOffhand(event.entityPlayer)) return;
+        if (event.world == null || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK
+            || !BackhandUtils.isUsingOffhand(event.entityPlayer)) return;
         ItemStack mainHand = MAIN_HAND.getItem(event.entityPlayer);
         if (mainHand == null || !(mainHand.getItem() instanceof ItemWateringCan)) return;
         if (event.world.getBlock(event.x, event.y, event.z) instanceof BlockCropSticks) {
