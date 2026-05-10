@@ -11,7 +11,8 @@ public enum Mods {
     TFCPLUS("terrafirmacraftplus"),
     THAUMCRAFT("Thaumcraft"),
     BIBLIOCRAFT("BiblioCraft"),
-    EXTRA_UTILITIES("ExtraUtilities");
+    EXTRA_UTILITIES("ExtraUtilities"),
+    CROPSNH("cropsnh"),;
 
     private final String modId;
     private Boolean loaded;

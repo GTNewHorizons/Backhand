@@ -53,6 +53,7 @@ dependencies {
     compileOnly('thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev')
     compileOnly(deobfCurse("extra-utilities-225561:2264384")) { transitive = false }
     compileOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
+    compileOnly("com.github.GTNewHorizons:CropsNH:2.0.49:dev")
 
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.6.7-backhand:dev") {
         exclude module: "Backhand"
