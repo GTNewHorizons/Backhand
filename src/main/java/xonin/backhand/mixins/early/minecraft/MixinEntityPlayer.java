@@ -5,6 +5,7 @@ import static xonin.backhand.api.core.EnumHand.MAIN_HAND;
 import java.util.Objects;
 
 import net.minecraft.block.BlockDispenser;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.RegistrySimple;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -37,6 +39,7 @@ import xonin.backhand.hooks.containerfix.IContainerHook;
 import xonin.backhand.packet.BackhandPacketHandler;
 import xonin.backhand.packet.OffhandAnimationPacket;
 import xonin.backhand.packet.OffhandSyncOffhandUse;
+import xonin.backhand.utils.BackhandConfig;
 
 @Mixin(EntityPlayer.class)
 public abstract class MixinEntityPlayer extends EntityLivingBase implements IBackhandPlayer {
@@ -57,6 +60,12 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private boolean backhand$isOffhandItemInUs = false;
     @Unique
     private int backhand$mainhandSlot;
+    @Unique
+    private int backhand$lastAttackTargetId = -1;
+    @Unique
+    private int backhand$lastAttackTick = Integer.MIN_VALUE;
+    @Unique
+    private boolean backhand$lastAttackWasOffhand = false;
 
     private MixinEntityPlayer(World p_i1594_1_) {
         super(p_i1594_1_);
@@ -177,6 +186,38 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
         return original.call(instance);
     }
 
+    @WrapOperation(
+        method = "attackTargetEntityWithCurrentItem",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
+    private boolean backhand$adjustDualWieldAttackIFrames(Entity targetEntity, DamageSource source, float amount,
+        Operation<Boolean> original) {
+        if (!BackhandConfig.OffhandAttack) {
+            return original.call(targetEntity, source, amount);
+        }
+
+        EntityPlayer player = (EntityPlayer) (Object) this;
+        boolean usingOffhand = BackhandUtils.isUsingOffhand(player);
+        boolean dualWieldCombo = backhand$isDualWieldCombo(targetEntity, usingOffhand);
+
+        if (dualWieldCombo) {
+            backhand$capTargetIFrames((EntityLivingBase) targetEntity);
+        }
+
+        boolean result = original.call(targetEntity, source, amount);
+        if (result) {
+            backhand$lastAttackTargetId = targetEntity.getEntityId();
+            backhand$lastAttackTick = ticksExisted;
+            backhand$lastAttackWasOffhand = usingOffhand;
+
+            if (dualWieldCombo) {
+                backhand$capTargetIFrames((EntityLivingBase) targetEntity);
+            }
+        }
+        return result;
+    }
+
     @Unique
     private void backhand$refreshAttributes(ItemStack oldItem, ItemStack newItem) {
         if (oldItem != null) {
@@ -185,6 +226,35 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
 
         if (newItem != null) {
             getAttributeMap().applyAttributeModifiers(newItem.getAttributeModifiers());
+        }
+    }
+
+    @Unique
+    private boolean backhand$isDualWieldCombo(Entity targetEntity, boolean usingOffhand) {
+        if (!(targetEntity instanceof EntityLivingBase target)) return false;
+        int dualWieldIFrames = backhand$getDualWieldAttackIFrames();
+        if (dualWieldIFrames >= 20 || targetEntity.getEntityId() != backhand$lastAttackTargetId
+            || usingOffhand == backhand$lastAttackWasOffhand) {
+            return false;
+        }
+
+        int ticksSinceLastAttack = ticksExisted - backhand$lastAttackTick;
+        return ticksSinceLastAttack >= 0 && ticksSinceLastAttack <= target.maxHurtResistantTime;
+    }
+
+    @Unique
+    private int backhand$getDualWieldAttackIFrames() {
+        int dualWieldIFrames = BackhandConfig.DualWieldAttackIFrames;
+        if (dualWieldIFrames < 0) return 0;
+        if (dualWieldIFrames > 20) return 20;
+        return dualWieldIFrames;
+    }
+
+    @Unique
+    private void backhand$capTargetIFrames(EntityLivingBase target) {
+        int dualWieldIFrames = backhand$getDualWieldAttackIFrames();
+        if (target.hurtResistantTime > dualWieldIFrames) {
+            target.hurtResistantTime = dualWieldIFrames;
         }
     }
 

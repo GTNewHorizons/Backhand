@@ -15,6 +15,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.hooks.ItemRendererHooks;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfigClient;
 
 @Mixin(ItemRenderer.class)
@@ -32,7 +33,8 @@ public abstract class MixinItemRenderer {
         if (BackhandConfigClient.RenderEmptyOffhandAtRest) return original;
         EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
         if (BackhandUtils.isUsingOffhand(player)) {
-            return true;
+            return original
+                || ((IBackhandPlayer) player).getOffSwingProgress(BackhandRenderHelper.firstPersonFrame) == 0;
         }
         return original;
     }

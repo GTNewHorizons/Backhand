@@ -23,6 +23,17 @@ public class BackhandConfig {
     @Config.DefaultBoolean(false)
     public static boolean OffhandBreakBlocks;
 
+    @Config.Sync
+    @Config.Comment("If true, mainhand item use blocks offhand attacks and block breaking. True in vanilla.")
+    @Config.DefaultBoolean(true)
+    public static boolean MainhandUseBlocksOffhandFallback;
+
+    @Config.Sync
+    @Config.Comment("Invulnerability ticks used when alternating mainhand and offhand attacks against the same mob. 20 is vanilla.")
+    @Config.DefaultInt(15)
+    @Config.RangeInt(min = 0, max = 20)
+    public static int DualWieldAttackIFrames;
+
     @Config.Comment("""
         These items will be unable to be swapped into the offhand.
         Formatting of an item should be: modid:itemname
