@@ -41,10 +41,8 @@ public class ItemRendererHooks {
 
         BackhandRenderHelper.firstPersonFrame = frame;
         if (usesBothHands(renderedOffhandItem)) {
-            BackhandUtils.useOffhandItem(
-                player,
-                false,
-                () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
+            BackhandUtils
+                .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
 
         } else {
             GL11.glEnable(GL11.GL_CULL_FACE);
