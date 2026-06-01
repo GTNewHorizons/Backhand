@@ -27,20 +27,22 @@ public class MixinItemThaumometerRenderer {
 
     @Inject(
         method = "renderItem",
-        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
+        remap = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/texture/TextureManager;bindTexture(Lnet/minecraft/util/ResourceLocation;)V"))
     private void beforeArmLoop(IItemRenderer.ItemRenderType type, ItemStack item, Object[] data, CallbackInfo ci) {
         if (type != IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON) return;
 
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
-        ItemStack mainhand = player.getHeldItem();
 
-        boolean otherSlotOccupied = offhand != null && mainhand != null;
+        if (ItemStack.areItemStacksEqual(offhand, item)) {
+            skipArm = 1;
+        } else {
+            skipArm = (offhand != null) ? 0 : -1;
+        }
 
-        // If the other slot has something in it, always render only the right
-        // arm (var9=1). Backhand mirrors the whole scene for offhand items,
-        // so this naturally becomes the left arm when in the offhand.
-        skipArm = otherSlotOccupied ? 0 : -1;
         armCallCount = 0;
     }
 

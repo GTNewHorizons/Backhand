@@ -36,14 +36,17 @@ public class ItemRendererHooks {
             }
         }
 
-        if (usesBothHands(renderedMainhandItem)) {
-            return;
-        }
+        if (usesBothHands(renderedMainhandItem) && renderedOffhandItem == null) return;
+        if (usesBothHands(renderedMainhandItem) && usesBothHands(renderedOffhandItem)) return;
 
         BackhandRenderHelper.firstPersonFrame = frame;
         if (usesBothHands(renderedOffhandItem)) {
-            BackhandUtils
-                .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
+            if (usesBothHands(renderedOffhandItem)) {
+                BackhandUtils.useOffhandItem(
+                    player,
+                    false,
+                    () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
+            }
         } else {
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glCullFace(GL11.GL_FRONT);
