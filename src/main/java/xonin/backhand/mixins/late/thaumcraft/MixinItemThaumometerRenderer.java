@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import thaumcraft.client.renderers.item.ItemThaumometerRenderer;
-import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 
 @Mixin(value = ItemThaumometerRenderer.class, remap = false)
 public class MixinItemThaumometerRenderer {
@@ -34,13 +34,20 @@ public class MixinItemThaumometerRenderer {
     private void beforeArmLoop(IItemRenderer.ItemRenderType type, ItemStack item, Object[] data, CallbackInfo ci) {
         if (type != IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON) return;
 
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        ItemStack offhand = BackhandUtils.getOffhandItem(player);
+        ItemStack mainhand = Minecraft.getMinecraft().entityRenderer.itemRenderer.itemToRender;
+        ItemStack offhand = BackhandRenderHelper.itemRenderer.itemToRender;
 
-        if (ItemStack.areItemStacksEqual(offhand, item)) {
+        boolean offhandMatch = ItemStack.areItemStacksEqual(offhand, item);
+        boolean mainhandMatch = ItemStack.areItemStacksEqual(mainhand, item);
+
+        if (offhandMatch && mainhandMatch) {
+            skipArm = -1;
+        } else if (offhandMatch) {
             skipArm = 1;
+        } else if (offhand != null) {
+            skipArm = 0;
         } else {
-            skipArm = (offhand != null) ? 0 : -1;
+            skipArm = -1;
         }
 
         armCallCount = 0;
