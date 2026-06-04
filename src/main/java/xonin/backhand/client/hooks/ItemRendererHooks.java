@@ -36,11 +36,11 @@ public class ItemRendererHooks {
             }
         }
 
-        if (usesBothHands(renderedMainhandItem) && renderedOffhandItem == null) return;
-        if (usesBothHands(renderedMainhandItem) && usesBothHands(renderedOffhandItem)) return;
+        if (handlesOwnRendering(renderedMainhandItem) && renderedOffhandItem == null) return;
+        if (handlesOwnRendering(renderedMainhandItem) && handlesOwnRendering(renderedOffhandItem)) return;
 
         BackhandRenderHelper.firstPersonFrame = frame;
-        if (usesBothHands(renderedOffhandItem)) {
+        if (handlesOwnRendering(renderedOffhandItem)) {
             BackhandUtils
                 .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
         } else {
@@ -59,7 +59,7 @@ public class ItemRendererHooks {
         }
     }
 
-    private static boolean usesBothHands(ItemStack item) {
+    private static boolean handlesOwnRendering(ItemStack item) {
         return item != null && (item.getItem() instanceof ItemMap
             || Mods.THAUMCRAFT.isLoaded() && item.getItem() instanceof ItemThaumometer);
     }
