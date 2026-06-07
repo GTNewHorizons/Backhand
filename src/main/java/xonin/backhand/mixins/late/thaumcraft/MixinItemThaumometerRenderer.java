@@ -11,8 +11,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import thaumcraft.client.renderers.item.ItemThaumometerRenderer;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -57,15 +59,15 @@ public class MixinItemThaumometerRenderer {
         backhand$armCallCount = 0;
     }
 
-    @Redirect(
+    @WrapOperation(
         method = "renderItem",
         remap = true,
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/RenderPlayer;renderFirstPersonArm(Lnet/minecraft/entity/player/EntityPlayer;)V"))
-    private void backhand$redirectArmRender(RenderPlayer renderPlayer, EntityPlayer player) {
+    private void backhand$wrapArmRender(RenderPlayer renderPlayer, EntityPlayer player, Operation<Void> original) {
         if (backhand$armCallCount != backhand$skipArm) {
-            renderPlayer.renderFirstPersonArm(player);
+            original.call(renderPlayer, player);
         }
         backhand$armCallCount++;
     }
