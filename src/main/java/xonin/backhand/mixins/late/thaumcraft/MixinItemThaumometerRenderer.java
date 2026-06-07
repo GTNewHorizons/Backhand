@@ -20,7 +20,7 @@ import thaumcraft.client.renderers.item.ItemThaumometerRenderer;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 
 @Mixin(value = ItemThaumometerRenderer.class, remap = false)
-public class MixinItemThaumometerRenderer {
+abstract class MixinItemThaumometerRenderer {
 
     @Unique
     private int backhand$skipArm = -1; // -1 = default rendering, 1 = skip right arm, 0 = skip left arm
