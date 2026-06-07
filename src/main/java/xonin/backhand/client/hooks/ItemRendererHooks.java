@@ -36,8 +36,10 @@ public class ItemRendererHooks {
             }
         }
 
-        if (handlesOwnRendering(renderedMainhandItem) && renderedOffhandItem == null) return;
-        if (handlesOwnRendering(renderedMainhandItem) && handlesOwnRendering(renderedOffhandItem)) return;
+        if (handlesOwnRendering(renderedMainhandItem)
+            && (renderedOffhandItem == null || handlesOwnRendering(renderedOffhandItem))) {
+            return;
+        }
 
         BackhandRenderHelper.firstPersonFrame = frame;
         if (handlesOwnRendering(renderedOffhandItem)) {
