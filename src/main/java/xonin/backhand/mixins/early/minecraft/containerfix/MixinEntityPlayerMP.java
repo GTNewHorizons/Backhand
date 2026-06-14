@@ -27,6 +27,28 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     @Unique
     private int backhand$heldItemTemp;
 
+    @Unique
+    private int backhand$closeHeldItemTemp;
+
+    @Unique
+    private boolean backhand$closeWasOffhand;
+
+    @Inject(method = "closeContainer", at = @At("HEAD"))
+    private void backhand$closeContainerPre(CallbackInfo ci) {
+        backhand$closeWasOffhand = ((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand();
+        if (backhand$closeWasOffhand) {
+            backhand$closeHeldItemTemp = BackhandUtils.swapToOffhand(this);
+        }
+    }
+
+    @Inject(method = "closeContainer", at = @At("RETURN"))
+    private void backhand$closeContainerPost(CallbackInfo ci) {
+        if (backhand$closeWasOffhand) {
+            BackhandUtils.swapBack(this, backhand$closeHeldItemTemp);
+            backhand$closeWasOffhand = false;
+        }
+    }
+
     @Inject(method = "onUpdate", at = @At("HEAD"))
     private void backhand$onUpdatePre(CallbackInfo ci) {
         if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
