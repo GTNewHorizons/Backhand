@@ -3,6 +3,7 @@ package xonin.backhand.mixins.early.minecraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +11,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
@@ -50,4 +56,14 @@ public abstract class MixinItemRenderer {
 
         return ((IBackhandPlayer) player).isOffhandItemInUse() ? 0 : original;
     }
+
+    @Definition(id = "getItem", method = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;")
+    @Definition(id = "itemstack", local = @Local(type = ItemStack.class))
+    @Definition(id = "ItemMap", type = ItemMap.class)
+    @Expression("itemstack.getItem() instanceof ItemMap")
+    @WrapOperation(method = "renderItemInFirstPerson", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
+    private boolean alwaysFalseItemMap(Object object, Operation<Boolean> original) {
+        return false;
+    }
+
 }
