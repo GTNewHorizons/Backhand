@@ -37,8 +37,7 @@ public enum Mixins implements IMixins {
             "minecraft.MixinRenderPlayer",
             "minecraft.MixinPlayerControllerMP",
             "minecraft.containerfix.MixinOpenGuiHandler",
-            "minecraft.containerfix.MixinPlayerControllerMP",
-            "minecraft.MinecraftAccessor")
+            "minecraft.containerfix.MixinPlayerControllerMP")
         .setPhase(Phase.EARLY)),
     GC_FIX_ARMOR_SLOT(new MixinBuilder("Fix GC boot slot clashing with offhand slot")
         .addCommonMixins("galacticraft.MixinContainerExtendedInventory")

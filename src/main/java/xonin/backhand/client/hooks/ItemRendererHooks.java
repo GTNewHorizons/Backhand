@@ -2,7 +2,6 @@ package xonin.backhand.client.hooks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
@@ -62,7 +61,6 @@ public class ItemRendererHooks {
     }
 
     private static boolean handlesOwnRendering(ItemStack item) {
-        return item != null && (item.getItem() instanceof ItemMap
-            || Mods.THAUMCRAFT.isLoaded() && item.getItem() instanceof ItemThaumometer);
+        return item != null && Mods.THAUMCRAFT.isLoaded() && item.getItem() instanceof ItemThaumometer;
     }
 }

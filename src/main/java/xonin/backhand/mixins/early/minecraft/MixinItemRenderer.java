@@ -7,6 +7,7 @@ import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,10 +22,14 @@ import com.llamalad7.mixinextras.sugar.Local;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.hooks.ItemRendererHooks;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfigClient;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
+
+    @Shadow
+    public ItemStack itemToRender;
 
     @Inject(method = "renderItemInFirstPerson", at = @At("RETURN"))
     private void backhand$renderItemInFirstPerson(float frame, CallbackInfo ci) {
@@ -63,7 +68,16 @@ public abstract class MixinItemRenderer {
     @Expression("itemstack.getItem() instanceof ItemMap")
     @WrapOperation(method = "renderItemInFirstPerson", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
     private boolean alwaysFalseItemMap(Object object, Operation<Boolean> original) {
-        return false;
-    }
+        if (!original.call(object)) {
+            return false;
+        }
 
+        ItemStack mainHandItem = Minecraft.getMinecraft().entityRenderer.itemRenderer.itemToRender;
+        ItemStack offHandItem = BackhandRenderHelper.itemRenderer.itemToRender;
+
+        boolean isInMainHand = ItemStack.areItemStacksEqual(mainHandItem, this.itemToRender);
+        boolean offHandEmpty = (offHandItem == null || offHandItem.stackSize == 0);
+
+        return isInMainHand && offHandEmpty;
+    }
 }
