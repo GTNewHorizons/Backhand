@@ -67,7 +67,7 @@ public abstract class MixinItemRenderer {
     @Definition(id = "ItemMap", type = ItemMap.class)
     @Expression("itemstack.getItem() instanceof ItemMap")
     @WrapOperation(method = "renderItemInFirstPerson", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
-    private boolean alwaysFalseItemMap(Object object, Operation<Boolean> original) {
+    private boolean backhand$additionalMapConditions(Object object, Operation<Boolean> original) {
         if (!original.call(object)) {
             return false;
         }
