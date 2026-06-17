@@ -72,7 +72,7 @@ public abstract class MixinItemRenderer {
             return false;
         }
 
-        ItemStack mainHandItem = Minecraft.getMinecraft().entityRenderer.itemRenderer.itemToRender;
+        ItemStack mainHandItem = this.itemToRender;
         ItemStack offHandItem = BackhandRenderHelper.itemRenderer.itemToRender;
 
         boolean isInMainHand = ItemStack.areItemStacksEqual(mainHandItem, this.itemToRender);
