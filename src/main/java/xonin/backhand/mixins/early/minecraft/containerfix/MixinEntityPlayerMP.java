@@ -28,6 +28,9 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     private int backhand$heldItemTemp;
 
     @Unique
+    private boolean backhand$onUpdateWasOffhand;
+
+    @Unique
     private int backhand$closeHeldItemTemp;
 
     @Unique
@@ -51,14 +54,15 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
 
     @Inject(method = "onUpdate", at = @At("HEAD"))
     private void backhand$onUpdatePre(CallbackInfo ci) {
-        if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
+        backhand$onUpdateWasOffhand = ((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand();
+        if (backhand$onUpdateWasOffhand) {
             backhand$heldItemTemp = BackhandUtils.swapToOffhand(this);
         }
     }
 
     @Inject(method = "onUpdate", at = @At("RETURN"))
     private void backhand$onUpdatePost(CallbackInfo ci) {
-        if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
+        if (backhand$onUpdateWasOffhand) {
             BackhandUtils.swapBack(this, backhand$heldItemTemp);
         }
     }

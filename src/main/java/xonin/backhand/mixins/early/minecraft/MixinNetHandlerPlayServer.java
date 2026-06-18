@@ -157,16 +157,21 @@ public abstract class MixinNetHandlerPlayServer {
     @Unique
     private int backhand$heldItemTemp;
 
+    @Unique
+    private boolean backhand$processClickWasOffhand;
+
     @Inject(method = "processClickWindow", at = @At("HEAD"))
     public void backhand$processClickPre(CallbackInfo ci) {
-        if (((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand()) {
+        backhand$processClickWasOffhand = ((IContainerHook) this.playerEntity.openContainer)
+            .backhand$wasOpenedWithOffhand();
+        if (backhand$processClickWasOffhand) {
             backhand$heldItemTemp = BackhandUtils.swapToOffhand(playerEntity);
         }
     }
 
     @Inject(method = "processClickWindow", at = @At("TAIL"))
     public void backhand$processClickPost(CallbackInfo ci) {
-        if (((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand()) {
+        if (backhand$processClickWasOffhand) {
             BackhandUtils.swapBack(playerEntity, backhand$heldItemTemp);
         }
     }
