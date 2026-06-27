@@ -73,8 +73,11 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     private void backhand$detectAndSendChanges2(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int currentItem = BackhandUtils.swapToOffhand(this);
-            instance.detectAndSendChanges();
-            BackhandUtils.swapBack(this, currentItem);
+            try {
+                instance.detectAndSendChanges();
+            } finally {
+                BackhandUtils.swapBack(this, currentItem);
+            }
         } else {
             instance.detectAndSendChanges();
         }

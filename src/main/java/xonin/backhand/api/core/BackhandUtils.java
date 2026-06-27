@@ -62,14 +62,15 @@ public final class BackhandUtils {
         if (syncSlot && player.worldObj.isRemote) {
             Minecraft.getMinecraft().playerController.syncCurrentPlayItem();
         }
-        boolean result = action.getAsBoolean();
-        player.inventory.currentItem = oldSlot;
+        try {
+            return action.getAsBoolean();
+        } finally {
+            player.inventory.currentItem = oldSlot;
 
-        if (syncSlot && player.worldObj.isRemote) {
-            Minecraft.getMinecraft().playerController.syncCurrentPlayItem();
+            if (syncSlot && player.worldObj.isRemote) {
+                Minecraft.getMinecraft().playerController.syncCurrentPlayItem();
+            }
         }
-
-        return result;
     }
 
     public static boolean isUsingOffhand(EntityPlayer player) {

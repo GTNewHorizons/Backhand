@@ -21,7 +21,12 @@ public class OffhandCancelUsage implements IMessage {
 
         @Override
         public IMessage onMessage(OffhandCancelUsage message, MessageContext ctx) {
-            Minecraft.getMinecraft().thePlayer.clearItemInUse();
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.func_152344_a(() -> {
+                if (mc.thePlayer != null) {
+                    mc.thePlayer.clearItemInUse();
+                }
+            });
             return null;
         }
     }

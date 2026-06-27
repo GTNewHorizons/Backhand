@@ -2,6 +2,7 @@ package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
@@ -47,14 +48,13 @@ public abstract class MixinNetHandlerPlayServer {
             target = "Lnet/minecraft/network/play/client/C09PacketHeldItemChange;func_149614_c()I",
             ordinal = 1))
     private int backhand$isValidInventorySlot(int original) {
-        // return a valid int e.g. between 0 and < 9
         if (IOffhandInventory.isValidSwitch(original, playerEntity)) {
             if (original != BackhandUtils.getOffhandSlot(playerEntity)) {
                 ((IBackhandPlayer) playerEntity).setMainhandSlot(original);
             }
             return 0;
         }
-        return -1;
+        return InventoryPlayer.getHotbarSize();
     }
 
     @ModifyExpressionValue(
