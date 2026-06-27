@@ -42,7 +42,7 @@ public abstract class MixinNetHandlerPlayClient {
             value = "INVOKE",
             target = "Lnet/minecraft/inventory/Container;putStacksInSlots([Lnet/minecraft/item/ItemStack;)V",
             ordinal = 0))
-    private void backhand$isValidInventorySlot(S30PacketWindowItems packetIn, CallbackInfo ci) {
+    private void backhand$preserveItemInUseStack(S30PacketWindowItems packetIn, CallbackInfo ci) {
         // This is a weird bug where the item in the prioritized hand might briefly cancel the other hand's item use
         // if the prioritized hand's item has an item use but didn't execute it. It causes the used hands item to
         // be replaced with a different instance which causes equality checks between it and the itemInUse to fail.
@@ -53,13 +53,14 @@ public abstract class MixinNetHandlerPlayClient {
             if (((IBackhandPlayer) player).isOffhandItemInUse()) {
                 int offhandSlot = BackhandUtils.getOffhandSlot(player) + InventoryPlayer.getHotbarSize();
                 ItemStack offhandItem = BackhandUtils.getOffhandItem(player);
-                if (ItemStack.areItemStacksEqual(stacks[offhandSlot], offhandItem)) {
+                if (offhandSlot >= 0 && offhandSlot < stacks.length
+                    && ItemStack.areItemStacksEqual(stacks[offhandSlot], offhandItem)) {
                     stacks[offhandSlot] = offhandItem;
                 }
             } else {
                 ItemStack currentItem = player.inventory.getCurrentItem();
                 int slot = player.inventory.mainInventory.length - 1 + player.inventory.currentItem;
-                if (ItemStack.areItemStacksEqual(stacks[slot], currentItem)) {
+                if (slot >= 0 && slot < stacks.length && ItemStack.areItemStacksEqual(stacks[slot], currentItem)) {
                     stacks[slot] = currentItem;
                 }
             }
