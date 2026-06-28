@@ -1,7 +1,6 @@
 package xonin.backhand.packet;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -34,10 +33,13 @@ public class OffhandAnimationPacket implements IMessage {
 
         @Override
         public IMessage onMessage(OffhandAnimationPacket message, MessageContext ctx) {
-            Entity entity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityId);
-            if (entity instanceof IBackhandPlayer player) {
-                player.swingOffItem();
-            }
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.func_152344_a(() -> {
+                if (mc.theWorld == null) return;
+                if (mc.theWorld.getEntityByID(message.entityId) instanceof IBackhandPlayer player) {
+                    player.swingOffItem();
+                }
+            });
             return null;
         }
     }
