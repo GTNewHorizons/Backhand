@@ -5,7 +5,7 @@
   "refmap": "mixins.backhand.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
-  "client": [],
-  "server": []
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
 }
