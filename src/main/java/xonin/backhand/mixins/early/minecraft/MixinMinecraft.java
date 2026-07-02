@@ -13,8 +13,10 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraftforge.common.MinecraftForge;
@@ -37,6 +39,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.hooks.RightClickItemTracker;
 import xonin.backhand.hooks.TorchHandler;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -68,8 +71,24 @@ public abstract class MixinMinecraft {
     @Shadow
     public EffectRenderer effectRenderer;
 
+    @Shadow
+    public GameSettings gameSettings;
+
     @Unique
     private int backhand$breakBlockTimer = 0;
+
+    @Unique
+    private boolean backhand$suppressNextOffhandBreakSwing = false;
+
+    @Unique
+    private boolean backhand$wasUseItemKeyDown = false;
+
+    @Inject(method = "runTick", at = @At("HEAD"))
+    private void backhand$resetUseItemKeyState(CallbackInfo ci) {
+        if (gameSettings == null || !gameSettings.keyBindUseItem.getIsKeyPressed()) {
+            backhand$wasUseItemKeyDown = false;
+        }
+    }
 
     /**
      * @author Lyft
@@ -79,6 +98,9 @@ public abstract class MixinMinecraft {
      */
     @Overwrite
     public void func_147121_ag() {
+        boolean useItemKeyDown = gameSettings.keyBindUseItem.getIsKeyPressed();
+        boolean repeatedUseClick = backhand$wasUseItemKeyDown && useItemKeyDown;
+        backhand$wasUseItemKeyDown = useItemKeyDown;
         rightClickDelayTimer = 4;
         if (objectMouseOver == null) {
             logger.warn("Null returned as 'hitResult', this shouldn't happen!");
@@ -95,6 +117,7 @@ public abstract class MixinMinecraft {
         boolean blockHit = objectMouseOver.typeOfHit == MovingObjectType.BLOCK && !theWorld.getBlock(x, y, z)
             .isAir(theWorld, x, y, z);
         boolean entityHit = objectMouseOver.typeOfHit == MovingObjectType.ENTITY;
+        boolean suppressOffhandFallback = backhand$shouldSuppressOffhandFallback(repeatedUseClick);
 
         // Make sure no item gets used twice
         boolean mainHandUsedFluid = false;
@@ -125,7 +148,7 @@ public abstract class MixinMinecraft {
             // is handled in backhand$rightClickBlock, not in backhand$rightClickItem
             if (handStack != null && handStack.getItem() != null
                 && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
-                if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+                if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickItem(hand, stack))) {
                     return;
                 }
                 if (hand == MAIN_HAND) {
@@ -146,27 +169,31 @@ public abstract class MixinMinecraft {
                 if (offhandUsedFluid) continue;
                 handStack = offhandItem;
             }
-            if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+            if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickItem(hand, stack))) {
                 return;
             }
         }
 
-        if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY
-            && offhandItem != null) {
+        if (!suppressOffhandFallback && BackhandConfig.OffhandBreakBlocks
+            && blockHit
+            && backhand$canBreakWithOffhand(mainHandItem, offhandItem)) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
-                rightClickDelayTimer = 10;
+                backhand$breakBlockTimer = 5;
+                backhand$suppressNextOffhandBreakSwing = true;
                 thePlayer.swingItem();
-                playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
+                playerController.clickBlock(x, y, z, objectMouseOver.sideHit);
             });
             return;
         }
 
-        if (BackhandConfig.OffhandBreakBlocks && blockHit
-            && offhandItem != null
-            && BackhandUtils.isItemTool(offhandItem.getItem())) {
+        if (!suppressOffhandFallback && BackhandConfig.OffhandAttack
+            && backhand$canUseOffhand(mainHandItem, offhandItem)
+            && (entityHit || backhand$shouldSwingOffhandUseFallback(offhandItem))) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
-                backhand$breakBlockTimer = 5;
-                playerController.clickBlock(x, y, z, objectMouseOver.sideHit);
+                thePlayer.swingItem();
+                if (entityHit) {
+                    playerController.attackEntity(thePlayer, objectMouseOver.entityHit);
+                }
             });
         }
     }
@@ -178,6 +205,11 @@ public abstract class MixinMinecraft {
             target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;resetBlockRemoving()V"))
     private boolean backhand$pauseReset(PlayerControllerMP instance) {
         if (backhand$breakBlockTimer > 0) {
+            if (!gameSettings.keyBindUseItem.getIsKeyPressed()) {
+                backhand$breakBlockTimer = 0;
+                backhand$suppressNextOffhandBreakSwing = false;
+                return true;
+            }
             backhand$breakBlockTimer--;
             return false;
         }
@@ -187,6 +219,11 @@ public abstract class MixinMinecraft {
     @Inject(method = "func_147115_a", at = @At(value = "HEAD"))
     private void backhand$breakBlockOffhand(boolean leftClick, CallbackInfo ci) {
         if (backhand$breakBlockTimer > 0) {
+            if (!gameSettings.keyBindUseItem.getIsKeyPressed()) {
+                backhand$breakBlockTimer = 0;
+                backhand$suppressNextOffhandBreakSwing = false;
+                return;
+            }
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 int i = objectMouseOver.blockX;
                 int j = objectMouseOver.blockY;
@@ -198,7 +235,13 @@ public abstract class MixinMinecraft {
 
                     if (thePlayer.isCurrentToolAdventureModeExempt(i, j, k)) {
                         effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
-                        thePlayer.swingItem();
+                        if (backhand$suppressNextOffhandBreakSwing) {
+                            backhand$suppressNextOffhandBreakSwing = false;
+                        } else {
+                            thePlayer.swingItem();
+                        }
+                    } else {
+                        backhand$suppressNextOffhandBreakSwing = false;
                     }
                 }
             });
@@ -211,6 +254,28 @@ public abstract class MixinMinecraft {
     }
 
     @Unique
+    private boolean backhand$canUseOffhand(ItemStack mainHandItem, ItemStack offhandItem) {
+        return offhandItem != null || mainHandItem == null && BackhandConfig.EmptyOffhand;
+    }
+
+    @Unique
+    private boolean backhand$canBreakWithOffhand(ItemStack mainHandItem, ItemStack offhandItem) {
+        return offhandItem != null ? BackhandUtils.isItemTool(offhandItem.getItem())
+            : mainHandItem == null && BackhandConfig.EmptyOffhand;
+    }
+
+    @Unique
+    private boolean backhand$shouldSwingOffhandUseFallback(ItemStack offhandItem) {
+        return offhandItem == null || BackhandUtils.isItemTool(offhandItem.getItem());
+    }
+
+    @Unique
+    private boolean backhand$shouldSuppressOffhandFallback(boolean repeatedUseClick) {
+        if (repeatedUseClick) return true;
+        return BackhandConfig.MainhandUseBlocksOffhandFallback && thePlayer.getItemInUse() != null;
+    }
+
+    @Unique
     private boolean backhand$useRightClick(EnumHand hand, ItemStack handStack, Predicate<ItemStack> action) {
         if (hand == MAIN_HAND) {
             return action.test(handStack);
@@ -220,12 +285,27 @@ public abstract class MixinMinecraft {
     }
 
     @Unique
-    private boolean backhand$rightClickItem(ItemStack stack) {
+    private boolean backhand$rightClickItem(EnumHand hand, ItemStack stack) {
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(thePlayer, RIGHT_CLICK_AIR, 0, 0, 0, -1, theWorld);
-        if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && stack != null
-            && (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null)) {
-            backhand$resetEquippedProgress();
-            return true;
+        if (MinecraftForge.EVENT_BUS.post(useItemEvent) || stack == null) {
+            return false;
+        }
+
+        boolean trackingMainhand = hand == MAIN_HAND && BackhandConfig.MainhandUseBlocksOffhandFallback;
+        if (trackingMainhand) {
+            RightClickItemTracker.beginMainhandUse();
+        }
+        try {
+            if (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
+                || trackingMainhand && RightClickItemTracker.didCustomItemRightClickHandle()
+                    && !(stack.getItem() instanceof ItemSword)) {
+                backhand$resetEquippedProgress();
+                return true;
+            }
+        } finally {
+            if (trackingMainhand) {
+                RightClickItemTracker.endMainhandUse();
+            }
         }
 
         return false;
