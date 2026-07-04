@@ -6,12 +6,11 @@ import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.authlib.GameProfile;
 
 import xonin.backhand.api.core.BackhandUtils;
@@ -24,20 +23,29 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
         super(p_i45324_1_, p_i45324_2_);
     }
 
-    @Unique
-    private int backhand$heldItemTemp;
-
-    @Inject(method = "onUpdate", at = @At("HEAD"))
-    private void backhand$onUpdatePre(CallbackInfo ci) {
-        if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
-            backhand$heldItemTemp = BackhandUtils.swapToOffhand(this);
+    @WrapMethod(method = "closeContainer")
+    private void backhand$wrapCloseContainer(Operation<Void> original) {
+        boolean wasOffhand = ((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand();
+        int heldItemTemp = wasOffhand ? BackhandUtils.swapToOffhand(this) : 0;
+        try {
+            original.call();
+        } finally {
+            if (wasOffhand) {
+                BackhandUtils.swapBack(this, heldItemTemp);
+            }
         }
     }
 
-    @Inject(method = "onUpdate", at = @At("RETURN"))
-    private void backhand$onUpdatePost(CallbackInfo ci) {
-        if (((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand()) {
-            BackhandUtils.swapBack(this, backhand$heldItemTemp);
+    @WrapMethod(method = "onUpdate")
+    private void backhand$wrapOnUpdate(Operation<Void> original) {
+        boolean wasOffhand = ((IContainerHook) this.openContainer).backhand$wasOpenedWithOffhand();
+        int heldItemTemp = wasOffhand ? BackhandUtils.swapToOffhand(this) : 0;
+        try {
+            original.call();
+        } finally {
+            if (wasOffhand) {
+                BackhandUtils.swapBack(this, heldItemTemp);
+            }
         }
     }
 
@@ -47,8 +55,11 @@ public abstract class MixinEntityPlayerMP extends EntityPlayer {
     private void backhand$detectAndSendChanges2(Container instance) {
         if (((IContainerHook) instance).backhand$wasOpenedWithOffhand()) {
             int currentItem = BackhandUtils.swapToOffhand(this);
-            instance.detectAndSendChanges();
-            BackhandUtils.swapBack(this, currentItem);
+            try {
+                instance.detectAndSendChanges();
+            } finally {
+                BackhandUtils.swapBack(this, currentItem);
+            }
         } else {
             instance.detectAndSendChanges();
         }

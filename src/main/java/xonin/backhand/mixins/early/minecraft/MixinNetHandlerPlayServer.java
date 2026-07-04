@@ -2,12 +2,14 @@ package xonin.backhand.mixins.early.minecraft;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.server.management.ItemInWorldManager;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -47,14 +50,13 @@ public abstract class MixinNetHandlerPlayServer {
             target = "Lnet/minecraft/network/play/client/C09PacketHeldItemChange;func_149614_c()I",
             ordinal = 1))
     private int backhand$isValidInventorySlot(int original) {
-        // return a valid int e.g. between 0 and < 9
         if (IOffhandInventory.isValidSwitch(original, playerEntity)) {
             if (original != BackhandUtils.getOffhandSlot(playerEntity)) {
                 ((IBackhandPlayer) playerEntity).setMainhandSlot(original);
             }
             return 0;
         }
-        return -1;
+        return InventoryPlayer.getHotbarSize();
     }
 
     @ModifyExpressionValue(
@@ -154,20 +156,16 @@ public abstract class MixinNetHandlerPlayServer {
 
     // Backhand Containerfix
 
-    @Unique
-    private int backhand$heldItemTemp;
-
-    @Inject(method = "processClickWindow", at = @At("HEAD"))
-    public void backhand$processClickPre(CallbackInfo ci) {
-        if (((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand()) {
-            backhand$heldItemTemp = BackhandUtils.swapToOffhand(playerEntity);
-        }
-    }
-
-    @Inject(method = "processClickWindow", at = @At("TAIL"))
-    public void backhand$processClickPost(CallbackInfo ci) {
-        if (((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand()) {
-            BackhandUtils.swapBack(playerEntity, backhand$heldItemTemp);
+    @WrapMethod(method = "processClickWindow")
+    private void backhand$wrapProcessClickWindow(C0EPacketClickWindow packetIn, Operation<Void> original) {
+        boolean wasOffhand = ((IContainerHook) this.playerEntity.openContainer).backhand$wasOpenedWithOffhand();
+        int heldItemTemp = wasOffhand ? BackhandUtils.swapToOffhand(playerEntity) : 0;
+        try {
+            original.call(packetIn);
+        } finally {
+            if (wasOffhand) {
+                BackhandUtils.swapBack(playerEntity, heldItemTemp);
+            }
         }
     }
 }

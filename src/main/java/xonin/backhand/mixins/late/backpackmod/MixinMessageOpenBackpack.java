@@ -25,7 +25,9 @@ public class MixinMessageOpenBackpack implements IContainerHook {
 
     @Inject(method = "fromBytes", at = @At("RETURN"))
     public void backhand$readBackhandFromBytes(ByteBuf buffer, CallbackInfo ci) {
-        backhand$openedWithOffhand = buffer.readBoolean();
+        if (buffer.isReadable()) {
+            backhand$openedWithOffhand = buffer.readBoolean();
+        }
     }
 
     @Inject(method = "toBytes", at = @At("RETURN"))

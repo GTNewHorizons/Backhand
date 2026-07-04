@@ -152,9 +152,11 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IBac
     private boolean backhand$canInteractWith(EntityPlayer player, Container openContainer) {
         if (((IContainerHook) openContainer).backhand$wasOpenedWithOffhand()) {
             int currentItem = BackhandUtils.swapToOffhand(player);
-            boolean retValue = ForgeHooks.canInteractWith(player, openContainer);
-            BackhandUtils.swapBack(player, currentItem);
-            return retValue;
+            try {
+                return ForgeHooks.canInteractWith(player, openContainer);
+            } finally {
+                BackhandUtils.swapBack(player, currentItem);
+            }
         }
         return ForgeHooks.canInteractWith(player, openContainer);
     }

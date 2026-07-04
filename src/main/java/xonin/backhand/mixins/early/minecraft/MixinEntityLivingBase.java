@@ -38,7 +38,7 @@ public abstract class MixinEntityLivingBase extends Entity {
         if (!((EntityLivingBase) (Object) this instanceof EntityPlayer player) || index > 0) return;
         ItemStack offhand = BackhandUtils.getOffhandItem(player);
         if (ItemStack.areItemStacksEqual(backhand$previousOffhandStack, offhand)) return;
-        backhand$previousOffhandStack = offhand;
+        backhand$previousOffhandStack = offhand == null ? null : offhand.copy();
         BackhandPacketHandler.sendPacketToAllTracking(player, new OffhandSyncItemPacket(player));
     }
 }

@@ -1,7 +1,6 @@
 package xonin.backhand.packet;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -46,10 +45,13 @@ public final class OffhandSyncItemPacket implements IMessage {
 
         @Override
         public IMessage onMessage(OffhandSyncItemPacket message, MessageContext ctx) {
-            Entity entity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityId);
-            if (entity instanceof EntityPlayer player) {
-                BackhandUtils.setPlayerOffhandItem(player, message.stack);
-            }
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.func_152344_a(() -> {
+                if (mc.theWorld == null) return;
+                if (mc.theWorld.getEntityByID(message.entityId) instanceof EntityPlayer player) {
+                    BackhandUtils.setPlayerOffhandItem(player, message.stack);
+                }
+            });
             return null;
         }
     }
