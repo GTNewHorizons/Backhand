@@ -67,4 +67,16 @@ public class Backhand {
         }
         return false;
     }
+
+    public static boolean doesMainhandUseStopOffhandFallback(ItemStack stack) {
+        if (stack == null) return false;
+
+        for (String itemName : BackhandConfig.mainhandUseStopsOffhandFallback) {
+            if (stack.getItem().delegate.name()
+                .equals(itemName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

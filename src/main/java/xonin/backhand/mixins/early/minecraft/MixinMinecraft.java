@@ -35,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
+import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -127,6 +128,10 @@ public abstract class MixinMinecraft {
                     }
                     return;
                 }
+                if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
+                    backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+                    return;
+                }
             } else if (entityHit) {
                 if (backhand$useRightClick(
                     hand,
@@ -162,6 +167,9 @@ public abstract class MixinMinecraft {
                 handStack = offhandItem;
             }
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+                return;
+            }
+            if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
                 return;
             }
         }
@@ -249,6 +257,11 @@ public abstract class MixinMinecraft {
     private boolean backhand$canBreakWithOffhand(ItemStack mainHandItem, ItemStack offhandItem) {
         return offhandItem != null ? BackhandUtils.isItemTool(offhandItem.getItem())
             : mainHandItem == null && BackhandConfig.EmptyOffhand;
+    }
+
+    @Unique
+    private boolean backhand$doesMainhandUseStopOffhandFallback(EnumHand hand, ItemStack stack) {
+        return hand == MAIN_HAND && Backhand.doesMainhandUseStopOffhandFallback(stack);
     }
 
     @Unique
