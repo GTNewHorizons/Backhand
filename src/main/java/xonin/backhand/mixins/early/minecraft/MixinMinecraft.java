@@ -70,6 +70,8 @@ public abstract class MixinMinecraft {
 
     @Unique
     private int backhand$breakBlockTimer = 0;
+    @Unique
+    private boolean backhand$blockRightClickCanceled;
 
     /**
      * @author Lyft
@@ -77,6 +79,7 @@ public abstract class MixinMinecraft {
      *         Don't change this methods visibility despite what mixin debug says.
      *         Some mods AT this and changing the visibility will break them.
      */
+    @SuppressWarnings("visibility")
     @Overwrite
     public void func_147121_ag() {
         rightClickDelayTimer = 4;
@@ -110,6 +113,12 @@ public abstract class MixinMinecraft {
 
             if (blockHit) {
                 if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z))) {
+                    return;
+                }
+                if (backhand$blockRightClickCanceled) {
+                    if (handStack != null) {
+                        backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+                    }
                     return;
                 }
             } else if (entityHit) {
@@ -251,7 +260,8 @@ public abstract class MixinMinecraft {
             z,
             objectMouseOver.sideHit,
             theWorld);
-        if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && playerController
+        backhand$blockRightClickCanceled = MinecraftForge.EVENT_BUS.post(useItemEvent);
+        if (!backhand$blockRightClickCanceled && playerController
             .onPlayerRightClick(thePlayer, theWorld, stack, x, y, z, objectMouseOver.sideHit, objectMouseOver.hitVec)) {
             thePlayer.swingItem();
             return true;
