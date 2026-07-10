@@ -79,6 +79,7 @@ public abstract class MixinMinecraft {
      *         Don't change this methods visibility despite what mixin debug says.
      *         Some mods AT this and changing the visibility will break them.
      */
+    @SuppressWarnings("visibility")
     @Overwrite
     public void func_147121_ag() {
         rightClickDelayTimer = 4;
