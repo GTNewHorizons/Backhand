@@ -93,7 +93,13 @@ public enum Mixins implements IMixins {
             .addCommonMixins(
                 "ic2.MixinSlotArmor")
             .setPhase(Phase.LATE)
-            .addRequiredMod(TargetedMod.IC2));
+            .addRequiredMod(TargetedMod.IC2)),
+    WITCHERY_FIX_BREW_BAG_CRASH(
+        new MixinBuilder("Fix crash when using brew bag from offhand")
+            .addCommonMixins(
+                "witchery.MixinInventoryBrewBag")
+            .setPhase(Phase.LATE)
+            .addRequiredMod(TargetedMod.WITCHERY));
     // spotless:on
 
     private final MixinBuilder builder;

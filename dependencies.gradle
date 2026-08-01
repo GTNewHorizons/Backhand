@@ -45,7 +45,7 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:WirelessCraftingTerminal:1.12.16:dev")
     compileOnly(deobfCurse('terrafirmacraft-302973:2627990')) {transitive = false}
     compileOnly(deobfCurse('terrafirmacraftplus-287053:3779225')) {transitive = false}
-    compileOnly("org.jetbrains:annotations:24.0.1")
+    compileOnly("org.jetbrains:annotations:26.1.0")
     compileOnly("com.github.GTNewHorizons:Minecraft-Backpack-Mod:2.6.13-GTNH:dev") {transitive = false}
     compileOnly(deobfCurse("bibliocraft-228027:2423369")) {transitive = false}
     compileOnly("net.industrial-craft:industrialcraft-2:2.2.828-experimental:dev") {transitive = false}
@@ -53,6 +53,7 @@ dependencies {
     compileOnly('thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev')
     compileOnly(deobfCurse("extra-utilities-225561:2264384")) { transitive = false }
     compileOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
+    compileOnly(rfg.deobf("curse.maven:witchery-69673:2234410"))
 
     // devOnlyNonPublishable (not runtimeOnlyNonPublishable) since we need mods.battlegear2.api classes at compile
     // time too, to detect Battlegear2 weapons (e.g. Tinkers' swords) without a hard dependency on the mod.
