@@ -16,7 +16,8 @@ public enum TargetedMod implements ITargetMod {
     TINKERS_CONSTRUCT("TConstruct"),
     MINECRAFT_BACKPACK_MOD("Backpack"),
     THAUMCRAFT("Thaumcraft"),
-    IC2("IC2");
+    IC2("IC2"),
+    WITCHERY("witchery");
 
     private final TargetModBuilder builder;
 
