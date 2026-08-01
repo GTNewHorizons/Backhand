@@ -54,7 +54,9 @@ dependencies {
     compileOnly(deobfCurse("extra-utilities-225561:2264384")) { transitive = false }
     compileOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
 
-    runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.6.8-backhand:dev") {
+    // devOnlyNonPublishable (not runtimeOnlyNonPublishable) since we need mods.battlegear2.api classes at compile
+    // time too, to detect Battlegear2 weapons (e.g. Tinkers' swords) without a hard dependency on the mod.
+    devOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.6.8-backhand:dev") {
         exclude module: "Backhand"
     }
 }

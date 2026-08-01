@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
@@ -43,6 +42,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.compat.Battlegear2Compat;
 import xonin.backhand.hooks.TorchHandler;
 import xonin.backhand.utils.BackhandConfig;
 
@@ -200,9 +200,7 @@ public abstract class MixinMinecraft {
      */
     @Unique
     private boolean backhand$skipSwordFallback(EnumHand hand, ItemStack handStack, ItemStack offhandItem) {
-        return hand == MAIN_HAND && offhandItem != null
-            && handStack != null
-            && handStack.getItem() instanceof ItemSword;
+        return hand == MAIN_HAND && offhandItem != null && Battlegear2Compat.isWeapon(handStack);
     }
 
     @WrapWithCondition(
