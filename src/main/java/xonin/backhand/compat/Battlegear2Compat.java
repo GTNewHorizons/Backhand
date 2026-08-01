@@ -3,7 +3,6 @@ package xonin.backhand.compat;
 import net.minecraft.item.ItemStack;
 
 import mods.battlegear2.api.core.BattlegearUtils;
-import xonin.backhand.utils.Mods;
 
 public class Battlegear2Compat {
 

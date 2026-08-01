@@ -188,7 +188,9 @@ public abstract class MixinMinecraft {
      */
     @Unique
     private boolean backhand$skipSwordFallback(EnumHand hand, ItemStack handStack, ItemStack offhandItem) {
-        return hand == MAIN_HAND && offhandItem != null && Mods.BATTLEGEAR2.isLoaded() && Battlegear2Compat.isWeapon(handStack);
+        return hand == MAIN_HAND && offhandItem != null
+            && Mods.BATTLEGEAR2.isLoaded()
+            && Battlegear2Compat.isWeapon(handStack);
     }
 
     @WrapWithCondition(
