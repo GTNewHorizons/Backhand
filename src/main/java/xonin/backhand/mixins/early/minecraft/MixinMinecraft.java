@@ -45,6 +45,7 @@ import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.compat.Battlegear2Compat;
 import xonin.backhand.hooks.TorchHandler;
 import xonin.backhand.utils.BackhandConfig;
+import xonin.backhand.utils.Mods;
 
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft {
@@ -94,8 +95,7 @@ public abstract class MixinMinecraft {
             return;
         }
 
-        // This flag is only meaningful right after a block-phase attempt in backhand$tryHand below, so reset
-        // it here to make sure a cancellation from a previous right click can never leak into this one.
+        // Reset here so a cancellation from a previous right click can't leak into this one.
         backhand$blockRightClickCanceled = false;
 
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
@@ -109,12 +109,8 @@ public abstract class MixinMinecraft {
             .isAir(theWorld, x, y, z);
         boolean entityHit = objectMouseOver.typeOfHit == MovingObjectType.ENTITY;
 
-        // Give one hand every chance it has (block/entity interaction, then its own item-use action) before
-        // moving on to the other hand, instead of resolving the block interaction for both hands first and only
-        // then looking at item-use actions. That older ordering let an offhand block/torch placement win over a
-        // mainhand item (backpack, travel staff, ...) whose action only exists as an item-use (onItemRightClick),
-        // since the mainhand never got a chance to try it before the offhand already placed its block and
-        // returned. This mirrors vanilla's own single-hand fallthrough (block phase, then item-use phase).
+        // Give one hand every chance (block/entity, then item-use) before the other, mirroring vanilla's
+        // single-hand fallthrough instead of resolving both hands' block phase first.
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
@@ -123,8 +119,7 @@ public abstract class MixinMinecraft {
             }
 
             if (blockHit && backhand$blockRightClickCanceled) {
-                // The interaction was cancelled (e.g. by a protection mod) - don't let the other hand attempt
-                // anything either, same as vanilla would simply stop for its single hand.
+                // Cancelled (e.g. by a protection mod) - stop entirely, same as vanilla does for its single hand.
                 return;
             }
         }
@@ -150,24 +145,21 @@ public abstract class MixinMinecraft {
     }
 
     /**
-     * Tries every action a single hand can perform for this right click: placing/using on the targeted block or
-     * entity first, then falling back to the item's own right-click action (eating, opening a backpack, bucket
-     * fill/empty, teleporting with a travel staff, ...). Returns true as soon as one of them succeeds.
+     * Tries every action one hand can perform for this right click (block/entity, then item-use), returning true
+     * as soon as one succeeds.
      */
     @Unique
     private boolean backhand$tryHand(EnumHand hand, ItemStack handStack, ItemStack mainHandItem, ItemStack offhandItem,
         boolean blockHit, boolean entityHit, int x, int y, int z) {
         if (blockHit) {
-            // The "don't place a torch/block from the offhand" option only ever gates this block-placement
-            // attempt - the offhand item can still act through its own item-use action further below.
+            // Only gates block placement - the offhand item can still act via its own item-use action below.
             boolean skipOffhandPlacement = hand == OFF_HAND && !TorchHandler.shouldPlace(mainHandItem, offhandItem);
             if (!skipOffhandPlacement) {
                 if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z))) {
                     return true;
                 }
                 if (backhand$blockRightClickCanceled) {
-                    // Still let this hand's item act once, but the caller stops entirely afterwards instead of
-                    // letting the other hand try the block too.
+                    // Still let this hand's item act once, but the other hand won't get to try the block.
                     if (handStack != null && !backhand$skipSwordFallback(hand, handStack, offhandItem)) {
                         backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
                     }
@@ -191,16 +183,12 @@ public abstract class MixinMinecraft {
     }
 
     /**
-     * Battlegear2's sword-parry stance is a persistent "item in use" state (like eating or drawing a bow), backed by
-     * vanilla's single, player-wide itemInUse field. Our offhand actions rely on briefly swapping the current hotbar
-     * slot to the offhand one and back, which fights with that persistent state instead of coexisting with it -
-     * starting a parry from the mainhand while the offhand also holds something breaks the animation of whichever
-     * hand loses. A parry with an empty offhand is unaffected and still works normally, so only skip it once the
-     * offhand actually has something that should act instead.
+     * Skip the mainhand sword's parry stance when the offhand also holds an item, since Battlegear2's persistent
+     * itemInUse state fights with our offhand hotbar-slot swap and breaks one hand's animation.
      */
     @Unique
     private boolean backhand$skipSwordFallback(EnumHand hand, ItemStack handStack, ItemStack offhandItem) {
-        return hand == MAIN_HAND && offhandItem != null && Battlegear2Compat.isWeapon(handStack);
+        return hand == MAIN_HAND && offhandItem != null && Mods.BATTLEGEAR2.isLoaded() && Battlegear2Compat.isWeapon(handStack);
     }
 
     @WrapWithCondition(
@@ -258,12 +246,9 @@ public abstract class MixinMinecraft {
             return false;
         }
 
-        // sendUseItem() always fires the "use item" packet to the server regardless of its own return value - that
-        // value only reflects whether the local stack visibly changed (size/instance), which is a poor proxy for
-        // success: it's always false in creative mode (onItemRightClick doesn't shrink the stack there) and for any
-        // item that isn't consumed by its own right-click action (e.g. an unbreakable teleport staff). Once the
-        // packet is sent the server will act on it no matter what we conclude here, so also treat any item that
-        // actually overrides onItemRightClick as handled, instead of letting the other hand also fire for real.
+        // sendUseItem()'s return value is a poor proxy for success (e.g. always false in creative, or for
+        // unconsumed items like a teleport staff), so also treat an onItemRightClick override as handled to stop
+        // the other hand firing for real too.
         boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
             || (stack.getItem() != null && backhand$hasRightClickAction(stack.getItem()));
         if (handled) {
@@ -279,11 +264,8 @@ public abstract class MixinMinecraft {
     @Unique
     private static final Class<?>[] RIGHT_CLICK_PARAM_TYPES = { ItemStack.class, World.class, EntityPlayer.class };
 
-    // Looked up by signature rather than by the "onItemRightClick" MCP name: in a reobfuscated production jar,
-    // vanilla methods are loaded under their SRG names (e.g. func_77659_a), so a name-based getMethod() lookup
-    // silently finds nothing and always returns false there - it only ever worked in the deobfuscated dev
-    // environment. Parameter/return types aren't renamed by obfuscation, so matching on those instead is safe in
-    // both environments.
+    // Matched by signature, not the "onItemRightClick" MCP name, since SRG names (e.g. func_77659_a) in a
+    // reobfuscated jar would make a name-based lookup silently fail.
     @Unique
     private static boolean backhand$hasRightClickAction(Item item) {
         return backhand$rightClickOverrideCache.computeIfAbsent(item.getClass(), clazz -> {

@@ -29,10 +29,8 @@ public abstract class MixinGuiContainerCreative extends InventoryEffectRenderer 
     }
 
     /**
-     * The vanilla "inventory" creative tab wraps every slot of the real {@code ContainerPlayer} (including our
-     * offhand slot, appended at the tail) and lays them out based on their original index, assuming a fixed 45-slot
-     * layout. That math places our appended slot right on top of the first hotbar slot, so give it its own spot
-     * instead, next to the armor slots.
+     * The vanilla "inventory" tab lays out slots by index assuming a fixed 45-slot layout, which would place our
+     * appended offhand slot on top of the first hotbar slot - so give it its own spot next to the armor slots.
      */
     @Inject(
         method = "setCurrentCreativeTab",
