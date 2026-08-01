@@ -4,6 +4,8 @@ import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
 import static xonin.backhand.api.core.EnumHand.*;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -277,14 +279,25 @@ public abstract class MixinMinecraft {
     private static final Map<Class<?>, Boolean> backhand$rightClickOverrideCache = new HashMap<>();
 
     @Unique
+    private static final Class<?>[] RIGHT_CLICK_PARAM_TYPES = { ItemStack.class, World.class, EntityPlayer.class };
+
+    // Looked up by signature rather than by the "onItemRightClick" MCP name: in a reobfuscated production jar,
+    // vanilla methods are loaded under their SRG names (e.g. func_77659_a), so a name-based getMethod() lookup
+    // silently finds nothing and always returns false there - it only ever worked in the deobfuscated dev
+    // environment. Parameter/return types aren't renamed by obfuscation, so matching on those instead is safe in
+    // both environments.
+    @Unique
     private static boolean backhand$hasRightClickAction(Item item) {
         return backhand$rightClickOverrideCache.computeIfAbsent(item.getClass(), clazz -> {
-            try {
-                return clazz.getMethod("onItemRightClick", ItemStack.class, World.class, EntityPlayer.class)
-                    .getDeclaringClass() != Item.class;
-            } catch (NoSuchMethodException e) {
-                return false;
+            for (Class<?> c = clazz; c != null && c != Item.class; c = c.getSuperclass()) {
+                for (Method method : c.getDeclaredMethods()) {
+                    if (method.getReturnType() == ItemStack.class
+                        && Arrays.equals(method.getParameterTypes(), RIGHT_CLICK_PARAM_TYPES)) {
+                        return true;
+                    }
+                }
             }
+            return false;
         });
     }
 
