@@ -4,6 +4,8 @@ import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
 import static xonin.backhand.api.core.EnumHand.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.block.material.Material;
@@ -13,9 +15,12 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -229,13 +234,38 @@ public abstract class MixinMinecraft {
     @Unique
     private boolean backhand$rightClickItem(ItemStack stack) {
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(thePlayer, RIGHT_CLICK_AIR, 0, 0, 0, -1, theWorld);
-        if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && stack != null
-            && (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null)) {
-            backhand$resetEquippedProgress();
-            return true;
+        if (MinecraftForge.EVENT_BUS.post(useItemEvent) || stack == null) {
+            return false;
         }
 
-        return false;
+        // sendUseItem() always fires the "use item" packet to the server regardless of its own return value - that
+        // value only reflects whether the local stack visibly changed (size/instance), which is a poor proxy for
+        // success: it's always false in creative mode (onItemRightClick doesn't shrink the stack there) and for any
+        // item that isn't consumed by its own right-click action (e.g. an unbreakable teleport staff). Once the
+        // packet is sent the server will act on it no matter what we conclude here, so also treat any item that
+        // actually overrides onItemRightClick as handled, instead of letting the other hand also fire for real.
+        boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
+            || backhand$hasRightClickAction(stack.getItem());
+        if (handled) {
+            backhand$resetEquippedProgress();
+        }
+
+        return handled;
+    }
+
+    @Unique
+    private static final Map<Class<?>, Boolean> backhand$rightClickOverrideCache = new HashMap<>();
+
+    @Unique
+    private static boolean backhand$hasRightClickAction(Item item) {
+        return backhand$rightClickOverrideCache.computeIfAbsent(item.getClass(), clazz -> {
+            try {
+                return clazz.getMethod("onItemRightClick", ItemStack.class, World.class, EntityPlayer.class)
+                    .getDeclaringClass() != Item.class;
+            } catch (NoSuchMethodException e) {
+                return false;
+            }
+        });
     }
 
     @Unique
