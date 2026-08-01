@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
@@ -165,7 +166,7 @@ public abstract class MixinMinecraft {
                 if (backhand$blockRightClickCanceled) {
                     // Still let this hand's item act once, but the caller stops entirely afterwards instead of
                     // letting the other hand try the block too.
-                    if (handStack != null) {
+                    if (handStack != null && !backhand$skipSwordFallback(hand, handStack, offhandItem)) {
                         backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
                     }
                     return false;
@@ -180,7 +181,26 @@ public abstract class MixinMinecraft {
             }
         }
 
+        if (backhand$skipSwordFallback(hand, handStack, offhandItem)) {
+            return false;
+        }
+
         return backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+    }
+
+    /**
+     * Battlegear2's sword-parry stance is a persistent "item in use" state (like eating or drawing a bow), backed by
+     * vanilla's single, player-wide itemInUse field. Our offhand actions rely on briefly swapping the current hotbar
+     * slot to the offhand one and back, which fights with that persistent state instead of coexisting with it -
+     * starting a parry from the mainhand while the offhand also holds something breaks the animation of whichever
+     * hand loses. A parry with an empty offhand is unaffected and still works normally, so only skip it once the
+     * offhand actually has something that should act instead.
+     */
+    @Unique
+    private boolean backhand$skipSwordFallback(EnumHand hand, ItemStack handStack, ItemStack offhandItem) {
+        return hand == MAIN_HAND && offhandItem != null
+            && handStack != null
+            && handStack.getItem() instanceof ItemSword;
     }
 
     @WrapWithCondition(
@@ -245,7 +265,7 @@ public abstract class MixinMinecraft {
         // packet is sent the server will act on it no matter what we conclude here, so also treat any item that
         // actually overrides onItemRightClick as handled, instead of letting the other hand also fire for real.
         boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
-            || backhand$hasRightClickAction(stack.getItem());
+            || (stack.getItem() != null && backhand$hasRightClickAction(stack.getItem()));
         if (handled) {
             backhand$resetEquippedProgress();
         }
