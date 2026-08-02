@@ -43,6 +43,7 @@ import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.compat.Battlegear2Compat;
+import xonin.backhand.compat.GregTechCompat;
 import xonin.backhand.hooks.TorchHandler;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.Mods;
@@ -179,7 +180,27 @@ public abstract class MixinMinecraft {
             return false;
         }
 
-        return backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+        boolean handled = backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+
+        // Vajra always looks "handled" to us, so give the offhand its intentional block-place pass-through.
+        if (hand == MAIN_HAND && blockHit && Mods.GREGTECH.isLoaded() && GregTechCompat.isVajra(handStack)) {
+            backhand$tryVajraOffhandPlacement(offhandItem, x, y, z);
+            return true;
+        }
+
+        return handled;
+    }
+
+    /**
+     * Gives the offhand a block-placement-only attempt (never its item-use fallback), skipping items on Backhand's
+     * torch list so the Vajra pass-through can't accidentally spam-place torches during a fast block-swap.
+     */
+    @Unique
+    private void backhand$tryVajraOffhandPlacement(ItemStack offhandItem, int x, int y, int z) {
+        if (offhandItem == null || TorchHandler.isTorch(offhandItem)) {
+            return;
+        }
+        backhand$useRightClick(OFF_HAND, offhandItem, stack -> backhand$rightClickBlock(stack, x, y, z));
     }
 
     /**

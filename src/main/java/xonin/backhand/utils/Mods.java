@@ -12,7 +12,8 @@ public enum Mods {
     THAUMCRAFT("Thaumcraft"),
     BIBLIOCRAFT("BiblioCraft"),
     EXTRA_UTILITIES("ExtraUtilities"),
-    BATTLEGEAR2("battlegear2");
+    BATTLEGEAR2("battlegear2"),
+    GREGTECH("gregtech");
 
     private final String modId;
     private Boolean loaded;
