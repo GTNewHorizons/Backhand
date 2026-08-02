@@ -97,7 +97,8 @@ public abstract class MixinMinecraft {
 
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
-        EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
+        EnumHand[] hands = Backhand.doesMainhandUseStopOffhandFallback(mainHandItem)
+            || !backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS : HANDS_REV;
 
         int x = objectMouseOver.blockX;
         int y = objectMouseOver.blockY;
