@@ -97,8 +97,8 @@ public abstract class MixinMinecraft {
 
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
-        EnumHand[] hands = Backhand.doesMainhandUseStopOffhandFallback(mainHandItem)
-            || !backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS : HANDS_REV;
+        EnumHand[] hands = !Backhand.doesMainhandUseStopOffhandFallback(mainHandItem)
+            && backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
 
         int x = objectMouseOver.blockX;
         int y = objectMouseOver.blockY;
@@ -151,6 +151,9 @@ public abstract class MixinMinecraft {
                 }
                 if (hand == MAIN_HAND) {
                     mainHandUsedFluid = true;
+                    if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
+                        return;
+                    }
                 } else {
                     offhandUsedFluid = true;
                 }
@@ -201,11 +204,6 @@ public abstract class MixinMinecraft {
             target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;resetBlockRemoving()V"))
     private boolean backhand$pauseReset(PlayerControllerMP instance) {
         if (backhand$breakBlockTimer > 0) {
-            if (!gameSettings.keyBindUseItem.getIsKeyPressed()) {
-                backhand$breakBlockTimer = 0;
-                backhand$suppressNextOffhandBreakSwing = false;
-                return true;
-            }
             backhand$breakBlockTimer--;
             return false;
         }
@@ -231,14 +229,11 @@ public abstract class MixinMinecraft {
 
                     if (thePlayer.isCurrentToolAdventureModeExempt(i, j, k)) {
                         effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
-                        if (backhand$suppressNextOffhandBreakSwing) {
-                            backhand$suppressNextOffhandBreakSwing = false;
-                        } else {
+                        if (!backhand$suppressNextOffhandBreakSwing) {
                             thePlayer.swingItem();
                         }
-                    } else {
-                        backhand$suppressNextOffhandBreakSwing = false;
                     }
+                    backhand$suppressNextOffhandBreakSwing = false;
                 }
             });
         }

@@ -57,21 +57,17 @@ public class Backhand {
     }
 
     public static boolean isOffhandBlacklisted(ItemStack stack) {
-        if (stack == null) return false;
-
-        for (String itemName : BackhandConfig.offhandBlacklist) {
-            if (stack.getItem().delegate.name()
-                .equals(itemName)) {
-                return true;
-            }
-        }
-        return false;
+        return matchesItemName(stack, BackhandConfig.offhandBlacklist);
     }
 
     public static boolean doesMainhandUseStopOffhandFallback(ItemStack stack) {
+        return matchesItemName(stack, BackhandConfig.mainhandUseStopsOffhandFallback);
+    }
+
+    private static boolean matchesItemName(ItemStack stack, String[] itemNames) {
         if (stack == null) return false;
 
-        for (String itemName : BackhandConfig.mainhandUseStopsOffhandFallback) {
+        for (String itemName : itemNames) {
             if (stack.getItem().delegate.name()
                 .equals(itemName)) {
                 return true;
