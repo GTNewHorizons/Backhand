@@ -94,6 +94,12 @@ public enum Mixins implements IMixins {
                 "ic2.MixinSlotArmor")
             .setPhase(Phase.LATE)
             .addRequiredMod(TargetedMod.IC2)),
+    WITCHERY_FIX_BREW_BAG_CRASH(
+        new MixinBuilder("Fix crash when using brew bag from offhand")
+            .addCommonMixins(
+                "witchery.MixinInventoryBrewBag")
+            .setPhase(Phase.LATE)
+            .addRequiredMod(TargetedMod.WITCHERY)),
     TC_THAUMOMETER_RENDER(
         new MixinBuilder("Adjusts the rendering of the Thaumometer to reflect backhand")
             .addClientMixins("thaumcraft.MixinItemThaumometerRenderer")
