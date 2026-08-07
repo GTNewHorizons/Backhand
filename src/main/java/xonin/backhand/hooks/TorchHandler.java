@@ -11,29 +11,20 @@ import xonin.backhand.utils.BackhandConfigClient;
 
 public class TorchHandler {
 
-    /**
-     * Whether this stack is on Backhand's explicit configured torch list.
-     */
-    public static boolean isTorch(ItemStack stack) {
-        if (stack == null || stack.stackSize <= 0) return false;
-
-        Item item = stack.getItem();
-        if (item == null) return false;
-
-        for (int i = 0; i < BackhandConfigClient.torchConfig.torch_items.length; i++) {
-            if (item.delegate.name()
-                .equals(BackhandConfigClient.torchConfig.torch_items[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean shouldPlace(ItemStack mainhandStack, ItemStack offhandStack) {
         // No item in offhand
         if (offhandStack == null || offhandStack.stackSize <= 0) return false;
 
-        if (!isTorch(offhandStack)) return true;
+        Item offhandItem = offhandStack.getItem();
+        if (offhandItem == null) return false;
+
+        boolean foundItem = false;
+        for (int i = 0; i < BackhandConfigClient.torchConfig.torch_items.length; i++) {
+            foundItem = offhandItem.delegate.name()
+                .equals(BackhandConfigClient.torchConfig.torch_items[i]);
+            if (foundItem) break;
+        }
+        if (!foundItem) return true;
 
         if (BackhandConfigClient.torchConfig.offhandTorchWithToolOnly) {
             if (mainhandStack == null || mainhandStack.stackSize <= 0) return false;
