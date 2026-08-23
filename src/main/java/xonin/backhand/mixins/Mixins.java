@@ -101,7 +101,12 @@ public enum Mixins implements IMixins {
             .addCommonMixins(
                 "witchery.MixinInventoryBrewBag")
             .setPhase(Phase.LATE)
-            .addRequiredMod(TargetedMod.WITCHERY));
+            .addRequiredMod(TargetedMod.WITCHERY)),
+    TC_THAUMOMETER_RENDER(
+        new MixinBuilder("Adjusts the rendering of the Thaumometer to reflect backhand")
+            .addClientMixins("thaumcraft.MixinItemThaumometerRenderer")
+            .setPhase(Phase.LATE)
+            .addRequiredMod(TargetedMod.THAUMCRAFT));
     // spotless:on
 
     private final MixinBuilder builder;
