@@ -64,14 +64,15 @@ public class Backhand {
         return matchesItemName(stack, BackhandConfig.mainhandUseStopsOffhandFallback);
     }
 
-    // Entries are "modid:itemname" (any damage value) or "modid:itemname:damage" (that damage value only), since
-    // some tools (e.g. GT's meta tools) share one registered item across many unrelated tool types by damage value.
+    // Entries are "modid:itemname" (any damage value) or "modid:itemname/damage" (that damage value only, using
+    // NEI's own notation), since some tools (e.g. GT's meta tools) share one registered item across many unrelated
+    // tool types by damage value.
     private static boolean matchesItemName(ItemStack stack, String[] itemNames) {
         if (stack == null) return false;
 
         String registryName = stack.getItem().delegate.name();
         for (String itemName : itemNames) {
-            int damageSeparator = itemName.indexOf(':', itemName.indexOf(':') + 1);
+            int damageSeparator = itemName.indexOf('/');
             if (damageSeparator < 0) {
                 if (registryName.equals(itemName)) {
                     return true;

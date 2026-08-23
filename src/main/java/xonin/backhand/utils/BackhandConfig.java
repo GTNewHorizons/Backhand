@@ -38,7 +38,8 @@ public class BackhandConfig {
         Only use this for items that always act unconditionally on right click (e.g. always opening a GUI):
         tools whose action depends on the targeted block (e.g. a wrench) are already detected generically
         and should NOT be added here, since this always blocks the offhand regardless of what was targeted.
-        Formatting of an item should be: modid:itemname, or modid:itemname:damage for one damage value only.
+        Formatting of an item should be: modid:itemname, or modid:itemname/damage for one damage value only
+        (matching NEI's own notation).
         """)
     @Config.DefaultStringList({ "matter-manipulator:itemMatterManipulator0",
         "matter-manipulator:itemMatterManipulator1", "matter-manipulator:itemMatterManipulator2",
@@ -48,7 +49,9 @@ public class BackhandConfig {
         "Forestry:hunterBag", "Forestry:hunterBagT2", "Forestry:adventurerBag", "Forestry:adventurerBagT2",
         "Forestry:builderBag", "Forestry:builderBagT2", "Forestry:coinBag", "Forestry:coinBagT2",
         "DraconicEvolution:magnet", "appliedenergistics2:item.ToolNetworkTool",
-        "appliedenergistics2:item.ToolAdvancedNetworkTool" })
+        "appliedenergistics2:item.ToolAdvancedNetworkTool", "Backpack:backpack", "Backpack:workbenchbackpack",
+        "minecraft:fishing_rod", "WitchingGadgets:item.WG_Bag", "JABBA:mover", "JABBA:moverFolded",
+        "JABBA:moverDiamond", "EnderIO:itemTravelStaff", "EnderIO:itemTeleportStaff" })
     public static String[] mainhandUseStopsOffhandFallback;
 
     @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
