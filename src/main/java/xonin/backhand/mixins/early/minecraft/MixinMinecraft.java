@@ -13,6 +13,7 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -34,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
+import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -68,10 +70,15 @@ public abstract class MixinMinecraft {
     @Shadow
     public EffectRenderer effectRenderer;
 
+    @Shadow
+    public GameSettings gameSettings;
+
     @Unique
     private int backhand$breakBlockTimer = 0;
     @Unique
     private boolean backhand$blockRightClickCanceled;
+    @Unique
+    private boolean backhand$suppressNextOffhandBreakSwing;
 
     /**
      * @author Lyft
@@ -90,7 +97,8 @@ public abstract class MixinMinecraft {
 
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
-        EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
+        EnumHand[] hands = !Backhand.doesMainhandUseStopOffhandFallback(mainHandItem)
+            && backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
 
         int x = objectMouseOver.blockX;
         int y = objectMouseOver.blockY;
@@ -121,6 +129,10 @@ public abstract class MixinMinecraft {
                     }
                     return;
                 }
+                if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
+                    backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+                    return;
+                }
             } else if (entityHit) {
                 if (backhand$useRightClick(
                     hand,
@@ -139,6 +151,9 @@ public abstract class MixinMinecraft {
                 }
                 if (hand == MAIN_HAND) {
                     mainHandUsedFluid = true;
+                    if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
+                        return;
+                    }
                 } else {
                     offhandUsedFluid = true;
                 }
@@ -158,10 +173,13 @@ public abstract class MixinMinecraft {
             if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
                 return;
             }
+            if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
+                return;
+            }
         }
 
         if (BackhandConfig.OffhandAttack && objectMouseOver.typeOfHit == MovingObjectType.ENTITY
-            && offhandItem != null) {
+            && backhand$canUseOffhand(mainHandItem, offhandItem)) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 rightClickDelayTimer = 10;
                 thePlayer.swingItem();
@@ -170,11 +188,10 @@ public abstract class MixinMinecraft {
             return;
         }
 
-        if (BackhandConfig.OffhandBreakBlocks && blockHit
-            && offhandItem != null
-            && BackhandUtils.isItemTool(offhandItem.getItem())) {
+        if (BackhandConfig.OffhandBreakBlocks && blockHit && backhand$canBreakWithOffhand(mainHandItem, offhandItem)) {
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 backhand$breakBlockTimer = 5;
+                backhand$suppressNextOffhandBreakSwing = true;
                 playerController.clickBlock(x, y, z, objectMouseOver.sideHit);
             });
         }
@@ -196,6 +213,11 @@ public abstract class MixinMinecraft {
     @Inject(method = "func_147115_a", at = @At(value = "HEAD"))
     private void backhand$breakBlockOffhand(boolean leftClick, CallbackInfo ci) {
         if (backhand$breakBlockTimer > 0) {
+            if (!gameSettings.keyBindUseItem.getIsKeyPressed()) {
+                backhand$breakBlockTimer = 0;
+                backhand$suppressNextOffhandBreakSwing = false;
+                return;
+            }
             BackhandUtils.useOffhandItem(thePlayer, () -> {
                 int i = objectMouseOver.blockX;
                 int j = objectMouseOver.blockY;
@@ -207,8 +229,11 @@ public abstract class MixinMinecraft {
 
                     if (thePlayer.isCurrentToolAdventureModeExempt(i, j, k)) {
                         effectRenderer.addBlockHitEffects(i, j, k, objectMouseOver);
-                        thePlayer.swingItem();
+                        if (!backhand$suppressNextOffhandBreakSwing) {
+                            thePlayer.swingItem();
+                        }
                     }
+                    backhand$suppressNextOffhandBreakSwing = false;
                 }
             });
         }
@@ -217,6 +242,22 @@ public abstract class MixinMinecraft {
     @ModifyExpressionValue(method = "func_147112_ai", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
     private int backhand$adjustSlotOffset(int original) {
         return original - 1;
+    }
+
+    @Unique
+    private boolean backhand$canUseOffhand(ItemStack mainHandItem, ItemStack offhandItem) {
+        return offhandItem != null || mainHandItem == null && BackhandConfig.EmptyOffhand;
+    }
+
+    @Unique
+    private boolean backhand$canBreakWithOffhand(ItemStack mainHandItem, ItemStack offhandItem) {
+        return offhandItem != null ? BackhandUtils.isItemTool(offhandItem.getItem())
+            : mainHandItem == null && BackhandConfig.EmptyOffhand;
+    }
+
+    @Unique
+    private boolean backhand$doesMainhandUseStopOffhandFallback(EnumHand hand, ItemStack stack) {
+        return hand == MAIN_HAND && Backhand.doesMainhandUseStopOffhandFallback(stack);
     }
 
     @Unique
