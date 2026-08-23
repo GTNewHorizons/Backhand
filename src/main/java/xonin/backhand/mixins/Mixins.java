@@ -84,6 +84,8 @@ public enum Mixins implements IMixins {
             .addRequiredMod(TargetedMod.MINECRAFT_BACKPACK_MOD)),
     TC_BACKHAND_COMPAT(
         new MixinBuilder("Backhand compat for TC wands & Thaumometer")
+            .addCommonMixins(
+                "thaumcraft.MixinEntityAspectOrb")
             .addClientMixins(
                 "thaumcraft.MixinClientTickEventsFML", "thaumcraft.MixinTileNodeRenderer")
             .setPhase(Phase.LATE)
