@@ -4,8 +4,6 @@ import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
 import static xonin.backhand.api.core.EnumHand.*;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -290,20 +288,33 @@ public abstract class MixinMinecraft {
     @Unique
     private static final Class<?>[] RIGHT_CLICK_PARAM_TYPES = { ItemStack.class, World.class, EntityPlayer.class };
 
-    // Matched by signature, not the "onItemRightClick" MCP name, since SRG names (e.g. func_77659_a) in a
-    // reobfuscated jar would make a name-based lookup silently fail.
+    // The dev environment resolves vanilla methods to their MCP name, a reobfuscated production jar to the SRG
+    // name (e.g. func_77659_a) - try both once instead of hardcoding either.
+    @Unique
+    private static final String backhand$onItemRightClickName = backhand$resolveOnItemRightClickName();
+
+    @Unique
+    private static String backhand$resolveOnItemRightClickName() {
+        for (String name : new String[] { "func_77659_a", "onItemRightClick" }) {
+            try {
+                Item.class.getMethod(name, RIGHT_CLICK_PARAM_TYPES);
+                return name;
+            } catch (NoSuchMethodException ignored) {}
+        }
+        throw new IllegalStateException("Could not resolve Item.onItemRightClick");
+    }
+
+    // Looked up by name instead of matching any method with this signature, since that also matched onEaten
+    // (same erased signature, different method).
     @Unique
     private static boolean backhand$hasRightClickAction(Item item) {
         return backhand$rightClickOverrideCache.computeIfAbsent(item.getClass(), clazz -> {
-            for (Class<?> c = clazz; c != null && c != Item.class; c = c.getSuperclass()) {
-                for (Method method : c.getDeclaredMethods()) {
-                    if (method.getReturnType() == ItemStack.class
-                        && Arrays.equals(method.getParameterTypes(), RIGHT_CLICK_PARAM_TYPES)) {
-                        return true;
-                    }
-                }
+            try {
+                return clazz.getMethod(backhand$onItemRightClickName, RIGHT_CLICK_PARAM_TYPES)
+                    .getDeclaringClass() != Item.class;
+            } catch (NoSuchMethodException e) {
+                return false;
             }
-            return false;
         });
     }
 
