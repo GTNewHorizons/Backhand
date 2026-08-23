@@ -41,10 +41,8 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
-import xonin.backhand.compat.Battlegear2Compat;
 import xonin.backhand.hooks.TorchHandler;
 import xonin.backhand.utils.BackhandConfig;
-import xonin.backhand.utils.Mods;
 
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft {
@@ -163,7 +161,7 @@ public abstract class MixinMinecraft {
                 }
                 if (backhand$blockRightClickCanceled) {
                     // Still let this hand's item act once, but the other hand won't get to try the block.
-                    if (handStack != null && !backhand$skipSwordFallback(hand, handStack, offhandItem)) {
+                    if (handStack != null) {
                         backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
                     }
                     return false;
@@ -178,22 +176,7 @@ public abstract class MixinMinecraft {
             }
         }
 
-        if (backhand$skipSwordFallback(hand, handStack, offhandItem)) {
-            return false;
-        }
-
         return backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
-    }
-
-    /**
-     * Skip the mainhand sword's parry stance when the offhand also holds an item, since Battlegear2's persistent
-     * itemInUse state fights with our offhand hotbar-slot swap and breaks one hand's animation.
-     */
-    @Unique
-    private boolean backhand$skipSwordFallback(EnumHand hand, ItemStack handStack, ItemStack offhandItem) {
-        return hand == MAIN_HAND && offhandItem != null
-            && Mods.BATTLEGEAR2.isLoaded()
-            && Battlegear2Compat.isWeapon(handStack);
     }
 
     @WrapWithCondition(
@@ -270,11 +253,12 @@ public abstract class MixinMinecraft {
             return false;
         }
 
-        // sendUseItem()'s return value is a poor proxy for success (e.g. always false in creative, or for
-        // unconsumed items like a teleport staff), so also treat an onItemRightClick override as handled to stop
-        // the other hand firing for real too.
+        // sendUseItem()'s stack-diff check for success is accurate in survival (e.g. food declining to eat when
+        // full correctly returns the stack unchanged), so only fall back to the coarser "item can act at all"
+        // check in creative, where items are never consumed and that diff is always unreliable.
         boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
-            || (stack.getItem() != null && backhand$hasRightClickAction(stack.getItem()));
+            || (thePlayer.capabilities.isCreativeMode && stack.getItem() != null
+                && backhand$hasRightClickAction(stack.getItem()));
         if (handled) {
             backhand$resetEquippedProgress();
         }

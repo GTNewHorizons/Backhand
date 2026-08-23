@@ -55,7 +55,7 @@ dependencies {
     compileOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
     compileOnly(rfg.deobf("curse.maven:witchery-69673:2234410"))
 
-    devOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.6.8-backhand:dev") {
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.6.8-backhand:dev") {
         exclude module: "Backhand"
     }
 }
