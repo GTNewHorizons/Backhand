@@ -51,7 +51,8 @@ public class BackhandConfig {
         "DraconicEvolution:magnet", "appliedenergistics2:item.ToolNetworkTool",
         "appliedenergistics2:item.ToolAdvancedNetworkTool", "Backpack:backpack", "Backpack:workbenchbackpack",
         "minecraft:fishing_rod", "WitchingGadgets:item.WG_Bag", "JABBA:mover", "JABBA:moverFolded",
-        "JABBA:moverDiamond", "EnderIO:itemTravelStaff", "EnderIO:itemTeleportStaff" })
+        "JABBA:moverDiamond", "EnderIO:itemTravelStaff", "EnderIO:itemTeleportStaff", "SpiceOfLife:lunchbag",
+        "SpiceOfLife:lunchbox" })
     public static String[] mainhandUseStopsOffhandFallback;
 
     @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
