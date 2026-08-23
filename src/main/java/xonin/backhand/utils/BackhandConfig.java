@@ -31,6 +31,26 @@ public class BackhandConfig {
     @Config.DefaultStringList({})
     public static String[] offhandBlacklist;
 
+    @Config.Sync
+    @Config.Comment("""
+        Main hand items listed here stop Backhand from trying the offhand fallback after right click.
+        This does not stop the item from being held in the offhand; use offhandBlacklist for that.
+        Only use this for items that always act unconditionally on right click (e.g. always opening a GUI):
+        tools whose action depends on the targeted block (e.g. a wrench) are already detected generically
+        and should NOT be added here, since this always blocks the offhand regardless of what was targeted.
+        Formatting of an item should be: modid:itemname, or modid:itemname:damage for one damage value only.
+        """)
+    @Config.DefaultStringList({ "matter-manipulator:itemMatterManipulator0",
+        "matter-manipulator:itemMatterManipulator1", "matter-manipulator:itemMatterManipulator2",
+        "matter-manipulator:itemMatterManipulator3", "Forestry:beealyzer", "Forestry:solderingIron",
+        "Forestry:apiaristBag", "Forestry:lepidopteristBag", "Forestry:minerBag", "Forestry:minerBagT2",
+        "Forestry:diggerBag", "Forestry:diggerBagT2", "Forestry:foresterBag", "Forestry:foresterBagT2",
+        "Forestry:hunterBag", "Forestry:hunterBagT2", "Forestry:adventurerBag", "Forestry:adventurerBagT2",
+        "Forestry:builderBag", "Forestry:builderBagT2", "Forestry:coinBag", "Forestry:coinBagT2",
+        "DraconicEvolution:magnet", "appliedenergistics2:item.ToolNetworkTool",
+        "appliedenergistics2:item.ToolAdvancedNetworkTool" })
+    public static String[] mainhandUseStopsOffhandFallback;
+
     @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
     @Config.DefaultBoolean(false)
     public static boolean OffhandPickup;

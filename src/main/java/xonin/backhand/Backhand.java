@@ -57,12 +57,33 @@ public class Backhand {
     }
 
     public static boolean isOffhandBlacklisted(ItemStack stack) {
+        return matchesItemName(stack, BackhandConfig.offhandBlacklist);
+    }
+
+    public static boolean doesMainhandUseStopOffhandFallback(ItemStack stack) {
+        return matchesItemName(stack, BackhandConfig.mainhandUseStopsOffhandFallback);
+    }
+
+    // Entries are "modid:itemname" (any damage value) or "modid:itemname:damage" (that damage value only), since
+    // some tools (e.g. GT's meta tools) share one registered item across many unrelated tool types by damage value.
+    private static boolean matchesItemName(ItemStack stack, String[] itemNames) {
         if (stack == null) return false;
 
-        for (String itemName : BackhandConfig.offhandBlacklist) {
-            if (stack.getItem().delegate.name()
-                .equals(itemName)) {
-                return true;
+        String registryName = stack.getItem().delegate.name();
+        for (String itemName : itemNames) {
+            int damageSeparator = itemName.indexOf(':', itemName.indexOf(':') + 1);
+            if (damageSeparator < 0) {
+                if (registryName.equals(itemName)) {
+                    return true;
+                }
+            } else {
+                String name = itemName.substring(0, damageSeparator);
+                try {
+                    int damage = Integer.parseInt(itemName.substring(damageSeparator + 1));
+                    if (stack.getItemDamage() == damage && registryName.equals(name)) {
+                        return true;
+                    }
+                } catch (NumberFormatException ignored) {}
             }
         }
         return false;

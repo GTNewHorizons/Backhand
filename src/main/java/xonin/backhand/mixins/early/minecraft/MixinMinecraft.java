@@ -38,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
+import xonin.backhand.Backhand;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.EnumHand;
 import xonin.backhand.client.utils.BackhandRenderHelper;
@@ -102,7 +103,8 @@ public abstract class MixinMinecraft {
 
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
-        EnumHand[] hands = backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
+        EnumHand[] hands = !Backhand.doesMainhandUseStopOffhandFallback(mainHandItem)
+            && backhand$doesOffhandNeedPriority(mainHandItem, offhandItem) ? HANDS_REV : HANDS;
 
         int x = objectMouseOver.blockX;
         int y = objectMouseOver.blockY;
@@ -122,6 +124,12 @@ public abstract class MixinMinecraft {
 
             if (blockHit && backhand$blockRightClickCanceled) {
                 // Cancelled (e.g. by a protection mod) - stop entirely, same as vanilla does for its single hand.
+                return;
+            }
+
+            if (hand == MAIN_HAND && Backhand.doesMainhandUseStopOffhandFallback(handStack)) {
+                // This tool always does something we can't observe (e.g. a server-authoritative action), so never
+                // let the offhand fire "for real" too on the assumption that the mainhand did nothing.
                 return;
             }
         }
