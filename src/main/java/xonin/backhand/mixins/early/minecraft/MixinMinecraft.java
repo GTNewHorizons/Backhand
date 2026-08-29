@@ -280,11 +280,16 @@ public abstract class MixinMinecraft {
     @Unique
     private static final Class<?>[] RIGHT_CLICK_PARAM_TYPES = { ItemStack.class, World.class, EntityPlayer.class };
 
+    // Resolved lazily (rather than as an eager static field) so a lookup failure can't throw out of this mixin's
+    // share of Minecraft's <clinit>.
+    @Unique
+    private static boolean backhand$onItemRightClickNameResolved = false;
+
+    @Unique
+    private static String backhand$onItemRightClickName;
+
     // The dev environment resolves vanilla methods to their MCP name, a reobfuscated production jar to the SRG
     // name (e.g. func_77659_a) - try both once instead of hardcoding either.
-    @Unique
-    private static final String backhand$onItemRightClickName = backhand$resolveOnItemRightClickName();
-
     @Unique
     private static String backhand$resolveOnItemRightClickName() {
         for (String name : new String[] { "func_77659_a", "onItemRightClick" }) {
@@ -293,13 +298,21 @@ public abstract class MixinMinecraft {
                 return name;
             } catch (NoSuchMethodException ignored) {}
         }
-        throw new IllegalStateException("Could not resolve Item.onItemRightClick");
+        return null;
     }
 
     // Looked up by name instead of matching any method with this signature, since that also matched onEaten
     // (same erased signature, different method).
     @Unique
     private static boolean backhand$hasRightClickAction(Item item) {
+        if (!backhand$onItemRightClickNameResolved) {
+            backhand$onItemRightClickName = backhand$resolveOnItemRightClickName();
+            backhand$onItemRightClickNameResolved = true;
+        }
+        if (backhand$onItemRightClickName == null) {
+            return false;
+        }
+
         return backhand$rightClickOverrideCache.computeIfAbsent(item.getClass(), clazz -> {
             try {
                 return clazz.getMethod(backhand$onItemRightClickName, RIGHT_CLICK_PARAM_TYPES)
