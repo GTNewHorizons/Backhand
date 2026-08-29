@@ -35,9 +35,11 @@ public class BackhandConfig {
     @Config.Comment("""
         Main hand items listed here stop Backhand from trying the offhand fallback after right click.
         This does not stop the item from being held in the offhand; use offhandBlacklist for that.
-        Only use this for items that always act unconditionally on right click (e.g. always opening a GUI):
-        tools whose action depends on the targeted block (e.g. a wrench) are already detected generically
-        and should NOT be added here, since this always blocks the offhand regardless of what was targeted.
+        Only add items that generally act on right click (e.g. opening a GUI); this is a tradeoff, since the
+        offhand also won't get to act in the rarer cases where the item does nothing.
+        Tools whose action depends on the targeted block (e.g. a wrench) are already detected generically from
+        the block interaction, so adding them here would block the offhand regardless of what was targeted -
+        do NOT add those.
         Formatting of an item should be: modid:itemname, or modid:itemname/damage for one damage value only
         (matching NEI's own notation).
         """)
