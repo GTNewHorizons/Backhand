@@ -68,7 +68,7 @@ public class Backhand {
     // NEI's own notation), since some tools (e.g. GT's meta tools) share one registered item across many unrelated
     // tool types by damage value.
     private static boolean matchesItemName(ItemStack stack, String[] itemNames) {
-        if (stack == null) return false;
+        if (stack == null || stack.getItem() == null) return false;
 
         String registryName = stack.getItem().delegate.name();
         for (String itemName : itemNames) {
