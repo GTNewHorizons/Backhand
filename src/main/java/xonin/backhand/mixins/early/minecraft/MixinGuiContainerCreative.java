@@ -19,9 +19,7 @@ import xonin.backhand.client.utils.BackhandRenderHelper;
 @Mixin(GuiContainerCreative.class)
 public abstract class MixinGuiContainerCreative extends InventoryEffectRenderer {
 
-    @Unique
     private static final int OFFHAND_SLOT_X = 82;
-    @Unique
     private static final int OFFHAND_SLOT_Y = 20;
 
     public MixinGuiContainerCreative(Container container) {
