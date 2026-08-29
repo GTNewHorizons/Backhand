@@ -4,6 +4,8 @@ import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
 import static xonin.backhand.api.core.EnumHand.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.block.material.Material;
@@ -14,13 +16,14 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.item.ItemBucket;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fluids.IFluidContainerItem;
 
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -95,6 +98,9 @@ public abstract class MixinMinecraft {
             return;
         }
 
+        // Reset here so a cancellation from a previous right click can't leak into this one.
+        backhand$blockRightClickCanceled = false;
+
         ItemStack mainHandItem = MAIN_HAND.getItem(thePlayer);
         ItemStack offhandItem = OFF_HAND.getItem(thePlayer);
         EnumHand[] hands = !Backhand.doesMainhandUseStopOffhandFallback(mainHandItem)
@@ -107,73 +113,23 @@ public abstract class MixinMinecraft {
             .isAir(theWorld, x, y, z);
         boolean entityHit = objectMouseOver.typeOfHit == MovingObjectType.ENTITY;
 
-        // Make sure no item gets used twice
-        boolean mainHandUsedFluid = false;
-        boolean offhandUsedFluid = false;
+        // Give one hand every chance (block/entity, then item-use) before the other, mirroring vanilla's
+        // single-hand fallthrough instead of resolving both hands' block phase first.
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
-            if (hand == OFF_HAND) {
-                if (blockHit && !TorchHandler.shouldPlace(mainHandItem, offhandItem)) {
-                    continue;
-                }
-            }
-
-            if (blockHit) {
-                if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z))) {
-                    return;
-                }
-                if (backhand$blockRightClickCanceled) {
-                    if (handStack != null) {
-                        backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
-                    }
-                    return;
-                }
-                if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
-                    backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
-                    return;
-                }
-            } else if (entityHit) {
-                if (backhand$useRightClick(
-                    hand,
-                    handStack,
-                    stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit))) {
-                    return;
-                }
-            }
-
-            // Note: The bucket/IFluidContainerItem fix did not work, since fluid placement
-            // is handled in backhand$rightClickBlock, not in backhand$rightClickItem
-            if (handStack != null && handStack.getItem() != null
-                && (handStack.getItem() instanceof ItemBucket || handStack.getItem() instanceof IFluidContainerItem)) {
-                if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
-                    return;
-                }
-                if (hand == MAIN_HAND) {
-                    mainHandUsedFluid = true;
-                    if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
-                        return;
-                    }
-                } else {
-                    offhandUsedFluid = true;
-                }
-            }
-        }
-
-        // process the potential entity/block placements first before trying the item right click actions
-        for (EnumHand hand : hands) {
-            ItemStack handStack;
-            if (hand == MAIN_HAND) {
-                if (mainHandUsedFluid) continue;
-                handStack = mainHandItem;
-            } else {
-                if (offhandUsedFluid) continue;
-                handStack = offhandItem;
-            }
-            if (backhand$useRightClick(hand, handStack, this::backhand$rightClickItem)) {
+            if (backhand$tryHand(hand, handStack, mainHandItem, offhandItem, blockHit, entityHit, x, y, z)) {
                 return;
             }
-            if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
+
+            if (blockHit && backhand$blockRightClickCanceled) {
+                // Cancelled (e.g. by a protection mod) - stop entirely, same as vanilla does for its single hand.
+                return;
+            }
+
+            if (hand == MAIN_HAND && Backhand.doesMainhandUseStopOffhandFallback(handStack)) {
+                // This tool always does something we can't observe (e.g. a server-authoritative action), so never
+                // let the offhand fire "for real" too on the assumption that the mainhand did nothing.
                 return;
             }
         }
@@ -195,6 +151,53 @@ public abstract class MixinMinecraft {
                 playerController.clickBlock(x, y, z, objectMouseOver.sideHit);
             });
         }
+    }
+
+    /**
+     * Tries every action one hand can perform for this right click (block/entity, then item-use), returning true
+     * as soon as one succeeds.
+     */
+    @Unique
+    private boolean backhand$tryHand(EnumHand hand, ItemStack handStack, ItemStack mainHandItem, ItemStack offhandItem,
+        boolean blockHit, boolean entityHit, int x, int y, int z) {
+        // The creative onItemRightClick-override heuristic below can false-positive on items that do nothing this
+        // click, swallowing these fallbacks before they run.
+        boolean creativeHeuristicReachesFallback = (entityHit && BackhandConfig.OffhandAttack
+            && backhand$canUseOffhand(mainHandItem, offhandItem))
+            || (blockHit && BackhandConfig.OffhandBreakBlocks
+                && backhand$canBreakWithOffhand(mainHandItem, offhandItem));
+
+        if (blockHit) {
+            // Only gates block placement - the offhand item can still act via its own item-use action below.
+            boolean skipOffhandPlacement = hand == OFF_HAND && !TorchHandler.shouldPlace(mainHandItem, offhandItem);
+            if (!skipOffhandPlacement) {
+                if (backhand$useRightClick(hand, handStack, stack -> backhand$rightClickBlock(stack, x, y, z))) {
+                    return true;
+                }
+                if (backhand$blockRightClickCanceled) {
+                    // Still let this hand's item act once, but the other hand won't get to try the block.
+                    if (handStack != null) {
+                        backhand$useRightClick(
+                            hand,
+                            handStack,
+                            stack -> backhand$rightClickItem(stack, creativeHeuristicReachesFallback));
+                    }
+                    return false;
+                }
+            }
+        } else if (entityHit) {
+            if (backhand$useRightClick(
+                hand,
+                handStack,
+                stack -> playerController.interactWithEntitySendPacket(thePlayer, objectMouseOver.entityHit))) {
+                return true;
+            }
+        }
+
+        return backhand$useRightClick(
+            hand,
+            handStack,
+            stack -> backhand$rightClickItem(stack, creativeHeuristicReachesFallback));
     }
 
     @WrapWithCondition(
@@ -256,11 +259,6 @@ public abstract class MixinMinecraft {
     }
 
     @Unique
-    private boolean backhand$doesMainhandUseStopOffhandFallback(EnumHand hand, ItemStack stack) {
-        return hand == MAIN_HAND && Backhand.doesMainhandUseStopOffhandFallback(stack);
-    }
-
-    @Unique
     private boolean backhand$useRightClick(EnumHand hand, ItemStack handStack, Predicate<ItemStack> action) {
         if (hand == MAIN_HAND) {
             return action.test(handStack);
@@ -270,15 +268,73 @@ public abstract class MixinMinecraft {
     }
 
     @Unique
-    private boolean backhand$rightClickItem(ItemStack stack) {
+    private boolean backhand$rightClickItem(ItemStack stack, boolean skipCreativeHeuristic) {
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(thePlayer, RIGHT_CLICK_AIR, 0, 0, 0, -1, theWorld);
-        if (!MinecraftForge.EVENT_BUS.post(useItemEvent) && stack != null
-            && (playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null)) {
-            backhand$resetEquippedProgress();
-            return true;
+        if (MinecraftForge.EVENT_BUS.post(useItemEvent) || stack == null) {
+            return false;
         }
 
-        return false;
+        // sendUseItem()'s stack-diff check for success is accurate in survival (e.g. food declining to eat when
+        // full correctly returns the stack unchanged), so only fall back to the coarser "item can act at all"
+        // check in creative, where items are never consumed and that diff is always unreliable.
+        boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
+            || (!skipCreativeHeuristic && thePlayer.capabilities.isCreativeMode
+                && stack.getItem() != null
+                && backhand$hasRightClickAction(stack.getItem()));
+        if (handled) {
+            backhand$resetEquippedProgress();
+        }
+
+        return handled;
+    }
+
+    @Unique
+    private static final Map<Class<?>, Boolean> backhand$rightClickOverrideCache = new HashMap<>();
+
+    @Unique
+    private static final Class<?>[] RIGHT_CLICK_PARAM_TYPES = { ItemStack.class, World.class, EntityPlayer.class };
+
+    // Resolved lazily (rather than as an eager static field) so a lookup failure can't throw out of this mixin's
+    // share of Minecraft's <clinit>.
+    @Unique
+    private static boolean backhand$onItemRightClickNameResolved = false;
+
+    @Unique
+    private static String backhand$onItemRightClickName;
+
+    // The dev environment resolves vanilla methods to their MCP name, a reobfuscated production jar to the SRG
+    // name (e.g. func_77659_a) - try both once instead of hardcoding either.
+    @Unique
+    private static String backhand$resolveOnItemRightClickName() {
+        for (String name : new String[] { "func_77659_a", "onItemRightClick" }) {
+            try {
+                Item.class.getMethod(name, RIGHT_CLICK_PARAM_TYPES);
+                return name;
+            } catch (NoSuchMethodException ignored) {}
+        }
+        return null;
+    }
+
+    // Looked up by name instead of matching any method with this signature, since that also matched onEaten
+    // (same erased signature, different method).
+    @Unique
+    private static boolean backhand$hasRightClickAction(Item item) {
+        if (!backhand$onItemRightClickNameResolved) {
+            backhand$onItemRightClickName = backhand$resolveOnItemRightClickName();
+            backhand$onItemRightClickNameResolved = true;
+        }
+        if (backhand$onItemRightClickName == null) {
+            return false;
+        }
+
+        return backhand$rightClickOverrideCache.computeIfAbsent(item.getClass(), clazz -> {
+            try {
+                return clazz.getMethod(backhand$onItemRightClickName, RIGHT_CLICK_PARAM_TYPES)
+                    .getDeclaringClass() != Item.class;
+            } catch (NoSuchMethodException e) {
+                return false;
+            }
+        });
     }
 
     @Unique
