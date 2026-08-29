@@ -278,7 +278,8 @@ public abstract class MixinMinecraft {
         // full correctly returns the stack unchanged), so only fall back to the coarser "item can act at all"
         // check in creative, where items are never consumed and that diff is always unreliable.
         boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
-            || (!skipCreativeHeuristic && thePlayer.capabilities.isCreativeMode && stack.getItem() != null
+            || (!skipCreativeHeuristic && thePlayer.capabilities.isCreativeMode
+                && stack.getItem() != null
                 && backhand$hasRightClickAction(stack.getItem()));
         if (handled) {
             backhand$resetEquippedProgress();
