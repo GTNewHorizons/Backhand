@@ -160,6 +160,13 @@ public abstract class MixinMinecraft {
     @Unique
     private boolean backhand$tryHand(EnumHand hand, ItemStack handStack, ItemStack mainHandItem, ItemStack offhandItem,
         boolean blockHit, boolean entityHit, int x, int y, int z) {
+        // The creative onItemRightClick-override heuristic below can false-positive on items that do nothing this
+        // click, swallowing these fallbacks before they run.
+        boolean creativeHeuristicReachesFallback = (entityHit && BackhandConfig.OffhandAttack
+            && backhand$canUseOffhand(mainHandItem, offhandItem))
+            || (blockHit && BackhandConfig.OffhandBreakBlocks
+                && backhand$canBreakWithOffhand(mainHandItem, offhandItem));
+
         if (blockHit) {
             // Only gates block placement - the offhand item can still act via its own item-use action below.
             boolean skipOffhandPlacement = hand == OFF_HAND && !TorchHandler.shouldPlace(mainHandItem, offhandItem);
@@ -170,7 +177,10 @@ public abstract class MixinMinecraft {
                 if (backhand$blockRightClickCanceled) {
                     // Still let this hand's item act once, but the other hand won't get to try the block.
                     if (handStack != null) {
-                        backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+                        backhand$useRightClick(
+                            hand,
+                            handStack,
+                            stack -> backhand$rightClickItem(stack, creativeHeuristicReachesFallback));
                     }
                     return false;
                 }
@@ -184,7 +194,10 @@ public abstract class MixinMinecraft {
             }
         }
 
-        return backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+        return backhand$useRightClick(
+            hand,
+            handStack,
+            stack -> backhand$rightClickItem(stack, creativeHeuristicReachesFallback));
     }
 
     @WrapWithCondition(
@@ -255,7 +268,7 @@ public abstract class MixinMinecraft {
     }
 
     @Unique
-    private boolean backhand$rightClickItem(ItemStack stack) {
+    private boolean backhand$rightClickItem(ItemStack stack, boolean skipCreativeHeuristic) {
         PlayerInteractEvent useItemEvent = new PlayerInteractEvent(thePlayer, RIGHT_CLICK_AIR, 0, 0, 0, -1, theWorld);
         if (MinecraftForge.EVENT_BUS.post(useItemEvent) || stack == null) {
             return false;
@@ -265,7 +278,7 @@ public abstract class MixinMinecraft {
         // full correctly returns the stack unchanged), so only fall back to the coarser "item can act at all"
         // check in creative, where items are never consumed and that diff is always unreliable.
         boolean handled = playerController.sendUseItem(thePlayer, theWorld, stack) || thePlayer.getItemInUse() != null
-            || (thePlayer.capabilities.isCreativeMode && stack.getItem() != null
+            || (!skipCreativeHeuristic && thePlayer.capabilities.isCreativeMode && stack.getItem() != null
                 && backhand$hasRightClickAction(stack.getItem()));
         if (handled) {
             backhand$resetEquippedProgress();
