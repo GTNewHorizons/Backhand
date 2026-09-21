@@ -3,22 +3,33 @@ package xonin.backhand.mixins.early.minecraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.client.hooks.ItemRendererHooks;
+import xonin.backhand.client.utils.BackhandRenderHelper;
 import xonin.backhand.utils.BackhandConfigClient;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
+
+    @Shadow
+    public ItemStack itemToRender;
 
     @Inject(method = "renderItemInFirstPerson", at = @At("RETURN"))
     private void backhand$renderItemInFirstPerson(float frame, CallbackInfo ci) {
@@ -49,5 +60,24 @@ public abstract class MixinItemRenderer {
         }
 
         return ((IBackhandPlayer) player).isOffhandItemInUse() ? 0 : original;
+    }
+
+    @Definition(id = "getItem", method = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;")
+    @Definition(id = "itemstack", local = @Local(type = ItemStack.class))
+    @Definition(id = "ItemMap", type = ItemMap.class)
+    @Expression("itemstack.getItem() instanceof ItemMap")
+    @WrapOperation(method = "renderItemInFirstPerson", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
+    private boolean backhand$additionalMapConditions(Object object, Operation<Boolean> original) {
+        if (!original.call(object)) {
+            return false;
+        }
+
+        ItemStack mainHandItem = this.itemToRender;
+        ItemStack offHandItem = BackhandRenderHelper.itemRenderer.itemToRender;
+
+        boolean isInMainHand = ItemStack.areItemStacksEqual(mainHandItem, this.itemToRender);
+        boolean offHandEmpty = (offHandItem == null || offHandItem.stackSize == 0);
+
+        return isInMainHand && offHandEmpty;
     }
 }
