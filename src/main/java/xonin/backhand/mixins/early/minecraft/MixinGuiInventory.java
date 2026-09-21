@@ -20,6 +20,6 @@ public abstract class MixinGuiInventory extends InventoryEffectRenderer {
 
     @Inject(method = "drawGuiContainerBackgroundLayer", at = @At("TAIL"))
     protected void backhand$drawOffhandSlot(float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
-        BackhandRenderHelper.drawItemStackSlot(guiLeft + 78, guiTop + 63);
+        BackhandRenderHelper.drawItemStackSlot(guiLeft + 78, guiTop + 60);
     }
 }
