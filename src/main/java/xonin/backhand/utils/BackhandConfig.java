@@ -35,8 +35,13 @@ public class BackhandConfig {
     @Config.Comment("""
         Main hand items listed here stop Backhand from trying the offhand fallback after right click.
         This does not stop the item from being held in the offhand; use offhandBlacklist for that.
-        Use this for server-authoritative tools that act on the server but return false on the client.
-        Formatting of an item should be: modid:itemname
+        Only add items that generally act on right click (e.g. opening a GUI); this is a tradeoff, since the
+        offhand also won't get to act in the rarer cases where the item does nothing.
+        Tools whose action depends on the targeted block (e.g. a wrench) are already detected generically from
+        the block interaction, so adding them here would block the offhand regardless of what was targeted -
+        do NOT add those.
+        Formatting of an item should be: modid:itemname, or modid:itemname/damage for one damage value only
+        (matching NEI's own notation).
         """)
     @Config.DefaultStringList({ "matter-manipulator:itemMatterManipulator0",
         "matter-manipulator:itemMatterManipulator1", "matter-manipulator:itemMatterManipulator2",
@@ -46,7 +51,10 @@ public class BackhandConfig {
         "Forestry:hunterBag", "Forestry:hunterBagT2", "Forestry:adventurerBag", "Forestry:adventurerBagT2",
         "Forestry:builderBag", "Forestry:builderBagT2", "Forestry:coinBag", "Forestry:coinBagT2",
         "DraconicEvolution:magnet", "appliedenergistics2:item.ToolNetworkTool",
-        "appliedenergistics2:item.ToolAdvancedNetworkTool" })
+        "appliedenergistics2:item.ToolAdvancedNetworkTool", "Backpack:backpack", "Backpack:workbenchbackpack",
+        "minecraft:fishing_rod", "WitchingGadgets:item.WG_Bag", "JABBA:mover", "JABBA:moverFolded",
+        "JABBA:moverDiamond", "EnderIO:itemTravelStaff", "EnderIO:itemTeleportStaff", "SpiceOfLife:lunchbag",
+        "SpiceOfLife:lunchbox" })
     public static String[] mainhandUseStopsOffhandFallback;
 
     @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
