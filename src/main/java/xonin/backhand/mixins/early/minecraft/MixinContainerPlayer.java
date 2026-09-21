@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import xonin.backhand.api.core.BackhandSlot;
 import xonin.backhand.api.core.BackhandUtils;
+import xonin.backhand.utils.BackhandConfigClient;
 
 @Mixin(ContainerPlayer.class)
 public abstract class MixinContainerPlayer extends Container {
@@ -19,6 +20,11 @@ public abstract class MixinContainerPlayer extends Container {
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void backhand2$addOffhandSlot(InventoryPlayer p_i1819_1_, boolean p_i1819_2_, EntityPlayer p_i1819_3_,
         CallbackInfo ci) {
-        addSlotToContainer(new BackhandSlot(p_i1819_1_, BackhandUtils.getOffhandSlot(p_i1819_3_), 80, 62));
+        addSlotToContainer(
+            new BackhandSlot(
+                p_i1819_1_,
+                BackhandUtils.getOffhandSlot(p_i1819_3_),
+                80 + BackhandConfigClient.offhandInventorySlotXOffset,
+                65 + BackhandConfigClient.offhandInventorySlotYOffset));
     }
 }

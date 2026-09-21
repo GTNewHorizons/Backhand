@@ -9,7 +9,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import xonin.backhand.api.core.BackhandSlot;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.utils.BackhandConfigClient;
 
 @Mixin(GuiInventory.class)
 public abstract class MixinGuiInventory extends InventoryEffectRenderer {
@@ -20,6 +22,15 @@ public abstract class MixinGuiInventory extends InventoryEffectRenderer {
 
     @Inject(method = "drawGuiContainerBackgroundLayer", at = @At("TAIL"))
     protected void backhand$drawOffhandSlot(float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
-        BackhandRenderHelper.drawItemStackSlot(guiLeft + 78, guiTop + 60);
+        // The slot is created once when joining a world, so keep it in sync if the config changes afterwards
+        for (Object slotObject : inventorySlots.inventorySlots) {
+            if (slotObject instanceof BackhandSlot offhandSlot) {
+                offhandSlot.xDisplayPosition = 80 + BackhandConfigClient.offhandInventorySlotXOffset;
+                offhandSlot.yDisplayPosition = 65 + BackhandConfigClient.offhandInventorySlotYOffset;
+            }
+        }
+        BackhandRenderHelper.drawItemStackSlot(
+            guiLeft + 78 + BackhandConfigClient.offhandInventorySlotXOffset,
+            guiTop + 63 + BackhandConfigClient.offhandInventorySlotYOffset);
     }
 }
