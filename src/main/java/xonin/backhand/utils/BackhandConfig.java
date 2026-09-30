@@ -46,7 +46,7 @@ public class BackhandConfig {
         "Forestry:hunterBag", "Forestry:hunterBagT2", "Forestry:adventurerBag", "Forestry:adventurerBagT2",
         "Forestry:builderBag", "Forestry:builderBagT2", "Forestry:coinBag", "Forestry:coinBagT2",
         "DraconicEvolution:magnet", "appliedenergistics2:item.ToolNetworkTool",
-        "appliedenergistics2:item.ToolAdvancedNetworkTool" })
+        "appliedenergistics2:item.ToolAdvancedNetworkTool", "ExtraUtilities:watering_can" })
     public static String[] mainhandUseStopsOffhandFallback;
 
     @Config.Comment("Picked up items can go into the offhand slot when empty. False in vanilla")
