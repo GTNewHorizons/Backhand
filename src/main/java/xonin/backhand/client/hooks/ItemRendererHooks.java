@@ -2,7 +2,6 @@ package xonin.backhand.client.hooks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
@@ -36,12 +35,13 @@ public class ItemRendererHooks {
             }
         }
 
-        if (usesBothHands(renderedMainhandItem)) {
+        if (handlesOwnRendering(renderedMainhandItem)
+            && (renderedOffhandItem == null || handlesOwnRendering(renderedOffhandItem))) {
             return;
         }
 
         BackhandRenderHelper.firstPersonFrame = frame;
-        if (usesBothHands(renderedOffhandItem)) {
+        if (handlesOwnRendering(renderedOffhandItem)) {
             BackhandUtils
                 .useOffhandItem(player, false, () -> BackhandRenderHelper.itemRenderer.renderItemInFirstPerson(frame));
         } else {
@@ -60,8 +60,7 @@ public class ItemRendererHooks {
         }
     }
 
-    private static boolean usesBothHands(ItemStack item) {
-        return item != null && (item.getItem() instanceof ItemMap
-            || Mods.THAUMCRAFT.isLoaded() && item.getItem() instanceof ItemThaumometer);
+    private static boolean handlesOwnRendering(ItemStack item) {
+        return item != null && Mods.THAUMCRAFT.isLoaded() && item.getItem() instanceof ItemThaumometer;
     }
 }
