@@ -3,12 +3,14 @@ package xonin.backhand;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 
 import org.lwjgl.input.Keyboard;
 
 import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
 
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import xonin.backhand.api.core.BackhandUtils;
@@ -22,7 +24,20 @@ public class CommonProxy {
         .createConfigurable("backhand.swap_offhand", "key.categories.gameplay", Keyboard.KEY_F)
         .registerGlobalListener(CommonProxy::swapOffhand);
 
+    /**
+     * Set when a main-hand entity interact was cancelled by a mod, read right after by the server's use-entity
+     * handling.
+     */
+    public static boolean mainhandInteractCanceled;
+
     public void load() {}
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void onEntityInteract(EntityInteractEvent event) {
+        if (event.isCanceled() && !event.entityPlayer.worldObj.isRemote) {
+            mainhandInteractCanceled = true;
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
