@@ -84,7 +84,8 @@ public final class BackhandRenderHelper {
 
             EnumAction enumaction = null;
 
-            if (player.getItemInUseCount() > 0) {
+            // Only the item actually in use takes its use pose; a blocking main hand sword must not raise the offhand
+            if (player.getItemInUseCount() > 0 && player.getItemInUse() == BackhandUtils.getOffhandItem(player)) {
                 enumaction = offhandItem.getItemUseAction();
             }
 
