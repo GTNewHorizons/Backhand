@@ -26,6 +26,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.api.core.IBackhandPlayer;
 import xonin.backhand.api.core.IOffhandInventory;
@@ -149,7 +150,10 @@ public abstract class MixinNetHandlerPlayServer {
             }
             backhand$dropEntityInteraction = false;
         } else {
-            result = backhand$dropEntityInteraction = original.call(instance, entity);
+            CommonProxy.mainhandInteractCanceled = false;
+            result = original.call(instance, entity);
+            // A mod that cancels the interact has handled the click, so the offhand must not click as well
+            backhand$dropEntityInteraction = result || CommonProxy.mainhandInteractCanceled;
         }
         return result;
     }
