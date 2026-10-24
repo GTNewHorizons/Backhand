@@ -24,6 +24,16 @@ public class BackhandConfigClient {
     @Config.DefaultInt(0)
     public static int offhandHotbarSlotYOffset;
 
+    @Config.Comment("Moves the offhand slot in the player inventory horizontally. Positive values move it right.")
+    @Config.RangeInt(min = -100, max = 100)
+    @Config.DefaultInt(0)
+    public static int offhandInventorySlotXOffset;
+
+    @Config.Comment("Moves the offhand slot in the player inventory vertically. Positive values move it down.")
+    @Config.RangeInt(min = -100, max = 100)
+    @Config.DefaultInt(0)
+    public static int offhandInventorySlotYOffset;
+
     @Config.Comment("Tweaks when holding a torch in the offhand")
     @Config.Name("Offhand Torch Tweaks")
     public static TorchConfig torchConfig = new TorchConfig();
