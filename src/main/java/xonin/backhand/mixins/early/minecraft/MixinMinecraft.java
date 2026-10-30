@@ -110,6 +110,7 @@ public abstract class MixinMinecraft {
         // Make sure no item gets used twice
         boolean mainHandUsedFluid = false;
         boolean offhandUsedFluid = false;
+        boolean blockAttempted = false;
         for (EnumHand hand : hands) {
             ItemStack handStack = hand == MAIN_HAND ? mainHandItem : offhandItem;
 
@@ -124,11 +125,17 @@ public abstract class MixinMinecraft {
                     return;
                 }
                 if (backhand$blockRightClickCanceled) {
-                    if (handStack != null) {
-                        backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+                    // Only stop here if no earlier hand has tried the block yet, otherwise the earlier
+                    // hand would never get its item use,
+                    if (!blockAttempted) {
+                        if (handStack != null) {
+                            backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
+                        }
+                        return;
                     }
-                    return;
+                    break;
                 }
+                blockAttempted = true;
                 if (backhand$doesMainhandUseStopOffhandFallback(hand, handStack)) {
                     backhand$useRightClick(hand, handStack, this::backhand$rightClickItem);
                     return;
