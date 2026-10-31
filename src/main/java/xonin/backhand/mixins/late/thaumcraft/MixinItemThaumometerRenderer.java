@@ -23,7 +23,21 @@ import xonin.backhand.client.utils.BackhandRenderHelper;
 abstract class MixinItemThaumometerRenderer {
 
     @Unique
-    private int backhand$skipArm = -1; // -1 = default rendering, 1 = skip right arm, 0 = skip left arm
+    private enum backhand$skipArm {
+
+        NONE(-1),
+        RIGHT(1),
+        LEFT(0);
+
+        private final int armToSkip;
+
+        backhand$skipArm(int armToSkip) {
+            this.armToSkip = armToSkip;
+        }
+    }
+
+    @Unique
+    private backhand$skipArm backhand$armToSkip = MixinItemThaumometerRenderer.backhand$skipArm.NONE;
 
     @Unique
     private int backhand$armCallCount = 0;
@@ -45,13 +59,13 @@ abstract class MixinItemThaumometerRenderer {
         boolean mainhandThaumometer = ItemStack.areItemStacksEqual(mainhand, item);
 
         if (mainhandThaumometer && offhandThaumometer) {
-            backhand$skipArm = -1;
+            backhand$armToSkip = backhand$skipArm.NONE;
         } else if (offhandThaumometer) {
-            backhand$skipArm = 1;
+            backhand$armToSkip = backhand$skipArm.RIGHT;
         } else if (mainhandThaumometer && offhand != null) {
-            backhand$skipArm = 0;
+            backhand$armToSkip = backhand$skipArm.LEFT;
         } else {
-            backhand$skipArm = -1;
+            backhand$armToSkip = backhand$skipArm.NONE;
         }
 
         GL11.glDepthRange(0.0, 0.1); // forces the Thaumometer to render in front of the other hand
@@ -66,7 +80,7 @@ abstract class MixinItemThaumometerRenderer {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/RenderPlayer;renderFirstPersonArm(Lnet/minecraft/entity/player/EntityPlayer;)V"))
     private void backhand$wrapArmRender(RenderPlayer renderPlayer, EntityPlayer player, Operation<Void> original) {
-        if (backhand$armCallCount != backhand$skipArm) {
+        if (backhand$armCallCount != backhand$armToSkip.armToSkip) {
             original.call(renderPlayer, player);
         }
         backhand$armCallCount++;
