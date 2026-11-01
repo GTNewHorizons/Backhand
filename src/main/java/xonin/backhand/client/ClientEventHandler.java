@@ -39,6 +39,7 @@ import xonin.backhand.utils.Mods;
 @EventBusSubscriber(side = Side.CLIENT)
 public class ClientEventHandler {
 
+    public static final int SLOT_SIZE = 22;
     private static final ResourceLocation OFFHAND_SLOT_TEXTURE = new ResourceLocation(
         Backhand.MODID,
         "textures/gui/offhand_slot.png");
@@ -71,6 +72,15 @@ public class ClientEventHandler {
         }
     }
 
+    public static int getSlotX(int screenWidth) {
+        return screenWidth / 2 - (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125)
+            + BackhandConfigClient.offhandHotbarSlotXOffset;
+    }
+
+    public static int getSlotY(int screenHeight) {
+        return screenHeight - SLOT_SIZE - BackhandConfigClient.offhandHotbarSlotYOffset;
+    }
+
     private static void renderHotbar(int width, int height, float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
@@ -83,16 +93,14 @@ public class ClientEventHandler {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
 
-        int offsetX = (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125) - BackhandConfigClient.offhandHotbarSlotXOffset;
-        int offsetY = BackhandConfigClient.offhandHotbarSlotYOffset;
-        renderTexture(width / 2 - offsetX, height - 22 - offsetY, -90, 22, 22);
+        int slotX = getSlotX(width);
+        int slotY = getSlotY(height);
+        renderTexture(slotX, slotY, -90, SLOT_SIZE, SLOT_SIZE);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
 
-        int x = width / 2 - offsetX + 3;
-        int z = height - 16 - 3 - offsetY;
-        renderOffhandInventorySlot(x, z, partialTicks);
+        renderOffhandInventorySlot(slotX + 3, slotY + 3, partialTicks);
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
