@@ -26,6 +26,18 @@ public final class DashboardCompat {
     private DashboardCompat() {}
 
     public static void register() {
+        OFFHAND_SLOT.setPreview(
+            (screenWidth, screenHeight) -> HudRegistry
+                .render(OFFHAND_SLOT, () -> ClientEventHandler.renderSlotBackground(screenWidth, screenHeight)));
         HudRegistry.register(OFFHAND_SLOT);
+    }
+
+    /** False means the player hid the slot, so skip drawing it and do not call {@link #endOffhandSlot()}. */
+    public static boolean beginOffhandSlot(int screenWidth, int screenHeight) {
+        return HudRegistry.beginRender(OFFHAND_SLOT, screenWidth, screenHeight);
+    }
+
+    public static void endOffhandSlot() {
+        HudRegistry.endRender();
     }
 }

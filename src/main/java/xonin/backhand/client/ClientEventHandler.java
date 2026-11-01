@@ -32,6 +32,7 @@ import xonin.backhand.Backhand;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.compat.DashboardCompat;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
 import xonin.backhand.utils.Mods;
@@ -47,10 +48,25 @@ public class ClientEventHandler {
     public static boolean prevInvTweaksBreakRefill;
     public static int invTweaksDelay;
 
-    @SubscribeEvent(receiveCanceled = true)
-    public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && !event.isCanceled()) {
-            renderHotbar(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
+    /** After the hotbar, so a HUD editor's move of the hotbar is over and the slot can be moved on its own. */
+    @SubscribeEvent
+    public static void renderHotbarOverlay(RenderGameOverlayEvent.Post event) {
+        if (event.type != RenderGameOverlayEvent.ElementType.HOTBAR) {
+            return;
+        }
+        if (BackhandUtils.getOffhandItem(Minecraft.getMinecraft().thePlayer) == null
+            && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
+            return;
+        }
+        int width = event.resolution.getScaledWidth();
+        int height = event.resolution.getScaledHeight();
+        boolean dashboard = Mods.DASHBOARD.isLoaded();
+        if (dashboard && !DashboardCompat.beginOffhandSlot(width, height)) {
+            return;
+        }
+        renderHotbar(width, height, event.partialTicks);
+        if (dashboard) {
+            DashboardCompat.endOffhandSlot();
         }
     }
 
@@ -82,29 +98,24 @@ public class ClientEventHandler {
     }
 
     private static void renderHotbar(int width, int height, float partialTicks) {
-        Minecraft mc = Minecraft.getMinecraft();
-        ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
-        if (itemstack == null && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
-            return;
-        }
-
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
-
-        int slotX = getSlotX(width);
-        int slotY = getSlotY(height);
-        renderTexture(slotX, slotY, -90, SLOT_SIZE, SLOT_SIZE);
-        GL11.glDisable(GL11.GL_BLEND);
+        renderSlotBackground(width, height);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
 
-        renderOffhandInventorySlot(slotX + 3, slotY + 3, partialTicks);
+        renderOffhandInventorySlot(getSlotX(width) + 3, getSlotY(height) + 3, partialTicks);
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        mc.renderEngine.bindTexture(Gui.icons);
+        Minecraft.getMinecraft().renderEngine.bindTexture(Gui.icons);
+    }
+
+    public static void renderSlotBackground(int width, int height) {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
+        renderTexture(getSlotX(width), getSlotY(height), -90, SLOT_SIZE, SLOT_SIZE);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private static void renderOffhandInventorySlot(int p_73832_2_, int p_73832_3_, float p_73832_4_) {
