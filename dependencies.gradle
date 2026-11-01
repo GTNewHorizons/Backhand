@@ -54,6 +54,7 @@ dependencies {
     compileOnly(deobfCurse("extra-utilities-225561:2264384")) { transitive = false }
     compileOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
     compileOnly(rfg.deobf("curse.maven:witchery-69673:2234410"))
+    compileOnly("com.github.GTNewHorizons:Dashboard:1.0.6:api")
 
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:Battlegear2-for-Backhand:1.6.8-backhand:dev") {
         exclude module: "Backhand"
