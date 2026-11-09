@@ -19,7 +19,9 @@ public abstract class MixinItemSword extends Item {
     @WrapMethod(method = "onItemRightClick")
     private ItemStack backhand$onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer player,
         Operation<ItemStack> original) {
-        if (BackhandUtils.getOffhandItem(player) != null) {
+        ItemStack offhand = BackhandUtils.getOffhandItem(player);
+        // The offhand item gets the right click, unless it is a sword too: then the main sword blocks
+        if (offhand != null && !(offhand.getItem() instanceof ItemSword)) {
             return itemStackIn;
         } else {
             return original.call(itemStackIn, worldIn, player);
