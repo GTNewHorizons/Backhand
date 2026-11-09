@@ -32,6 +32,7 @@ import xonin.backhand.Backhand;
 import xonin.backhand.CommonProxy;
 import xonin.backhand.api.core.BackhandUtils;
 import xonin.backhand.client.utils.BackhandRenderHelper;
+import xonin.backhand.compat.DashboardCompat;
 import xonin.backhand.utils.BackhandConfig;
 import xonin.backhand.utils.BackhandConfigClient;
 import xonin.backhand.utils.Mods;
@@ -39,6 +40,7 @@ import xonin.backhand.utils.Mods;
 @EventBusSubscriber(side = Side.CLIENT)
 public class ClientEventHandler {
 
+    public static final int SLOT_SIZE = 22;
     private static final ResourceLocation OFFHAND_SLOT_TEXTURE = new ResourceLocation(
         Backhand.MODID,
         "textures/gui/offhand_slot.png");
@@ -46,10 +48,25 @@ public class ClientEventHandler {
     public static boolean prevInvTweaksBreakRefill;
     public static int invTweaksDelay;
 
-    @SubscribeEvent(receiveCanceled = true)
-    public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && !event.isCanceled()) {
-            renderHotbar(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
+    /** After the hotbar, so a HUD editor's move of the hotbar is over and the slot can be moved on its own. */
+    @SubscribeEvent
+    public static void renderHotbarOverlay(RenderGameOverlayEvent.Post event) {
+        if (event.type != RenderGameOverlayEvent.ElementType.HOTBAR) {
+            return;
+        }
+        if (BackhandUtils.getOffhandItem(Minecraft.getMinecraft().thePlayer) == null
+            && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
+            return;
+        }
+        int width = event.resolution.getScaledWidth();
+        int height = event.resolution.getScaledHeight();
+        boolean dashboard = Mods.DASHBOARD.isLoaded();
+        if (dashboard && !DashboardCompat.beginOffhandSlot(width, height)) {
+            return;
+        }
+        renderHotbar(width, height, event.partialTicks);
+        if (dashboard) {
+            DashboardCompat.endOffhandSlot();
         }
     }
 
@@ -71,32 +88,34 @@ public class ClientEventHandler {
         }
     }
 
+    public static int getSlotX(int screenWidth) {
+        return screenWidth / 2 - (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125)
+            + BackhandConfigClient.offhandHotbarSlotXOffset;
+    }
+
+    public static int getSlotY(int screenHeight) {
+        return screenHeight - SLOT_SIZE - BackhandConfigClient.offhandHotbarSlotYOffset;
+    }
+
     private static void renderHotbar(int width, int height, float partialTicks) {
-        Minecraft mc = Minecraft.getMinecraft();
-        ItemStack itemstack = BackhandUtils.getOffhandItem(mc.thePlayer);
-        if (itemstack == null && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
-            return;
-        }
-
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
-
-        int offsetX = (DOUBLE_WIDE_SURPRISE.isLoaded() ? 212 : 125) - BackhandConfigClient.offhandHotbarSlotXOffset;
-        int offsetY = BackhandConfigClient.offhandHotbarSlotYOffset;
-        renderTexture(width / 2 - offsetX, height - 22 - offsetY, -90, 22, 22);
-        GL11.glDisable(GL11.GL_BLEND);
+        renderSlotBackground(width, height);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
 
-        int x = width / 2 - offsetX + 3;
-        int z = height - 16 - 3 - offsetY;
-        renderOffhandInventorySlot(x, z, partialTicks);
+        renderOffhandInventorySlot(getSlotX(width) + 3, getSlotY(height) + 3, partialTicks);
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        mc.renderEngine.bindTexture(Gui.icons);
+        Minecraft.getMinecraft().renderEngine.bindTexture(Gui.icons);
+    }
+
+    public static void renderSlotBackground(int width, int height) {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().renderEngine.bindTexture(OFFHAND_SLOT_TEXTURE);
+        renderTexture(getSlotX(width), getSlotY(height), -90, SLOT_SIZE, SLOT_SIZE);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private static void renderOffhandInventorySlot(int p_73832_2_, int p_73832_3_, float p_73832_4_) {
