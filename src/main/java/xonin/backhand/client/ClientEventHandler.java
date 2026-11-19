@@ -48,10 +48,21 @@ public class ClientEventHandler {
     public static boolean prevInvTweaksBreakRefill;
     public static int invTweaksDelay;
 
-    /** After the hotbar, so a HUD editor's move of the hotbar is over and the slot can be moved on its own. */
+    @SubscribeEvent(receiveCanceled = true)
+    public static void renderHotbarOverlay(RenderGameOverlayEvent.Pre event) {
+        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && !event.isCanceled()
+            && !Mods.DASHBOARD.isLoaded()) {
+            renderHotbar(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
+        }
+    }
+
+    /**
+     * With Dashboard, after the hotbar, so its move of the hotbar is over and the slot can be moved on its own.
+     * Dashboard sends this event also when the player hid the hotbar.
+     */
     @SubscribeEvent
-    public static void renderHotbarOverlay(RenderGameOverlayEvent.Post event) {
-        if (event.type != RenderGameOverlayEvent.ElementType.HOTBAR) {
+    public static void renderHotbarOverlayDashboard(RenderGameOverlayEvent.Post event) {
+        if (event.type != RenderGameOverlayEvent.ElementType.HOTBAR || !Mods.DASHBOARD.isLoaded()) {
             return;
         }
         if (BackhandUtils.getOffhandItem(Minecraft.getMinecraft().thePlayer) == null
@@ -60,14 +71,11 @@ public class ClientEventHandler {
         }
         int width = event.resolution.getScaledWidth();
         int height = event.resolution.getScaledHeight();
-        boolean dashboard = Mods.DASHBOARD.isLoaded();
-        if (dashboard && !DashboardCompat.beginOffhandSlot(width, height)) {
+        if (!DashboardCompat.beginOffhandSlot(width, height)) {
             return;
         }
         renderHotbar(width, height, event.partialTicks);
-        if (dashboard) {
-            DashboardCompat.endOffhandSlot();
-        }
+        DashboardCompat.endOffhandSlot();
     }
 
     @SubscribeEvent
@@ -98,6 +106,10 @@ public class ClientEventHandler {
     }
 
     private static void renderHotbar(int width, int height, float partialTicks) {
+        if (BackhandUtils.getOffhandItem(Minecraft.getMinecraft().thePlayer) == null
+            && !BackhandConfigClient.RenderOffhandHotbarSlotWhenEmpty) {
+            return;
+        }
         renderSlotBackground(width, height);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
