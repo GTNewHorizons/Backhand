@@ -125,12 +125,19 @@ public abstract class MixinInventoryPlayer implements IOffhandInventory {
 
     @Override
     public ItemStack backhand$getOffhandItem() {
-        return mainInventory[backhand$getOffhandSlot()];
+        final int slotIndex = backhand$getOffhandSlot();
+        if (slotIndex >= 0 && slotIndex < mainInventory.length) {
+            return mainInventory[slotIndex];
+        }
+        return null;
     }
 
     @Override
     public void backhand$setOffhandItem(ItemStack stack) {
-        mainInventory[backhand$getOffhandSlot()] = stack;
+        final int slotIndex = backhand$getOffhandSlot();
+        if (slotIndex >= 0 && slotIndex < mainInventory.length) {
+            mainInventory[slotIndex] = stack;
+        }
     }
 
     @Override
